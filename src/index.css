@@ -1,0 +1,107 @@
+:root {
+  --color-bg: #000000;
+  --color-surface: #0a0a0a;
+  --color-surface-hover: #111111;
+  --color-primary: #d4ff3b; /* Neon Lime/Yellow */
+  --color-primary-soft: rgba(212, 255, 59, 0.1);
+  
+  --color-text: #ffffff;
+  --color-text-dim: #888888;
+  --color-text-muted: #555555;
+  
+  --color-safe: #d4ff3b;
+  --color-safe-bg: rgba(212, 255, 59, 0.1);
+  --color-warning: #ffb800;
+  --color-danger: #ff3333;
+  --color-danger-bg: rgba(255, 51, 51, 0.1);
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 32px;
+  --radius-xl: 48px;
+  --radius-pill: 100px;
+
+  --border-subtle: 1px solid rgba(255, 255, 255, 0.05);
+  --border-accent: 1px solid var(--color-primary);
+  
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-glow: 0 0 20px rgba(212, 255, 59, 0.2);
+
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Material Symbols - Thin Weight Utility */
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 200,
+    'GRAD' 0,
+    'opsz' 24;
+  vertical-align: middle;
+  font-family: 'Material Symbols Outlined' !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  line-height: 1.2;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Common Layout Utilities */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
