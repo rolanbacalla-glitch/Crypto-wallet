@@ -28,7 +28,7 @@ const WelcomeStep: React.FC<StepProps> = ({ onNext }) => (
       transition={{ delay: 0.2 }}
       className="display-title"
     >
-      paytech <span className="text-primary">wallet</span>
+      nest <span className="text-primary">wallet</span>
     </motion.h1>
     <motion.p 
       initial={{ opacity: 0 }}

@@ -4,14 +4,14 @@ import { NavLink, Outlet } from 'react-router-dom';
 const MainLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-black text-white selection:bg-primary selection:text-black">
-      {/* Top Navigation Bar - Paytech Frosted Glass Style */}
+      {/* Top Navigation Bar - Nest Frosted Glass Style */}
       <header className="sticky top-0 h-20 w-full z-50 glass-frosted flex items-center border-b border-white/5">
         <div className="w-full max-w-[1600px] mx-auto px-8 flex justify-between items-center">
           
           <div className="flex items-center gap-16">
             <div className="flex items-center">
               <span className="text-2xl font-extrabold tracking-tighter hover:text-primary transition-colors cursor-default">
-                paytech
+                nest
               </span>
             </div>
             

@@ -1,8 +1,8 @@
-# Paytech Wallet 🛡️
+# Nest Wallet 🛡️
 
 **The intelligent safety layer for your assets.**
 
-Paytech Wallet is a modern, premium crypto wallet interface designed with security at its core. We simulate every transaction and decode protocol risks before you sign, providing you with a clear, readable breakdown of exactly what's happening with your assets.
+Nest Wallet is a modern, premium crypto wallet interface designed with security at its core. We simulate every transaction and decode protocol risks before you sign, providing you with a clear, readable breakdown of exactly what's happening with your assets.
 
 ## Core Features
 
