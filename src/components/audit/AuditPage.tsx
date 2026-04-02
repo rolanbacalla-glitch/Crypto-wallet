@@ -160,8 +160,8 @@ const AuditPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="flex gap-4 items-center">
-                <button className="text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-white px-6 py-3 rounded-full hover:bg-white/5 transition-all">
+              <div className="flex gap-3 items-center">
+                <button className="h-12 px-8 rounded-full font-black text-[10px] uppercase tracking-widest text-text-muted hover:text-white glass-frosted border border-white/10 hover:border-white/20 transition-all">
                   Edit Limit
                 </button>
                 <button 

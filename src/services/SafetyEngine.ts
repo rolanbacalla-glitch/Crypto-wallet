@@ -118,7 +118,8 @@ class SafetyEngine {
     }
 
     // 4. AI-Powered Narrative (Fluid Context)
-    const partialReport: any = {
+    // We create a container that matches what the AI needs for context
+    const narrativeContext = {
       riskLevel,
       warnings,
       transaction: tx,
@@ -126,9 +127,9 @@ class SafetyEngine {
       protocolAudit,
       slippageReport,
       simulationResults: simResults,
-    };
+    } as SafetyReport;
 
-    const narrative = await generateNarrative(partialReport, profile);
+    const narrative = await generateNarrative(narrativeContext, profile);
 
     return {
       riskLevel,

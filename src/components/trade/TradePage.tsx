@@ -34,6 +34,7 @@ const TradePage: React.FC = () => {
                   value={fromAmount}
                   onChange={(e) => setFromAmount(e.target.value)}
                   className="bg-transparent border-none text-2xl font-black italic tracking-tighter focus:outline-none w-full"
+                  aria-label="Swap Amount"
                 />
               </div>
               <span className="text-sm font-black italic text-text-dim">ETH</span>
