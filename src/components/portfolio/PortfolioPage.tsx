@@ -153,8 +153,8 @@ const PortfolioPage: React.FC = () => {
             <svg viewBox="-60 -20 920 280" className="w-full h-full overflow-visible">
               <defs>
                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#d4ff3b" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#d4ff3b" stopOpacity="0" />
+                  <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="var(--color-primary)" stopOpacity="0" />
                 </linearGradient>
               </defs>
               
@@ -205,10 +205,10 @@ const PortfolioPage: React.FC = () => {
                   transition={{ duration: 1.5, ease: "easeInOut" }}
                   d={generatePath(currentData)} 
                   fill="none" 
-                  stroke="#d4ff3b" 
+                  stroke="var(--color-primary)" 
                   strokeWidth="3" 
                   strokeLinecap="round"
-                  className="drop-shadow-[0_0_10px_rgba(212,255,59,0.5)]"
+                  className="drop-shadow-[0_0_10px_rgba(224,199,154,0.5)]"
                 />
               </AnimatePresence>
 
@@ -240,7 +240,7 @@ const PortfolioPage: React.FC = () => {
                       y1="0" 
                       x2={(hoveredPoint / (currentData.length - 1)) * 800} 
                       y2="200" 
-                      stroke="#d4ff3b" 
+                      stroke="var(--color-primary)" 
                       strokeDasharray="4 4" 
                       strokeOpacity="0.5" 
                     />
@@ -248,8 +248,8 @@ const PortfolioPage: React.FC = () => {
                       cx={(hoveredPoint / (currentData.length - 1)) * 800} 
                       cy={200 - ((currentData[hoveredPoint].value - stats.min) / (stats.range || 1)) * 200} 
                       r="6" 
-                      fill="#d4ff3b" 
-                      className="drop-shadow-[0_0_8px_rgba(212,255,59,0.8)]"
+                      fill="var(--color-primary)" 
+                      className="drop-shadow-[0_0_8px_rgba(224,199,154,0.8)]"
                     />
                   </motion.g>
                 )}

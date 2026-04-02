@@ -29,7 +29,7 @@ const TradePage: React.FC = () => {
           <div className="flex flex-col gap-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-text-muted px-4">From Asset</span>
             <div className="flex items-center gap-4 bg-white/5 border border-white/5 rounded-3xl p-4 hover:bg-white/10 transition-all group">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-black text-xs text-primary shadow-[0_0_15px_rgba(212,255,59,0.2)]">E</div>
+              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-black text-xs text-primary shadow-[0_0_15px_rgba(224,199,154,0.2)]">E</div>
               <div className="flex flex-col flex-1">
                 <span className="text-xs font-black uppercase tracking-widest text-text-muted">Ethereum</span>
                 <input
@@ -69,7 +69,7 @@ const TradePage: React.FC = () => {
             </div>
             <button
               onClick={startTradeSim}
-              className="w-full bg-primary text-black h-14 rounded-full font-black text-sm uppercase tracking-widest shadow-[0_0_30px_rgba(212,255,59,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full bg-primary text-black h-14 rounded-full font-black text-sm uppercase tracking-widest shadow-[0_0_30px_rgba(224,199,154,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
               disabled={isAnalysing}
             >
               {isAnalysing ? 'Analysing...' : 'Run Safety Simulation'}
@@ -85,7 +85,7 @@ const TradePage: React.FC = () => {
             className="glass-frosted border border-primary/20 rounded-[48px] p-8 shadow-2xl relative overflow-hidden"
           >
             <div className="flex items-center gap-3 mb-8">
-              <span className="material-symbols-outlined text-primary text-2xl drop-shadow-[0_0_8px_rgba(212,255,59,0.5)]">security</span>
+              <span className="material-symbols-outlined text-primary text-2xl drop-shadow-[0_0_8px_rgba(224,199,154,0.5)]">security</span>
               <h3 className="text-lg font-black tracking-tight">Pre-Trade Intelligence</h3>
             </div>
 
