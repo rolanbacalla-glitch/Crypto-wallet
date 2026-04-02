@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCopilot } from '../../hooks/useCopilot';
 import SafetyPreview from '../safety/SafetyPreview';
 import { useAssets } from '../../hooks/useAssets';
+import ThreatRadar from './ThreatRadar';
 
 interface DashboardProps {
   profile: 'beginner' | 'advanced';
@@ -216,26 +217,8 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
             <div className="absolute bottom-0 right-0 w-40 h-40 bg-warning/5 blur-[50px] -mb-20 -mr-20 group-hover:bg-primary/10 transition-all" />
           </Link>
 
-          <div className="glass-frosted border border-white/10 rounded-[48px] p-8 flex flex-col gap-8 flex-1">
-            <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-text-dim text-2xl">receipt_long</span>
-              <h3 className="text-lg font-black tracking-tight">Protected History</h3>
-            </div>
-            
-            <div className="flex flex-col gap-4">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="group flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-white/10 transition-all cursor-pointer">
-                  <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-text-dim group-hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-2xl">swap_horiz</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-bold tracking-tight">Uniswap V3 Swap</div>
-                    <div className="text-[10px] font-bold text-text-muted uppercase tracking-wider">2 mins ago</div>
-                  </div>
-                  <div className="text-sm font-black text-right">-£124.50</div>
-                </div>
-              ))}
-            </div>
+          <div className="glass-frosted border border-white/10 rounded-[48px] p-10 flex flex-col gap-8 flex-1">
+            <ThreatRadar />
           </div>
         </div>
       </div>
