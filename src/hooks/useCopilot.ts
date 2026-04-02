@@ -3,8 +3,12 @@ import { safetyEngine } from '../services/SafetyEngine';
 import type { SafetyReport } from '../services/SafetyEngine';
 import { mockTransactions } from '../data/mockTransactions';
 import type { TransactionData } from '../data/mockTransactions';
+import { db } from '../services/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useAuth } from '../context/AuthContext';
 
 export const useCopilot = () => {
+  const { user } = useAuth();
   const [isAnalysing, setIsAnalysing] = useState(false);
   const [report, setReport] = useState<SafetyReport | null>(null);
   const [activeTx, setActiveTx] = useState<TransactionData | null>(null);
@@ -21,10 +25,26 @@ export const useCopilot = () => {
       const result = await safetyEngine.analyseTransaction(tx, profile);
       setReport(result);
       setActiveTx(tx);
+
+      // Save to Firebase if user is logged in
+      if (user?.uid) {
+        try {
+          await addDoc(collection(db, 'users', user.uid, 'simulations'), {
+            txId: tx.id,
+            txName: tx.name,
+            riskLevel: result.riskLevel,
+            report: result,
+            timestamp: serverTimestamp(),
+            profile
+          });
+        } catch (error) {
+          console.error("Failed to save simulation to Firebase:", error);
+        }
+      }
     }
     
     setIsAnalysing(false);
-  }, []);
+  }, [user]);
 
   return {
     isAnalysing,

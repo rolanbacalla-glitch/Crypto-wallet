@@ -1,10 +1,14 @@
-import React, { createContext, useState, type ReactNode } from 'react';
+import React, { createContext, useState, useEffect, type ReactNode } from 'react';
 import { type Asset } from '../types/asset';
+import { db } from '../services/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useAuth } from './AuthContext';
 
 interface AssetContextType {
   assets: Asset[];
   addAsset: (asset: Asset) => void;
   removeAsset: (symbol: string) => void;
+  isLoading: boolean;
 }
 
 const DEFAULT_ASSETS: Asset[] = [
@@ -18,18 +22,62 @@ const DEFAULT_ASSETS: Asset[] = [
 export const AssetContext = createContext<AssetContextType | undefined>(undefined);
 
 export const AssetProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [assets, setAssets] = useState<Asset[]>(DEFAULT_ASSETS);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Load from Cloud on Login
+  useEffect(() => {
+    if (!user?.uid) return;
+
+    const loadAssets = async () => {
+      setIsLoading(true);
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid!));
+        if (userDoc.exists() && userDoc.data()?.assets) {
+          setAssets(userDoc.data()?.assets);
+        } else {
+          // If fresh user, persist defaults to cloud
+          await setDoc(doc(db, 'users', user.uid!), { assets: DEFAULT_ASSETS }, { merge: true });
+        }
+      } catch (error) {
+        console.error("Failed to load assets from Cloud:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadAssets();
+  }, [user?.uid]);
+
+  const syncToCloud = async (newAssetList: Asset[]) => {
+    if (user?.uid) {
+      try {
+        await setDoc(doc(db, 'users', user.uid), { assets: newAssetList }, { merge: true });
+      } catch (error) {
+        console.error("Failed to sync assets to Cloud:", error);
+      }
+    }
+  };
 
   const addAsset = (newAsset: Asset) => {
-    setAssets(prev => [newAsset, ...prev]);
+    setAssets(prev => {
+      const newList = [newAsset, ...prev];
+      syncToCloud(newList);
+      return newList;
+    });
   };
 
   const removeAsset = (symbol: string) => {
-    setAssets(prev => prev.filter(a => a.symbol !== symbol));
+    setAssets(prev => {
+      const newList = prev.filter(a => a.symbol !== symbol);
+      syncToCloud(newList);
+      return newList;
+    });
   };
 
   return (
-    <AssetContext.Provider value={{ assets, addAsset, removeAsset }}>
+    <AssetContext.Provider value={{ assets, addAsset, removeAsset, isLoading }}>
       {children}
     </AssetContext.Provider>
   );
