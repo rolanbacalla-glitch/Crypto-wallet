@@ -26,21 +26,21 @@ const LoginPage: React.FC = () => {
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/10 blur-[100px] rounded-full -mr-48 -mt-48" />
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         className="w-full max-w-[480px] relative z-10"
       >
         <div className="text-center mb-12">
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             className="inline-block px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-6 shadow-glow"
           >
             Vault Security V4.0
           </motion.div>
-          <h1 className="text-6xl font-black italic tracking-tighter mb-4">nest</h1>
+          <h1 className="text-6xl font-black tracking-tighter mb-4">nest</h1>
           <p className="text-text-dim font-medium text-lg">Secure your assets with the world's first AI Wallet Safety Copilot.</p>
         </div>
 
@@ -76,19 +76,19 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div className="pt-4 border-t border-white/5">
-            <p className="text-[10px] font-medium text-text-muted text-center leading-relaxed">
-              By connecting, you agree to Nest's safety algorithms and <span className="text-white hover:underline cursor-pointer">Terms of Protection</span>.
+            <p className="text-[11px] font-medium text-text-muted text-center leading-relaxed">
+              By connecting, you agree to Nest's safety algorithms and <br /> <span className="text-white hover:underline cursor-pointer">Terms of Protection</span>.
             </p>
           </div>
 
           {isLoggingIn && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-10 text-center"
             >
               <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin mb-6" />
-              <h3 className="text-2xl font-black italic tracking-tighter mb-2">Requesting Signature</h3>
+              <h3 className="text-2xl font-black tracking-tighter mb-2">Requesting Signature</h3>
               <p className="text-xs font-bold text-text-muted uppercase tracking-widest leading-relaxed">
                 Check your crypto wallet and authorize the secure login request.
               </p>
@@ -96,7 +96,7 @@ const LoginPage: React.FC = () => {
           )}
         </div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}

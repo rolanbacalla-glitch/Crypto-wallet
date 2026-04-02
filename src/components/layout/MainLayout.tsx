@@ -23,12 +23,12 @@ const MainLayout: React.FC = () => {
                 <NavLink 
                   key={item}
                   to={item === 'Dashboard' ? '/' : `/${item.toLowerCase()}`} 
-                  className={({ isActive }) => `
+                  className={({ isActive }: { isActive: boolean }) => `
                     relative py-2 text-sm font-bold transition-all duration-300
                     ${isActive ? 'text-primary' : 'text-text-dim hover:text-white'}
                   `}
                 >
-                  {({ isActive }) => (
+                  {({ isActive }: { isActive: boolean }) => (
                     <>
                       {item}
                       {isActive && (
@@ -53,24 +53,21 @@ const MainLayout: React.FC = () => {
               />
             </div>
             
-            <div className="relative group/profile">
-              <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full p-1.5 pl-1.5 pr-4 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all group">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full p-1.5 pl-1.5 pr-4 cursor-default transition-all">
                 <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-black font-black text-xs shadow-[0_0_15px_rgba(212,255,59,0.3)]">
                   {user?.profileImage || '??'}
                 </div>
-                <span className="text-sm font-bold tracking-tight">{user?.ens || user?.address.slice(0, 10) + '...'}</span>
-                <span className="material-symbols-outlined text-lg text-text-dim group-hover:text-white transition-colors">expand_more</span>
+                <span className="text-sm font-bold tracking-tight text-white">{user?.ens || user?.address.slice(0, 10) + '...'}</span>
               </div>
               
-              <div className="absolute top-full right-0 mt-2 w-48 glass-frosted border border-white/10 rounded-3xl p-2 opacity-0 scale-95 pointer-events-none group-hover/profile:opacity-100 group-hover/profile:scale-100 group-hover/profile:pointer-events-auto transition-all shadow-2xl">
-                <button 
-                  onClick={logout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-danger/20 text-danger transition-all text-xs font-black uppercase tracking-widest"
-                >
-                  <span className="material-symbols-outlined text-sm">logout</span>
-                  Logout Vault
-                </button>
-              </div>
+              <button 
+                onClick={logout}
+                title="Logout Vault"
+                className="w-11 h-11 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-text-muted hover:bg-danger/20 hover:text-danger hover:border-danger/30 transition-all duration-300"
+              >
+                <span className="material-symbols-outlined text-xl">power_settings_new</span>
+              </button>
             </div>
           </div>
         </div>
