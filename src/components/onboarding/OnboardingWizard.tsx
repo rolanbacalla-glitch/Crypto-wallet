@@ -212,10 +212,10 @@ const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #000;
+          background: #050505;
           position: relative;
           overflow: hidden;
-          color: #fff;
+          color: #F8F5F1;
           font-family: var(--sans);
         }
 
@@ -289,14 +289,14 @@ const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
 
         .display-title {
           font-family: var(--serif);
-          font-size: 3.5rem;
+          font-size: 4rem;
           font-weight: 700;
           margin: 2.5rem 0 1.5rem;
-          letter-spacing: -0.01em;
+          letter-spacing: -0.02em;
           line-height: 1;
         }
 
-        .display-title.small { font-size: 2.5rem; }
+        .display-title.small { font-size: 3rem; }
 
         .lead-text {
           font-size: 1.15rem;
@@ -334,9 +334,10 @@ const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
         }
 
         .btn-premium:hover {
-          background: var(--color-primary);
+          background: #EED7B0;
           color: #000;
           transform: translateY(-2px);
+          box-shadow: 0 15px 40px -10px rgba(224, 199, 154, 0.4);
         }
 
         .btn-premium.secondary {

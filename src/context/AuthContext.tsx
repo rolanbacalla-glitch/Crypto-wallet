@@ -42,10 +42,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user]);
 
   const login = async (address: string, ens?: string) => {
+    console.log("Starting luxury vault access for:", address);
     setIsLoggingIn(true);
     try {
-      // Sign in to Firebase anonymously
-      const cred = await signInAnonymously(firebaseAuth);
+      // Attempt cloud synchronization
+      const loginPromise = signInAnonymously(firebaseAuth);
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error("Cloud vault verification timeout")), 4000)
+      );
+      
+      const cred = await Promise.race([loginPromise, timeoutPromise]);
+      
+      console.log("Vault Cloud Sync Active:", cred.user.uid);
       const newUser = { 
         address, 
         ens, 
@@ -54,8 +62,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
       setUser(newUser);
       localStorage.setItem('nest_user', JSON.stringify(newUser));
-    } catch (error) {
-      console.error("Firebase auth failed:", error);
+    } catch (error: any) {
+      console.warn("Cloud infrastructure unavailable, proceeding with local-only vault:", error.message);
+      // Fallback to local-only high-security session
+      const newUser = { 
+        address, 
+        ens, 
+        profileImage: ens ? ens.slice(0, 2).toUpperCase() : '??',
+        uid: 'local-' + Date.now().toString(16) 
+      };
+      setUser(newUser);
+      localStorage.setItem('nest_user', JSON.stringify(newUser));
     } finally {
       setIsLoggingIn(false);
     }

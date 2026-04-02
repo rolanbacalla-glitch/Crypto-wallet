@@ -1,63 +1,48 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #d4ff3b;
-  --color-primary-soft: rgba(212, 255, 59, 0.1);
-  --color-bg: #000000;
-  --color-surface: #0a0a0a;
-  --color-surface-hover: #111111;
-  --color-text: #ffffff;
-  --color-text-dim: #888888;
-  --color-text-muted: #555555;
+  --color-primary: #E0C79A;
+  --color-primary-soft: rgba(224, 199, 154, 0.08);
+  --color-bg: #050505;
+  --color-surface: #111111;
+  --color-surface-hover: #161616;
+  --color-text: #F8F5F1;
+  --color-text-dim: #A69F94;
+  --color-text-muted: #4B4641;
 
-  --color-safe: #d4ff3b;
-  --color-warning: #ffb800;
-  --color-danger: #ff3333;
+  --color-safe: #B5D397;
+  --color-warning: #D9A066;
+  --color-danger: #AF5C5C;
 
-  --radius-sm: 8px;
-  --radius-md: 16px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
   --radius-lg: 32px;
-  --radius-xl: 48px;
-  --radius-pill: 100px;
+  --radius-xl: 56px;
+  --radius-pill: 9999px;
 
-  --shadow-glow: 0 0 20px rgba(212, 255, 59, 0.2);
+  --shadow-lux: 0 10px 40px -10px rgba(0,0,0,0.5), 0 0 20px -5px rgba(224, 199, 154, 0.1);
 
   --animate-shimmer: shimmer 2s infinite linear;
   --animate-core-pulse: core-pulse 1.5s infinite ease-out;
 
   @keyframes shimmer {
-    0% {
-      background-position: 200% 0;
-    }
-
-    100% {
-      background-position: -200% 0;
-    }
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
 
   @keyframes core-pulse {
-    0% {
-      transform: scale(0.6);
-      opacity: 0;
-    }
-
-    50% {
-      opacity: 0.5;
-    }
-
-    100% {
-      transform: scale(1.4);
-      opacity: 0;
-    }
+    0% { transform: scale(0.6); opacity: 0; }
+    50% { opacity: 0.5; }
+    100% { transform: scale(1.4); opacity: 0; }
   }
 }
 
 @utility glass-frosted {
-  backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(32px) saturate(120%);
   background: linear-gradient(135deg,
-      rgba(212, 255, 59, 0.05) 0%,
+      rgba(224, 199, 154, 0.03) 0%,
       rgba(0, 0, 0, 0.6) 100%);
-  border: 1px solid rgba(212, 255, 59, 0.15);
+  border: 1px solid rgba(224, 199, 154, 0.1);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
