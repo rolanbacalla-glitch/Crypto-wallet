@@ -1,7 +1,10 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const MainLayout: React.FC = () => {
+  const { user, logout } = useAuth();
+
   return (
     <div className="min-h-screen flex flex-col bg-black text-white selection:bg-primary selection:text-black">
       {/* Top Navigation Bar - Nest Frosted Glass Style */}
@@ -50,12 +53,24 @@ const MainLayout: React.FC = () => {
               />
             </div>
             
-            <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full p-1.5 pl-1.5 pr-4 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all group">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-black font-black text-xs shadow-[0_0_15px_rgba(212,255,59,0.3)]">
-                JD
+            <div className="relative group/profile">
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full p-1.5 pl-1.5 pr-4 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all group">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-black font-black text-xs shadow-[0_0_15px_rgba(212,255,59,0.3)]">
+                  {user?.profileImage || '??'}
+                </div>
+                <span className="text-sm font-bold tracking-tight">{user?.ens || user?.address.slice(0, 10) + '...'}</span>
+                <span className="material-symbols-outlined text-lg text-text-dim group-hover:text-white transition-colors">expand_more</span>
               </div>
-              <span className="text-sm font-bold tracking-tight">johndoe.eth</span>
-              <span className="material-symbols-outlined text-lg text-text-dim group-hover:text-white transition-colors">expand_more</span>
+              
+              <div className="absolute top-full right-0 mt-2 w-48 glass-frosted border border-white/10 rounded-3xl p-2 opacity-0 scale-95 pointer-events-none group-hover/profile:opacity-100 group-hover/profile:scale-100 group-hover/profile:pointer-events-auto transition-all shadow-2xl">
+                <button 
+                  onClick={logout}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-danger/20 text-danger transition-all text-xs font-black uppercase tracking-widest"
+                >
+                  <span className="material-symbols-outlined text-sm">logout</span>
+                  Logout Vault
+                </button>
+              </div>
             </div>
           </div>
         </div>
