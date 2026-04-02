@@ -4,7 +4,7 @@ import type { AINarrative as NarrativeType } from '../../services/geminiService'
 
 interface AINarrativeProps {
   narrative: NarrativeType;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: 'low' | 'medium' | 'high' | 'critical' | 'inconclusive';
 }
 
 const AINarrative: React.FC<AINarrativeProps> = ({ narrative, riskLevel }) => {
@@ -14,6 +14,7 @@ const AINarrative: React.FC<AINarrativeProps> = ({ narrative, riskLevel }) => {
       case 'medium': return 'bg-warning/10 border-warning/30 text-warning shadow-warning/10';
       case 'high': return 'bg-danger/10 border-danger/30 text-danger shadow-danger/10';
       case 'critical': return 'bg-danger/20 border-danger/50 text-danger shadow-danger/20 animate-pulse';
+      case 'inconclusive': return 'bg-white/10 border-white/20 text-white shadow-white/5';
       default: return 'bg-white/10 border-white/20 text-white';
     }
   };
@@ -24,6 +25,7 @@ const AINarrative: React.FC<AINarrativeProps> = ({ narrative, riskLevel }) => {
       case 'medium': return 'shield_with_heart';
       case 'high': return 'gpp_maybe';
       case 'critical': return 'gpp_bad';
+      case 'inconclusive': return 'question_mark';
       default: return 'security';
     }
   };

@@ -25,7 +25,7 @@ const ConfirmButton: React.FC<ConfirmButtonProps> = ({
   const [isHolding, setIsHolding] = useState(false);
   const [progress, setProgress] = useState(0);
   const [hasDoubleChecked, setHasDoubleChecked] = useState(false);
-  const holdTimerRef = useRef<NodeJS.Timeout | number | null>(null);
+  const holdTimerRef = useRef<any>(null);
 
   const startHold = () => {
     if (disabled || isPerforming || persona !== 'beginner') return;
@@ -39,7 +39,7 @@ const ConfirmButton: React.FC<ConfirmButtonProps> = ({
       setProgress(p);
 
       if (p === 1) {
-        if (holdTimerRef.current) clearInterval(holdTimerRef.current as any);
+        if (holdTimerRef.current) clearInterval(holdTimerRef.current);
         onConfirm();
         setIsHolding(false);
         setProgress(0);
@@ -48,14 +48,14 @@ const ConfirmButton: React.FC<ConfirmButtonProps> = ({
   };
 
   const cancelHold = () => {
-    if (holdTimerRef.current) clearInterval(holdTimerRef.current as any);
+    if (holdTimerRef.current) clearInterval(holdTimerRef.current);
     setIsHolding(false);
     setProgress(0);
   };
 
   useEffect(() => {
     return () => {
-      if (holdTimerRef.current) clearInterval(holdTimerRef.current as any);
+      if (holdTimerRef.current) clearInterval(holdTimerRef.current);
     };
   }, []);
 
