@@ -45,11 +45,11 @@ These limits matter because crypto scams often exploit overconfidence and blind 
 
 ### 1. Transaction explanation
 
-Before signing, the app explains the transaction in plain English: what asset moves, where it goes, what permissions it grants, and whether it can be reversed. This directly addresses the misunderstanding that crypto transactions are free, cancelable, or reversible.  
+Before signing, the app explains the transaction in plain English: what asset moves, where it goes, what permissions it grants, and whether it can be reversed. This directly addresses the misunderstanding that crypto transactions are free, cancellable, or reversible.  
 
 ### 2. Risk scoring
 
-The system assigns a simple risk label, such as low, medium, or high, based on wallet destination, contract behavior, approval size, and known scam patterns. The purpose is not perfect prediction, but timely friction before a costly mistake.  
+The system assigns a simple risk label, such as low, medium, or high, based on wallet destination, contract behaviour, approval size, and known scam patterns. The purpose is not perfect prediction, but timely friction before a costly mistake.  
 
 ### 3. Approval monitor
 
@@ -69,7 +69,7 @@ For novice users, the wallet defaults to safer settings for gas, slippage, appro
 
 ### Definition
 
-- Prioritize the top three user failures.
+- Prioritise the top three user failures.
 - Define what the AI can explain, detect, and block.
 - Establish guardrails for false positives and user override.  
 

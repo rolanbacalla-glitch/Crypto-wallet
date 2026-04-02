@@ -6,7 +6,7 @@ Nest Wallet is a modern, premium crypto wallet interface designed with security 
 
 ## Core Features
 
-- **Real-Time Transaction Simulations**: Visualize the impact of transactions on your wallet before they hit the blockchain.
+- **Real-Time Transaction Simulations**: Visualise the impact of transactions on your wallet before they hit the blockchain.
 - **Protocol Risk Assessment**: Intelligent decoding of complex smart contract interactions to identify potential threats.
 - **Bento-Style Dashboard**: A clean, high-contrast UI with glassmorphism aesthetics for a premium look and feel.
 - **Multi-Asset Support**: Comprehensive portfolio tracking and asset management.
@@ -66,7 +66,7 @@ npm run build
 
 ## Security
 
-We prioritize your security:
+We prioritise your security:
 
 - **Zero Placeholder Data**: Real asset data and simulations.
 - **No Hidden Risks**: Every interaction is decoded and presented clearly.

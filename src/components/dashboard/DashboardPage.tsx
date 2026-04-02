@@ -8,14 +8,14 @@ interface DashboardProps {
 }
 
 const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
-  const { isAnalyzing, report, analyze, availableScenarios } = useCopilot();
+  const { isAnalysing, report, analyse, availableScenarios } = useCopilot();
   const [selectedScenario, setSelectedScenario] = useState(availableScenarios[0].id);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [timeRange, setTimeRange] = useState('1W');
 
   useEffect(() => {
-    analyze(selectedScenario, profile);
-  }, [selectedScenario, profile, analyze]);
+    analyse(selectedScenario, profile);
+  }, [selectedScenario, profile, analyse]);
 
   return (
     <div className="flex flex-col gap-10">
@@ -146,8 +146,8 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             {[
-              { label: 'Realized PL', value: '+£2,450.00', color: 'text-primary' },
-              { label: 'Unrealized PL', value: '£14,204.30', color: 'text-primary' },
+              { label: 'Realised PL', value: '+£2,450.00', color: 'text-primary' },
+              { label: 'Unrealised PL', value: '£14,204.30', color: 'text-primary' },
               { label: 'Total Volume', value: '£1.2M', color: 'text-white' },
               { label: 'Safeguarded', value: '£412K', color: 'text-primary shadow-glow' }
             ].map((stat, i) => (
@@ -170,7 +170,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
             <div className="relative z-10">
               <SafetyPreview 
                 report={report} 
-                isAnalyzing={isAnalyzing} 
+                isAnalysing={isAnalysing} 
                 profile={profile} 
               />
             </div>

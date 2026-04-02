@@ -5,12 +5,12 @@ import { mockTransactions } from '../data/mockTransactions';
 import type { TransactionData } from '../data/mockTransactions';
 
 export const useCopilot = () => {
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isAnalysing, setIsAnalysing] = useState(false);
   const [report, setReport] = useState<SafetyReport | null>(null);
   const [activeTx, setActiveTx] = useState<TransactionData | null>(null);
 
-  const analyze = useCallback(async (txId: string, profile: 'beginner' | 'advanced' = 'beginner') => {
-    setIsAnalyzing(true);
+  const analyse = useCallback(async (txId: string, profile: 'beginner' | 'advanced' = 'beginner') => {
+    setIsAnalysing(true);
     setReport(null);
     
     // Simulate network delay
@@ -18,19 +18,19 @@ export const useCopilot = () => {
     
     const tx = mockTransactions.find(t => t.id === txId);
     if (tx) {
-      const result = await safetyEngine.analyzeTransaction(tx, profile);
+      const result = await safetyEngine.analyseTransaction(tx, profile);
       setReport(result);
       setActiveTx(tx);
     }
     
-    setIsAnalyzing(false);
+    setIsAnalysing(false);
   }, []);
 
   return {
-    isAnalyzing,
+    isAnalysing,
     report,
     activeTx,
-    analyze,
+    analyse,
     availableScenarios: mockTransactions
   };
 };

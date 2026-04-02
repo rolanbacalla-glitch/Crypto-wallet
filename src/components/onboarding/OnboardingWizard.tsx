@@ -12,17 +12,17 @@ interface StepProps {
 }
 
 const WelcomeStep: React.FC<StepProps> = ({ onNext }) => (
-  <motion.div 
+  <motion.div
     initial={{ opacity: 0, scale: 0.95 }}
     animate={{ opacity: 1, scale: 1 }}
     exit={{ opacity: 0, scale: 1.05 }}
     className="step-content"
   >
     <div className="premium-badge">
-       <div className="badge-ring"></div>
-       <span className="material-symbols-outlined logo-icon">verified_user</span>
+      <div className="badge-ring"></div>
+      <span className="material-symbols-outlined logo-icon">verified_user</span>
     </div>
-    <motion.h1 
+    <motion.h1
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
@@ -30,7 +30,7 @@ const WelcomeStep: React.FC<StepProps> = ({ onNext }) => (
     >
       nest <span className="text-primary">wallet</span>
     </motion.h1>
-    <motion.p 
+    <motion.p
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.3 }}
@@ -38,13 +38,13 @@ const WelcomeStep: React.FC<StepProps> = ({ onNext }) => (
     >
       The intelligent safety layer for your assets. We simulate every transaction and decode protocol risks before you sign.
     </motion.p>
-    <motion.button 
+    <motion.button
       whileHover={{ scale: 1.02, boxShadow: '0 0 20px var(--color-primary)' }}
       whileTap={{ scale: 0.98 }}
-      className="btn-premium" 
+      className="btn-premium"
       onClick={() => onNext()}
     >
-      Initialize Wallet <span className="material-symbols-outlined">arrow_forward</span>
+      Initialise Wallet <span className="material-symbols-outlined">arrow_forward</span>
     </motion.button>
   </motion.div>
 );
@@ -66,7 +66,7 @@ const ProfileStep: React.FC<StepProps> = ({ onNext }) => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="step-content"
@@ -74,48 +74,48 @@ const ProfileStep: React.FC<StepProps> = ({ onNext }) => {
       <h2 className="step-subtitle">Configuration</h2>
       <h1 className="display-title small">Choose Your <span className="text-primary">Experience</span></h1>
       <p className="text-dim">Our safety engine adapts its intelligence depth to your expertise.</p>
-      
-      <motion.div 
+
+      <motion.div
         variants={container}
         initial="hidden"
         animate="show"
         className="bento-selection"
       >
-        <motion.div 
+        <motion.div
           variants={item}
           className={`selection-card ${selected === 'beginner' ? 'active' : ''}`}
           onClick={() => setSelected('beginner')}
         >
           <div className="card-top">
-             <div className="icon-box">
-               <span className="material-symbols-outlined">shield</span>
-             </div>
-             <div className="status-dot"></div>
+            <div className="icon-box">
+              <span className="material-symbols-outlined">shield</span>
+            </div>
+            <div className="status-dot"></div>
           </div>
           <h3>Beginner</h3>
           <p>Clear, direct risk warnings. Translates technical data into simple actions.</p>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           variants={item}
           className={`selection-card ${selected === 'advanced' ? 'active' : ''}`}
           onClick={() => setSelected('advanced')}
         >
           <div className="card-top">
-             <div className="icon-box">
-               <span className="material-symbols-outlined">bolt</span>
-             </div>
-             <div className="status-dot"></div>
+            <div className="icon-box">
+              <span className="material-symbols-outlined">bolt</span>
+            </div>
+            <div className="status-dot"></div>
           </div>
           <h3>Advanced</h3>
           <p>Technical transparency. Native simulation logs and protocol audit data.</p>
         </motion.div>
       </motion.div>
 
-      <motion.button 
+      <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="btn-premium secondary" 
+        className="btn-premium secondary"
         onClick={() => onNext({ profile: selected })}
       >
         Set Experience Mode
@@ -125,26 +125,26 @@ const ProfileStep: React.FC<StepProps> = ({ onNext }) => {
 };
 
 const SuccessStep: React.FC<StepProps> = ({ onNext, profile }) => (
-  <motion.div 
+  <motion.div
     initial={{ opacity: 0, scale: 0.98 }}
     animate={{ opacity: 1, scale: 1 }}
     className="step-content"
   >
     <div className="success-visual">
-       <div className="success-ring outer"></div>
-       <div className="success-ring inner"></div>
-       <span className="material-symbols-outlined success-icon text-safe">check_circle</span>
+      <div className="success-ring outer"></div>
+      <div className="success-ring inner"></div>
+      <span className="material-symbols-outlined success-icon text-safe">check_circle</span>
     </div>
     <h1 className="display-title">Systems <span className="text-safe">Protected</span></h1>
     <div className="status-stack">
-       <div className="status-row">
-          <span className="material-symbols-outlined text-dim">person</span>
-          <span>Profile: <strong className="text-primary">{profile?.toUpperCase()}</strong></span>
-       </div>
-       <div className="status-row">
-          <span className="material-symbols-outlined text-dim">security</span>
-          <span>Safety Engine: <strong className="text-safe">ARMED</strong></span>
-       </div>
+      <div className="status-row">
+        <span className="material-symbols-outlined text-dim">person</span>
+        <span>Profile: <strong className="text-primary">{profile?.toUpperCase()}</strong></span>
+      </div>
+      <div className="status-row">
+        <span className="material-symbols-outlined text-dim">security</span>
+        <span>Safety Engine: <strong className="text-safe">ARMED</strong></span>
+      </div>
     </div>
     <button className="btn-premium" onClick={() => onNext()}>
       Launch Dashboard
@@ -169,18 +169,18 @@ const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
     <div className="onboarding-master">
       <div className="ambient-glow"></div>
       <div className="grid-overlay"></div>
-      
+
       <div className="wizard-frame">
         <AnimatePresence mode="wait">
           {step === 0 && <WelcomeStep key="welcome" onNext={next} />}
           {step === 1 && <ProfileStep key="profile" onNext={next} />}
           {step === 2 && <SuccessStep key="success" onNext={() => onComplete(data)} profile={data.profile} />}
         </AnimatePresence>
-        
+
         <div className="step-indicator">
           {[0, 1, 2].map(i => (
-            <motion.div 
-              key={i} 
+            <motion.div
+              key={i}
               className={`indicator-segment ${i === step ? 'active' : ''} ${i < step ? 'complete' : ''}`}
               initial={false}
               animate={{

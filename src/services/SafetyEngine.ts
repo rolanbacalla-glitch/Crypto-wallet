@@ -29,7 +29,7 @@ export interface SafetyReport {
 }
 
 class SafetyEngine {
-  async analyzeTransaction(tx: TransactionData, profile: 'beginner' | 'advanced' = 'beginner'): Promise<SafetyReport> {
+  async analyseTransaction(tx: TransactionData, profile: 'beginner' | 'advanced' = 'beginner'): Promise<SafetyReport> {
     let riskLevel: RiskLevel = 'low';
     const warnings: string[] = [];
     let isApprovalWarning = false;

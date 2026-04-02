@@ -4,13 +4,13 @@ import { useCopilot } from '../../hooks/useCopilot';
 import SafetyPreview from '../safety/SafetyPreview';
 
 const TradePage: React.FC = () => {
-  const { isAnalyzing, report, analyze } = useCopilot();
+  const { isAnalysing, report, analyse } = useCopilot();
   const [fromAmount, setFromAmount] = useState('1.0');
   const [hasStartedSimulation, setHasStartedSimulation] = useState(false);
 
   const startTradeSim = () => {
     setHasStartedSimulation(true);
-    analyze('uniswap_v3_swap', 'advanced');
+    analyse('uniswap_v3_swap', 'advanced');
   };
 
   return (
@@ -29,9 +29,9 @@ const TradePage: React.FC = () => {
               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-black text-xs text-primary shadow-[0_0_15px_rgba(212,255,59,0.2)]">E</div>
               <div className="flex flex-col flex-1">
                 <span className="text-xs font-black uppercase tracking-widest text-text-muted">Ethereum</span>
-                <input 
-                  type="text" 
-                  value={fromAmount} 
+                <input
+                  type="text"
+                  value={fromAmount}
                   onChange={(e) => setFromAmount(e.target.value)}
                   className="bg-transparent border-none text-2xl font-black italic tracking-tighter focus:outline-none w-full"
                 />
@@ -63,19 +63,19 @@ const TradePage: React.FC = () => {
               <span>Slippage Tolerance</span>
               <span className="text-primary">0.5% (Auto)</span>
             </div>
-            <button 
+            <button
               onClick={startTradeSim}
               className="w-full bg-primary text-black h-14 rounded-full font-black text-sm uppercase tracking-widest shadow-[0_0_30px_rgba(212,255,59,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
-              disabled={isAnalyzing}
+              disabled={isAnalysing}
             >
-              {isAnalyzing ? 'Analyzing...' : 'Run Safety Simulation'}
+              {isAnalysing ? 'Analysing...' : 'Run Safety Simulation'}
             </button>
           </div>
         </div>
 
         {/* Safety Intelligence Integration */}
         {hasStartedSimulation && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="glass-frosted border border-primary/20 rounded-[48px] p-8 shadow-2xl relative overflow-hidden"
@@ -84,14 +84,14 @@ const TradePage: React.FC = () => {
               <span className="material-symbols-outlined text-primary text-2xl drop-shadow-[0_0_8px_rgba(212,255,59,0.5)]">security</span>
               <h3 className="text-lg font-black tracking-tight">Pre-Trade Intelligence</h3>
             </div>
-            
-            <SafetyPreview 
-              report={report} 
-              isAnalyzing={isAnalyzing} 
-              profile="advanced" 
+
+            <SafetyPreview
+              report={report}
+              isAnalysing={isAnalysing}
+              profile="advanced"
             />
 
-            {!isAnalyzing && report && report.riskLevel === 'low' && (
+            {!isAnalysing && report && report.riskLevel === 'low' && (
               <motion.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -100,7 +100,7 @@ const TradePage: React.FC = () => {
                 Sign Secure Transaction
               </motion.button>
             )}
-            
+
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[64px] rounded-full" />
           </motion.div>
         )}

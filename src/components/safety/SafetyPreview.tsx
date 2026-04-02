@@ -4,11 +4,11 @@ import type { SafetyReport } from '../../services/SafetyEngine';
 
 interface SafetyPreviewProps {
   report: SafetyReport | null;
-  isAnalyzing: boolean;
+  isAnalysing: boolean;
   profile: 'beginner' | 'advanced';
 }
 
-const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalyzing, profile }) => {
+const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalysing, profile }) => {
   const [showTechnical, setShowTechnical] = useState(profile === 'advanced');
 
   const getScoreColor = (score: number) => {
@@ -25,11 +25,11 @@ const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalyzing, prof
     }
   };
 
-  if (!isAnalyzing && !report) return null;
+  if (!isAnalysing && !report) return null;
 
   return (
     <div className="flex flex-col gap-6">
-      {isAnalyzing ? (
+      {isAnalysing ? (
         <div className="flex flex-col gap-8">
           <div className="h-[200px] glass-frosted rounded-[32px] relative overflow-hidden p-6 border border-white/5">
             <motion.div 
@@ -57,7 +57,7 @@ const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalyzing, prof
               <span className="material-symbols-outlined text-primary text-2xl relative z-10">monitoring</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-black text-primary tracking-widest uppercase mb-0.5">Engine Analyzing</span>
+              <span className="text-[10px] font-black text-primary tracking-widest uppercase mb-0.5">Engine Analysing</span>
               <span className="text-sm font-bold text-text-dim">Simulating portfolio state changes...</span>
             </div>
           </div>

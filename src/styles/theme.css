@@ -9,7 +9,7 @@
   --color-text: #ffffff;
   --color-text-dim: #888888;
   --color-text-muted: #555555;
-  
+
   --color-safe: #d4ff3b;
   --color-warning: #ffb800;
   --color-danger: #ff3333;
@@ -19,30 +19,44 @@
   --radius-lg: 32px;
   --radius-xl: 48px;
   --radius-pill: 100px;
-  
+
   --shadow-glow: 0 0 20px rgba(212, 255, 59, 0.2);
-  
+
   --animate-shimmer: shimmer 2s infinite linear;
   --animate-core-pulse: core-pulse 1.5s infinite ease-out;
 
   @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+      background-position: 200% 0;
+    }
+
+    100% {
+      background-position: -200% 0;
+    }
   }
+
   @keyframes core-pulse {
-    0% { transform: scale(0.6); opacity: 0; }
-    50% { opacity: 0.5; }
-    100% { transform: scale(1.4); opacity: 0; }
+    0% {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 0.5;
+    }
+
+    100% {
+      transform: scale(1.4);
+      opacity: 0;
+    }
   }
 }
 
 @utility glass-frosted {
   backdrop-filter: blur(24px) saturate(160%);
-  background: linear-gradient(
-    135deg, 
-    rgba(212, 255, 59, 0.05) 0%, 
-    rgba(0, 0, 0, 0.6) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(212, 255, 59, 0.05) 0%,
+      rgba(0, 0, 0, 0.6) 100%);
   border: 1px solid rgba(212, 255, 59, 0.15);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }

@@ -10,9 +10,9 @@ import TradePage from './components/trade/TradePage';
 import PortfolioPage from './components/portfolio/PortfolioPage';
 import AssetsPage from './components/assets/AssetsPage';
 
-const SafetyCenter = () => (
+const SafetyCentre = () => (
   <div className="flex flex-col gap-4">
-    <h1 className="text-4xl font-extrabold tracking-tight">Safety Center</h1>
+    <h1 className="text-4xl font-extrabold tracking-tight">Safety Centre</h1>
     <p className="text-text-dim font-medium">Monitor your project security and transaction history.</p>
   </div>
 );
@@ -40,7 +40,7 @@ function App() {
           <Route path="trade" element={<TradePage />} />
           <Route path="portfolio" element={<PortfolioPage />} />
           <Route path="assets" element={<AssetsPage />} />
-          <Route path="safety" element={<SafetyCenter />} />
+          <Route path="safety" element={<SafetyCentre />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>

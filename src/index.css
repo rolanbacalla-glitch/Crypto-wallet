@@ -2,13 +2,14 @@
   --color-bg: #000000;
   --color-surface: #0a0a0a;
   --color-surface-hover: #111111;
-  --color-primary: #d4ff3b; /* Neon Lime/Yellow */
+  --color-primary: #d4ff3b;
+  /* Neon Lime/Yellow */
   --color-primary-soft: rgba(212, 255, 59, 0.1);
-  
+
   --color-text: #ffffff;
   --color-text-dim: #888888;
   --color-text-muted: #555555;
-  
+
   --color-safe: #d4ff3b;
   --color-safe-bg: rgba(212, 255, 59, 0.1);
   --color-warning: #ffb800;
@@ -23,7 +24,7 @@
 
   --border-subtle: 1px solid rgba(255, 255, 255, 0.05);
   --border-accent: 1px solid var(--color-primary);
-  
+
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --shadow-glow: 0 0 20px rgba(212, 255, 59, 0.2);
 
@@ -62,7 +63,12 @@ body {
   font-family: 'Material Symbols Outlined' !important;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   line-height: 1.2;
 }
@@ -72,7 +78,9 @@ button {
   font-family: inherit;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-family: inherit;
 }
 
