@@ -1,5 +1,5 @@
 import type { TransactionData } from '../data/mockTransactions';
-import { generateExplanation } from './geminiService';
+import { generateNarrative, type AINarrative } from './geminiService';
 import { simulateTransaction, type SimulationChange } from './simulationService';
 import { checkAddressReputation, type AddressIdentity } from './addressIntelService';
 import { getProtocolAudit, getSlippageReport, type ProtocolAudit, type SlippageReport } from './defiIntelService';
@@ -8,7 +8,7 @@ export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
 
 export interface SafetyReport {
   riskLevel: RiskLevel;
-  explanation: string;
+  narrative: AINarrative;
   isApprovalWarning: boolean;
   warnings: string[];
   transaction: TransactionData;
@@ -117,12 +117,22 @@ class SafetyEngine {
       }
     }
 
-    // 4. AI-Powered Explanation (Fluid Context)
-    const explanation = await generateExplanation(tx, profile);
+    // 4. AI-Powered Narrative (Fluid Context)
+    const partialReport: any = {
+      riskLevel,
+      warnings,
+      transaction: tx,
+      recipientIdentity,
+      protocolAudit,
+      slippageReport,
+      simulationResults: simResults,
+    };
+
+    const narrative = await generateNarrative(partialReport, profile);
 
     return {
       riskLevel,
-      explanation,
+      narrative,
       isApprovalWarning,
       warnings,
       transaction: tx,

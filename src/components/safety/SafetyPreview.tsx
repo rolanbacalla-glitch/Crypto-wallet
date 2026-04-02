@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { SafetyReport } from '../../services/SafetyEngine';
+import AINarrative from './AINarrative';
 
 interface SafetyPreviewProps {
   report: SafetyReport | null;
@@ -89,12 +90,11 @@ const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalysing, prof
             </div>
           </motion.div>
 
-          {/* AI Explanation */}
-          <div className="px-1">
-            <p className="text-lg font-bold leading-relaxed tracking-tight">
-              {report.explanation || "Safety analysis complete. No threats detected in this transaction flow."}
-            </p>
-          </div>
+          {/* AI Narrative Layer */}
+          <AINarrative 
+            narrative={report.narrative}
+            riskLevel={report.riskLevel}
+          />
 
           {/* Risk Checklist */}
           <div className="flex flex-col gap-4">
