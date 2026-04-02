@@ -12,13 +12,7 @@ import TradePage from './components/trade/TradePage';
 import PortfolioPage from './components/portfolio/PortfolioPage';
 import AssetsPage from './components/assets/AssetsPage';
 import AuditPage from './components/audit/AuditPage';
-
-const SafetyCentre = () => (
-  <div className="flex flex-col gap-4">
-    <h1 className="text-4xl font-extrabold tracking-tight">Safety Centre</h1>
-    <p className="text-text-dim font-medium">Monitor your project security and transaction history.</p>
-  </div>
-);
+import SafetyCentrePage from './components/safety/SafetyCentrePage';
 
 function App() {
   const [hasOnboarded, setHasOnboarded] = useState(false);
@@ -45,7 +39,7 @@ function App() {
             <Route path="portfolio" element={<PortfolioPage />} />
             <Route path="assets" element={<AssetsPage />} />
             <Route path="audit" element={<AuditPage />} />
-            <Route path="safety" element={<SafetyCentre />} />
+            <Route path="safety" element={<SafetyCentrePage />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Route>
         </Routes>
