@@ -16,7 +16,7 @@ const MainLayout: React.FC = () => {
             </div>
             
             <nav className="flex gap-10">
-              {['Dashboard', 'Market', 'Trade', 'Portfolio', 'Assets'].map((item) => (
+              {['Dashboard', 'Market', 'Trade', 'Portfolio', 'Assets', 'Audit'].map((item) => (
                 <NavLink 
                   key={item}
                   to={item === 'Dashboard' ? '/' : `/${item.toLowerCase()}`} 

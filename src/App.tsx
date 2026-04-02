@@ -11,6 +11,7 @@ import MarketPage from './components/market/MarketPage';
 import TradePage from './components/trade/TradePage';
 import PortfolioPage from './components/portfolio/PortfolioPage';
 import AssetsPage from './components/assets/AssetsPage';
+import AuditPage from './components/audit/AuditPage';
 
 const SafetyCentre = () => (
   <div className="flex flex-col gap-4">
@@ -43,6 +44,7 @@ function App() {
             <Route path="trade" element={<TradePage />} />
             <Route path="portfolio" element={<PortfolioPage />} />
             <Route path="assets" element={<AssetsPage />} />
+            <Route path="audit" element={<AuditPage />} />
             <Route path="safety" element={<SafetyCentre />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Route>

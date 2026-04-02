@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCopilot } from '../../hooks/useCopilot';
 import SafetyPreview from '../safety/SafetyPreview';
@@ -188,6 +189,32 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
             {/* Subtle background glow */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[64px] rounded-full" />
           </div>
+
+          <Link to="/audit" className="glass-frosted border border-white/10 rounded-[48px] p-8 flex flex-col gap-6 shadow-2xl relative overflow-hidden group hover:border-primary/40 transition-all">
+            <div className="flex justify-between items-center relative z-10">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-primary text-2xl group-hover:drop-shadow-[0_0_8px_rgba(212,255,59,0.5)]">gpp_maybe</span>
+                <h3 className="text-lg font-black tracking-tight">Security Score</h3>
+              </div>
+              <span className="text-2xl font-black italic tracking-tighter text-warning group-hover:text-primary transition-colors">85 / 100</span>
+            </div>
+            
+            <div className="flex flex-col gap-2 relative z-10">
+              <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: '85%' }}
+                  className="h-full bg-primary"
+                />
+              </div>
+              <p className="text-[10px] font-bold text-text-dim uppercase tracking-widest flex items-center justify-between">
+                <span>3 Med-Risk Approvals Found</span>
+                <span className="text-primary group-hover:underline">Manage & Audit</span>
+              </p>
+            </div>
+
+            <div className="absolute bottom-0 right-0 w-40 h-40 bg-warning/5 blur-[50px] -mb-20 -mr-20 group-hover:bg-primary/10 transition-all" />
+          </Link>
 
           <div className="glass-frosted border border-white/10 rounded-[48px] p-8 flex flex-col gap-8 flex-1">
             <div className="flex items-center gap-3">
