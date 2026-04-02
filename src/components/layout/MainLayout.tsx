@@ -6,14 +6,14 @@ const MainLayout: React.FC = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-black text-white selection:bg-primary selection:text-black">
+    <div className="min-h-screen flex flex-col bg-bg text-text selection:bg-primary selection:text-black">
       {/* Top Navigation Bar - Nest Frosted Glass Style */}
       <header className="sticky top-0 h-20 w-full z-50 glass-frosted flex items-center border-b border-white/5">
         <div className="w-full max-w-[1600px] mx-auto px-8 flex justify-between items-center">
           
           <div className="flex items-center gap-16">
             <div className="flex items-center">
-              <span className="text-2xl font-extrabold tracking-tighter hover:text-primary transition-colors cursor-default">
+              <span className="text-3xl font-bold tracking-tighter hover:text-primary transition-colors cursor-default logo-font">
                 nest
               </span>
             </div>
@@ -32,7 +32,7 @@ const MainLayout: React.FC = () => {
                     <>
                       {item}
                       {isActive && (
-                        <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full shadow-[0_0_10px_rgba(212,255,59,0.5)]" />
+                        <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full shadow-lux" />
                       )}
                     </>
                   )}
@@ -55,10 +55,10 @@ const MainLayout: React.FC = () => {
             
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full p-1.5 pl-1.5 pr-4 cursor-default transition-all">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-black font-black text-xs shadow-[0_0_15px_rgba(212,255,59,0.3)]">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-black font-black text-xs shadow-lux">
                   {user?.profileImage || '??'}
                 </div>
-                <span className="text-sm font-bold tracking-tight text-white">{user?.ens || user?.address.slice(0, 10) + '...'}</span>
+                <span className="text-sm font-bold tracking-tight text-text">{user?.ens || user?.address.slice(0, 10) + '...'}</span>
               </div>
               
               <button 

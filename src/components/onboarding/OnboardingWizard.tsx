@@ -223,8 +223,8 @@ const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
           position: absolute;
           width: 800px;
           height: 800px;
-          background: radial-gradient(circle, rgba(212, 255, 59, 0.05) 0%, transparent 70%);
-          filter: blur(100px);
+          background: radial-gradient(circle, var(--color-primary-soft) 0%, transparent 70%);
+          filter: blur(140px);
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
@@ -288,21 +288,22 @@ const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
         }
 
         .display-title {
-          font-size: 3rem;
-          font-weight: 800;
+          font-family: var(--serif);
+          font-size: 3.5rem;
+          font-weight: 700;
           margin: 2.5rem 0 1.5rem;
-          letter-spacing: -0.05em;
+          letter-spacing: -0.01em;
           line-height: 1;
         }
 
-        .display-title.small { font-size: 2.25rem; }
+        .display-title.small { font-size: 2.5rem; }
 
         .lead-text {
           font-size: 1.15rem;
           color: var(--color-text-dim);
           line-height: 1.6;
           margin-bottom: 3.5rem;
-          font-weight: 450;
+          font-weight: 400;
         }
 
         .step-subtitle {
@@ -316,11 +317,11 @@ const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
 
         .btn-premium {
           width: 100%;
-          background: #fff;
+          background: var(--color-primary);
           color: #000;
           padding: 1.35rem;
           border-radius: var(--radius-pill);
-          font-weight: 800;
+          font-weight: 700;
           font-size: 1rem;
           display: flex;
           align-items: center;
@@ -329,6 +330,7 @@ const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
           border: none;
           cursor: pointer;
           transition: var(--transition);
+          box-shadow: 0 10px 30px -10px rgba(224, 199, 154, 0.3);
         }
 
         .btn-premium:hover {
@@ -412,8 +414,9 @@ const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
         }
 
         .selection-card h3 {
-           font-size: 1.25rem;
-           font-weight: 800;
+           font-family: var(--serif);
+           font-size: 1.35rem;
+           font-weight: 600;
            margin-bottom: 0.5rem;
         }
 

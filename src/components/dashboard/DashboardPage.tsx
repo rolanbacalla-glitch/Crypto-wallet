@@ -37,8 +37,8 @@ const DashboardPage: React.FC<DashboardProps> = () => {
       {/* Top Banner - Controls & Context */}
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-1">Dashboard</h1>
-          <p className="text-text-dim font-medium">Overview of your protected portfolio</p>
+          <h1 className="mb-2">Dashboard</h1>
+          <p className="text-text-dim text-sm font-medium tracking-wide">Overview of your protected portfolio</p>
         </div>
         
         <div className="flex items-center gap-4">
@@ -98,8 +98,8 @@ const DashboardPage: React.FC<DashboardProps> = () => {
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-bold uppercase tracking-widest text-text-muted">Total Wallet Value</span>
                 <div className="flex items-center gap-6">
-                  <h2 className="text-6xl font-black tracking-tighter tabular-numbers">{totalWalletValue}</h2>
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-black shadow-[0_0_15px_rgba(212,255,59,0.15)]">
+                  <h2 className="text-6xl tabular-numbers">{totalWalletValue}</h2>
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-[10px] font-black shadow-lux">
                     <span className="material-symbols-outlined text-sm">trending_up</span>
                     +12.4%
                   </div>
@@ -138,13 +138,13 @@ const DashboardPage: React.FC<DashboardProps> = () => {
                   d="M0,150 Q100,120 200,160 T400,100 T600,140 T800,60 T1000,80" 
                   fill="none" 
                   stroke="currentColor" 
-                  strokeWidth="4"
-                  className="text-primary drop-shadow-[0_0_8px_rgba(212,255,59,0.5)]"
+                  strokeWidth="3.5"
+                  className="text-primary drop-shadow-[0_0_15px_rgba(224,199,154,0.4)]"
                 />
                 <defs>
                   <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#d4ff3b" stopOpacity="0.15" />
-                    <stop offset="100%" stopColor="#d4ff3b" stopOpacity="0" />
+                    <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0.1" />
+                    <stop offset="100%" stopColor="var(--color-primary)" stopOpacity="0" />
                   </linearGradient>
                 </defs>
                 <path 
@@ -178,8 +178,8 @@ const DashboardPage: React.FC<DashboardProps> = () => {
         <div className="flex flex-col gap-10">
           <div className="glass-frosted border border-white/10 rounded-[48px] p-8 flex flex-col gap-8 shadow-2xl relative overflow-hidden">
             <div className="flex items-center gap-3 relative z-10">
-              <span className="material-symbols-outlined text-primary text-2xl drop-shadow-[0_0_8px_rgba(212,255,59,0.5)]">security</span>
-              <h3 className="text-lg font-black tracking-tight">Safety Intelligence</h3>
+              <span className="material-symbols-outlined text-primary text-2xl drop-shadow-[0_0_12px_rgba(224,199,154,0.4)]">security</span>
+              <h3>Safety Intelligence</h3>
             </div>
             
             <div className="relative z-10">
@@ -197,8 +197,8 @@ const DashboardPage: React.FC<DashboardProps> = () => {
           <Link to="/audit" className="glass-frosted border border-white/10 rounded-[48px] p-8 flex flex-col gap-6 shadow-2xl relative overflow-hidden group hover:border-primary/40 transition-all">
             <div className="flex justify-between items-center relative z-10">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary text-2xl group-hover:drop-shadow-[0_0_8px_rgba(212,255,59,0.5)]">gpp_maybe</span>
-                <h3 className="text-lg font-black tracking-tight">Security Score</h3>
+                <span className="material-symbols-outlined text-primary text-2xl group-hover:drop-shadow-[0_0_12px_rgba(224,199,154,0.4)]">gpp_maybe</span>
+                <h3>Security Score</h3>
               </div>
               <span className="text-2xl font-black  tracking-tighter text-warning group-hover:text-primary transition-colors tabular-numbers">85 / 100</span>
             </div>

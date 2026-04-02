@@ -34,11 +34,11 @@ const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalysing, prof
         <div className="flex flex-col gap-8">
           <div className="h-[200px] glass-frosted rounded-[32px] relative overflow-hidden p-6 border border-white/5">
             <motion.div 
-              className="absolute left-0 right-0 h-0.5 bg-primary shadow-[0_0_15px_#d4ff3b,0_0_30px_#d4ff3b] z-20"
+              className="absolute left-0 right-0 h-0.5 bg-primary shadow-[0_0_20px_var(--color-primary)] z-20"
               animate={{ top: ['0%', '98%', '0%'] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(212,255,59,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(212,255,59,0.03)_1px,transparent_1px)] bg-[size:24px_24px] opacity-40" />
+            <div className="absolute inset-0 bg-[linear-gradient(var(--color-primary-soft)_1px,transparent_1px),linear-gradient(90deg,var(--color-primary-soft)_1px,transparent_1px)] bg-[size:24px_24px] opacity-40" />
             
             <div className="flex flex-col gap-3 relative z-10">
               <div className="w-1/3 h-5 bg-white/5 animate-pulse rounded-md" />
@@ -79,9 +79,7 @@ const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalysing, prof
                 <span className={`text-[10px] font-black uppercase tracking-widest ${getRiskColor(report.riskLevel)}`}>
                   {report.riskLevel} Risk Detected
                 </span>
-                <h3 className="text-2xl font-black tracking-tighter">
-                  {report.riskLevel === 'low' ? 'Safety Verification' : 'Threat Assessment'}
-                </h3>
+                <h3>{report.riskLevel === 'low' ? 'Safety Verification' : 'Threat Assessment'}</h3>
               </div>
             </div>
             <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-[10px] font-black text-text-dim">
