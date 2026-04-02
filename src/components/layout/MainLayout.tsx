@@ -66,7 +66,7 @@ const MainLayout: React.FC = () => {
                 title="Logout Vault"
                 className="w-11 h-11 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-text-muted hover:bg-danger/20 hover:text-danger hover:border-danger/30 transition-all duration-300"
               >
-                <span className="material-symbols-outlined text-xl">power_settings_new</span>
+                <span className="material-symbols-outlined text-xl">logout</span>
               </button>
             </div>
           </div>
