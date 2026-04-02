@@ -5,12 +5,15 @@ import { useCopilot } from '../../hooks/useCopilot';
 import SafetyPreview from '../safety/SafetyPreview';
 import { useAssets } from '../../hooks/useAssets';
 import ThreatRadar from './ThreatRadar';
+import { useSettings } from '../../context/SettingsContext';
 
 interface DashboardProps {
-  profile: 'beginner' | 'advanced';
+  /** Placeholder to avoid empty interface warning */
+  _status?: string;
 }
 
-const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
+const DashboardPage: React.FC<DashboardProps> = () => {
+  const { persona } = useSettings();
   const { isAnalysing, report, analyse, availableScenarios } = useCopilot();
   const { assets } = useAssets();
   const [selectedScenario, setSelectedScenario] = useState(availableScenarios[0].id);
@@ -26,8 +29,8 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
   }, [assets]);
 
   useEffect(() => {
-    analyse(selectedScenario, profile);
-  }, [selectedScenario, profile, analyse]);
+    analyse(selectedScenario, persona);
+  }, [selectedScenario, persona, analyse]);
 
   return (
     <div className="flex flex-col gap-10">
@@ -95,7 +98,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-bold uppercase tracking-widest text-text-muted">Total Wallet Value</span>
                 <div className="flex items-center gap-6">
-                  <h2 className="text-6xl font-black tracking-tighter ">{totalWalletValue}</h2>
+                  <h2 className="text-6xl font-black tracking-tighter tabular-numbers">{totalWalletValue}</h2>
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-black shadow-[0_0_15px_rgba(212,255,59,0.15)]">
                     <span className="material-symbols-outlined text-sm">trending_up</span>
                     +12.4%
@@ -136,7 +139,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
                   fill="none" 
                   stroke="currentColor" 
                   strokeWidth="4"
-                  className="text-primary drop-shadow-[0_0_15px_rgba(212,255,59,0.5)]"
+                  className="text-primary drop-shadow-[0_0_8px_rgba(212,255,59,0.5)]"
                 />
                 <defs>
                   <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
@@ -165,7 +168,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
             ].map((stat, i) => (
               <div key={i} className="glass-frosted border border-white/10 rounded-3xl p-6 flex flex-col gap-1">
                 <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">{stat.label}</span>
-                <span className={`text-xl font-black tracking-tight ${stat.color}`}>{stat.value}</span>
+                <span className={`text-xl font-black tracking-tight ${stat.color} tabular-numbers`}>{stat.value}</span>
               </div>
             ))}
           </div>
@@ -183,7 +186,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
               <SafetyPreview 
                 report={report} 
                 isAnalysing={isAnalysing} 
-                profile={profile} 
+                profile={persona} 
               />
             </div>
 
@@ -197,7 +200,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
                 <span className="material-symbols-outlined text-primary text-2xl group-hover:drop-shadow-[0_0_8px_rgba(212,255,59,0.5)]">gpp_maybe</span>
                 <h3 className="text-lg font-black tracking-tight">Security Score</h3>
               </div>
-              <span className="text-2xl font-black  tracking-tighter text-warning group-hover:text-primary transition-colors">85 / 100</span>
+              <span className="text-2xl font-black  tracking-tighter text-warning group-hover:text-primary transition-colors tabular-numbers">85 / 100</span>
             </div>
             
             <div className="flex flex-col gap-2 relative z-10">

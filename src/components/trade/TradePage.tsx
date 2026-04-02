@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCopilot } from '../../hooks/useCopilot';
 import SafetyPreview from '../safety/SafetyPreview';
+import { useSettings } from '../../context/SettingsContext';
+import ConfirmButton from '../ui/ConfirmButton';
 
 const TradePage: React.FC = () => {
+  const { persona, settings } = useSettings();
   const { isAnalysing, report, analyse } = useCopilot();
   const [fromAmount, setFromAmount] = useState('1.0');
   const [hasStartedSimulation, setHasStartedSimulation] = useState(false);
 
   const startTradeSim = () => {
     setHasStartedSimulation(true);
-    analyse('uniswap_v3_swap', 'advanced');
+    analyse('uniswap_v3_swap', persona);
   };
 
   return (
@@ -37,7 +40,7 @@ const TradePage: React.FC = () => {
                   aria-label="Swap Amount"
                 />
               </div>
-              <span className="text-sm font-black  text-text-dim">ETH</span>
+              <span className="text-sm font-black  text-text-dim tabular-numbers">ETH</span>
             </div>
           </div>
 
@@ -62,7 +65,7 @@ const TradePage: React.FC = () => {
           <div className="mt-4 flex flex-col gap-3">
             <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-text-muted px-2">
               <span>Slippage Tolerance</span>
-              <span className="text-primary">0.5% (Auto)</span>
+              <span className="text-primary tabular-numbers">{settings.slippage}% (Auto)</span>
             </div>
             <button
               onClick={startTradeSim}
@@ -89,17 +92,16 @@ const TradePage: React.FC = () => {
             <SafetyPreview
               report={report}
               isAnalysing={isAnalysing}
-              profile="advanced"
+              profile={persona}
             />
 
-            {!isAnalysing && report && report.riskLevel === 'low' && (
-              <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="w-full mt-10 bg-white/5 border border-primary/40 text-primary h-12 rounded-full font-black text-xs uppercase tracking-widest hover:bg-primary/10 transition-all"
-              >
-                Sign Secure Transaction
-              </motion.button>
+            {!isAnalysing && report && (
+              <ConfirmButton 
+                onConfirm={() => alert('Transaction Signed Safely!')}
+                label="Sign Secure Transaction"
+                risk={report.riskLevel}
+                className="mt-10"
+              />
             )}
 
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[64px] rounded-full" />

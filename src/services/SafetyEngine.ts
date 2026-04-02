@@ -4,7 +4,7 @@ import { simulateTransaction, type SimulationChange } from './simulationService'
 import { checkAddressReputation, type AddressIdentity } from './addressIntelService';
 import { getProtocolAudit, getSlippageReport, type ProtocolAudit, type SlippageReport } from './defiIntelService';
 
-export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
+export type RiskLevel = 'low' | 'medium' | 'high' | 'critical' | 'inconclusive';
 
 export interface SafetyReport {
   riskLevel: RiskLevel;

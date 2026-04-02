@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSettings } from '../../context/SettingsContext';
 
 interface StepData {
   profile?: 'beginner' | 'advanced';
@@ -116,7 +117,9 @@ const ProfileStep: React.FC<StepProps> = ({ onNext }) => {
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         className="btn-premium secondary"
-        onClick={() => onNext({ profile: selected })}
+        onClick={() => {
+          onNext({ profile: selected });
+        }}
       >
         Set Experience Mode
       </motion.button>
@@ -157,6 +160,7 @@ interface OnboardingProps {
 }
 
 const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
+  const { setPersona } = useSettings();
   const [step, setStep] = useState(0);
   const [data, setData] = useState<StepData>({});
 
@@ -174,7 +178,16 @@ const OnboardingWizard: React.FC<OnboardingProps> = ({ onComplete }) => {
         <AnimatePresence mode="wait">
           {step === 0 && <WelcomeStep key="welcome" onNext={next} />}
           {step === 1 && <ProfileStep key="profile" onNext={next} />}
-          {step === 2 && <SuccessStep key="success" onNext={() => onComplete(data)} profile={data.profile} />}
+          {step === 2 && (
+            <SuccessStep 
+              key="success" 
+              onNext={() => {
+                if (data.profile) setPersona(data.profile);
+                onComplete(data);
+              }} 
+              profile={data.profile} 
+            />
+          )}
         </AnimatePresence>
 
         <div className="step-indicator">

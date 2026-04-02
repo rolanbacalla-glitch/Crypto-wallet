@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import OnboardingWizard from './components/onboarding/OnboardingWizard';
@@ -12,6 +12,8 @@ import PortfolioPage from './components/portfolio/PortfolioPage';
 import AssetsPage from './components/assets/AssetsPage';
 import AuditPage from './components/audit/AuditPage';
 import SafetyCentrePage from './components/safety/SafetyCentrePage';
+import { SettingsProvider, useSettings } from './context/SettingsContext';
+import type { UserPersona } from './context/SettingsContext';
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
@@ -19,7 +21,12 @@ function AppContent() {
     return localStorage.getItem('nest_onboarded') === 'true';
   });
 
-  const handleOnboardingComplete = () => {
+  const { setPersona } = useSettings();
+
+  const handleOnboardingComplete = (data?: { profile?: string }) => {
+    if (data?.profile) {
+      setPersona(data.profile as UserPersona);
+    }
     setHasOnboarded(true);
     localStorage.setItem('nest_onboarded', 'true');
   };
@@ -41,7 +48,7 @@ function AppContent() {
     <AssetProvider>
       <Routes>
         <Route path="/" element={<MainLayout />}>
-          <Route index element={<DashboardPage profile="advanced" />} />
+          <Route index element={<DashboardPage />} />
           <Route path="market" element={<MarketPage />} />
           <Route path="trade" element={<TradePage />} />
           <Route path="portfolio" element={<PortfolioPage />} />
@@ -58,7 +65,9 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <SettingsProvider>
+        <AppContent />
+      </SettingsProvider>
     </AuthProvider>
   );
 }
