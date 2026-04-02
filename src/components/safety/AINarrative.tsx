@@ -47,7 +47,7 @@ const AINarrative: React.FC<AINarrativeProps> = ({ narrative, riskLevel }) => {
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-xl font-black italic tracking-tight leading-snug"
+          className="text-xl font-black  tracking-tight leading-snug"
         >
           {narrative.summary}
         </motion.p>
@@ -64,7 +64,7 @@ const AINarrative: React.FC<AINarrativeProps> = ({ narrative, riskLevel }) => {
         <div className="flex items-center justify-between relative z-10">
           <div className="flex flex-col gap-0.5">
             <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Security Verdict</span>
-            <span className="text-lg font-black uppercase tracking-tighter italic">{narrative.securityVerdict}</span>
+            <span className="text-lg font-black uppercase tracking-tighter ">{narrative.securityVerdict}</span>
           </div>
           <span className="material-symbols-outlined text-3xl opacity-80">{getIcon()}</span>
         </div>
@@ -78,7 +78,7 @@ const AINarrative: React.FC<AINarrativeProps> = ({ narrative, riskLevel }) => {
         <div className="flex items-center gap-3 mt-2 relative z-10 px-4 py-3 bg-black/20 rounded-2xl border border-white/5">
           <span className="material-symbols-outlined text-sm text-primary">lightbulb</span>
           <span className="text-[10px] font-black uppercase tracking-widest text-white/80">
-            Recommendation: <span className="text-primary italic">{narrative.recommendation}</span>
+            Recommendation: <span className="text-primary ">{narrative.recommendation}</span>
           </span>
         </div>
       </motion.div>

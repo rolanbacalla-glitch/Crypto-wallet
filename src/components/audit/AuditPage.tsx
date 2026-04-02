@@ -85,13 +85,13 @@ const AuditPage: React.FC = () => {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tight mb-1">Approval Guard</h1>
-          <p className="text-text-dim font-medium italic">Audit and revoke dApp permissions to secure your vault</p>
+          <p className="text-text-dim font-medium ">Audit and revoke dApp permissions to secure your vault</p>
         </div>
         
         <div className="flex gap-4">
           <div className="glass-frosted border border-white/10 px-8 py-4 rounded-[32px] flex flex-col items-center shadow-2xl">
             <span className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-1">Security Health Score</span>
-            <span className={`text-4xl font-black italic tracking-tighter ${getScoreColor(healthScore)}`}>
+            <span className={`text-4xl font-black  tracking-tighter ${getScoreColor(healthScore)}`}>
               {healthScore}
             </span>
           </div>
@@ -154,7 +154,7 @@ const AuditPage: React.FC = () => {
                   </span>
                 </div>
                 {approval.reason && (
-                  <p className="text-[11px] font-black italic text-primary/60 mt-1 uppercase tracking-tighter">
+                  <p className="text-[11px] font-black  text-primary/60 mt-1 uppercase tracking-tighter">
                     {approval.reason}
                   </p>
                 )}
@@ -190,7 +190,7 @@ const AuditPage: React.FC = () => {
               <span className="material-symbols-outlined text-primary text-5xl animate-bounce">security</span>
             </div>
             <div className="text-center">
-              <h3 className="text-2xl font-black italic tracking-tighter">Vault Fully Secure</h3>
+              <h3 className="text-2xl font-black  tracking-tighter">Vault Fully Secure</h3>
               <p className="text-text-dim font-bold">No active dangerous permissions found in your wallet.</p>
             </div>
           </motion.div>

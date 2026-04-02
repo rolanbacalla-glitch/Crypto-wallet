@@ -122,11 +122,11 @@ const PortfolioPage: React.FC = () => {
         <div className="flex gap-4">
           <div className="glass-frosted border border-white/10 px-6 py-3 rounded-2xl flex flex-col items-center">
             <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">Total P&L</span>
-            <span className="text-sm font-black tracking-tighter italic text-primary">+£16,424.30 <span className="text-[10px] ml-1 opacity-60">↑ 12%</span></span>
+            <span className="text-sm font-black tracking-tighter text-primary">+£16,424.30 <span className="text-[10px] ml-1 opacity-60">↑ 12%</span></span>
           </div>
           <div className="glass-frosted border border-white/10 px-6 py-3 rounded-2xl flex flex-col items-center">
             <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">Sharpe Ratio</span>
-            <span className="text-sm font-black tracking-tighter italic text-primary">2.42</span>
+            <span className="text-sm font-black tracking-tighter text-primary">2.42</span>
           </div>
         </div>
       </div>
@@ -268,7 +268,7 @@ const PortfolioPage: React.FC = () => {
                 >
                   <div className="flex flex-col gap-1 items-center">
                     <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">{currentData[hoveredPoint].label}</span>
-                    <span className="text-sm font-black italic tracking-tighter">£{currentData[hoveredPoint].value.toLocaleString()}</span>
+                    <span className="text-sm font-black tracking-tighter">£{currentData[hoveredPoint].value.toLocaleString()}</span>
                     <span className={`text-[10px] font-black ${currentData[hoveredPoint].pnl.startsWith('+') ? 'text-primary' : 'text-danger'}`}>{currentData[hoveredPoint].pnl}</span>
                   </div>
                 </motion.div>
@@ -296,12 +296,12 @@ const PortfolioPage: React.FC = () => {
               </div>
             ))}
             {assets.length > 5 && (
-              <div className="text-[10px] font-black uppercase tracking-widest text-text-muted text-center pt-2 italic">
+              <div className="text-[10px] font-black uppercase tracking-widest text-text-muted text-center pt-2">
                 + {assets.length - 5} more assets
               </div>
             )}
             {assets.length === 0 && (
-              <div className="text-xs font-black uppercase tracking-widest text-text-muted text-center py-10 italic">
+              <div className="text-xs font-black uppercase tracking-widest text-text-muted text-center py-10">
                 No assets found
               </div>
             )}
@@ -332,7 +332,7 @@ const PortfolioPage: React.FC = () => {
               <div className="flex flex-col flex-1">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-[10px] font-black uppercase tracking-widest text-primary">{event.type}</span>
-                  <span className="text-[10px] font-bold text-text-muted italic">{event.date}</span>
+                  <span className="text-[10px] font-bold text-text-muted">{event.date}</span>
                 </div>
                 <span className="text-sm font-black tracking-tight mb-1">{event.label}</span>
                 <p className="text-xs font-medium text-text-dim">{event.detail}</p>

@@ -33,11 +33,11 @@ const TradePage: React.FC = () => {
                   type="text"
                   value={fromAmount}
                   onChange={(e) => setFromAmount(e.target.value)}
-                  className="bg-transparent border-none text-2xl font-black italic tracking-tighter focus:outline-none w-full"
+                  className="bg-transparent border-none text-2xl font-black  tracking-tighter focus:outline-none w-full"
                   aria-label="Swap Amount"
                 />
               </div>
-              <span className="text-sm font-black italic text-text-dim">ETH</span>
+              <span className="text-sm font-black  text-text-dim">ETH</span>
             </div>
           </div>
 
@@ -53,7 +53,7 @@ const TradePage: React.FC = () => {
               <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-black text-xs">?</div>
               <div className="flex flex-col flex-1">
                 <span className="text-xs font-black uppercase tracking-widest text-text-muted">Select Target Asset</span>
-                <span className="text-2xl font-black italic tracking-tighter text-text-muted">Select...</span>
+                <span className="text-2xl font-black  tracking-tighter text-text-muted">Select...</span>
               </div>
               <span className="material-symbols-outlined text-text-muted">expand_more</span>
             </div>

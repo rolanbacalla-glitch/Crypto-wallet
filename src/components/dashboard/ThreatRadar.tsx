@@ -52,7 +52,7 @@ const ThreatRadar: React.FC = () => {
           </div>
           <div className="flex flex-col">
             <h3 className="text-sm font-black uppercase tracking-widest">Global Threat Feed</h3>
-            <span className="text-[9px] font-black italic text-text-dim uppercase tracking-widest">Live Monitoring • Active</span>
+            <span className="text-[9px] font-black  text-text-dim uppercase tracking-widest">Live Monitoring • Active</span>
           </div>
         </div>
         <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-[9px] font-black text-text-dim uppercase tracking-widest">

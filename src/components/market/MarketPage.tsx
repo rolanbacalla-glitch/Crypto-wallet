@@ -45,11 +45,11 @@ const MarketPage: React.FC = () => {
         <div className="flex gap-4">
           <div className="glass-frosted border border-white/10 px-6 py-3 rounded-2xl flex flex-col items-center">
             <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">Global Cap</span>
-            <span className="text-sm font-black tracking-tight tracking-tighter italic">£2.42T</span>
+            <span className="text-sm font-black tracking-tight tracking-tighter ">£2.42T</span>
           </div>
           <div className="glass-frosted border border-white/10 px-6 py-3 rounded-2xl flex flex-col items-center">
             <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">24h Vol</span>
-            <span className="text-sm font-black tracking-tight tracking-tighter italic text-primary">£84.2B</span>
+            <span className="text-sm font-black tracking-tight tracking-tighter  text-primary">£84.2B</span>
           </div>
         </div>
       </div>
@@ -96,8 +96,8 @@ const MarketPage: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-6 font-black tracking-tight text-sm italic">{token.price}</td>
-                  <td className="px-8 py-6 font-black tracking-tight text-sm italic">
+                  <td className="px-8 py-6 font-black tracking-tight text-sm ">{token.price}</td>
+                  <td className="px-8 py-6 font-black tracking-tight text-sm ">
                     <span className={token.change.startsWith('+') ? 'text-primary drop-shadow-[0_0_8px_rgba(212,255,59,0.3)]' : 'text-danger'}>
                       {token.change}
                     </span>

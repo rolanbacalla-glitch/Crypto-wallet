@@ -155,7 +155,7 @@ const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalysing, prof
                         ))}
                       </div>
                     </div>
-                    <div className="mt-auto text-[10px] font-bold text-text-muted italic">
+                    <div className="mt-auto text-[10px] font-bold text-text-muted ">
                       Type: {report.recipientIdentity?.isContract ? 'Contract Proxy' : 'Legacy Wallet'}
                     </div>
                   </div>
@@ -167,7 +167,7 @@ const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalysing, prof
                     </div>
                     <div className="flex flex-col gap-3">
                       <div className="flex items-baseline gap-1">
-                        <span className={`text-4xl font-black italic ${getScoreColor(report.recipientIdentity?.reputationScore || 0)}`}>
+                        <span className={`text-4xl font-black  ${getScoreColor(report.recipientIdentity?.reputationScore || 0)}`}>
                           {report.recipientIdentity?.reputationScore || 0}
                         </span>
                         <span className="text-xs font-bold text-text-muted">/100</span>
@@ -203,7 +203,7 @@ const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalysing, prof
                           </div>
                           <div className="flex-1">
                             <div className="text-[11px] font-black text-text-dim uppercase tracking-widest mb-0.5">{change.asset}</div>
-                            <div className="text-sm font-black italic">{change.amount}</div>
+                            <div className="text-sm font-black ">{change.amount}</div>
                           </div>
                           <span className={`text-[10px] font-black uppercase tracking-widest ${change.isIncoming ? 'text-primary' : 'text-danger'}`}>
                             {change.isIncoming ? 'Incoming' : 'Outgoing'}
@@ -211,7 +211,7 @@ const SafetyPreview: React.FC<SafetyPreviewProps> = ({ report, isAnalysing, prof
                         </div>
                       ))}
                       {(!report.simulationResults?.changes || report.simulationResults.changes.length === 0) && (
-                        <div className="text-center py-4 text-xs font-bold text-text-muted italic">No net balance changes detected</div>
+                        <div className="text-center py-4 text-xs font-bold text-text-muted ">No net balance changes detected</div>
                       )}
                     </div>
                   </div>

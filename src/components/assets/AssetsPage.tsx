@@ -149,7 +149,7 @@ const AssetsPage: React.FC = () => {
             <span className="material-symbols-outlined text-sm">verified</span>
             Safe Portfolio
           </div>
-          <div className="text-sm font-black italic tracking-tighter">Total Assets: {assets.length}</div>
+          <div className="text-sm font-black  tracking-tighter">Total Assets: {assets.length}</div>
         </div>
 
         <table className="w-full text-left border-collapse">
@@ -201,9 +201,9 @@ const AssetsPage: React.FC = () => {
                     </div>
                   </div>
                 </td>
-                <td className="px-8 py-6 font-black tracking-tight text-sm italic">{asset.balance}</td>
-                <td className="px-8 py-6 font-black tracking-tight text-sm italic text-primary">{asset.value}</td>
-                <td className="px-8 py-6 font-black tracking-tight text-sm italic text-text-dim/60 group-hover:text-text-dim transition-all">{asset.price}</td>
+                <td className="px-8 py-6 font-black tracking-tight text-sm ">{asset.balance}</td>
+                <td className="px-8 py-6 font-black tracking-tight text-sm  text-primary">{asset.value}</td>
+                <td className="px-8 py-6 font-black tracking-tight text-sm  text-text-dim/60 group-hover:text-text-dim transition-all">{asset.price}</td>
                 <td className="px-8 py-6 text-right">
                   <div className="flex justify-end gap-2">
                     <button className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-text-dim hover:text-primary transition-all">

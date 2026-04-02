@@ -25,7 +25,7 @@ const SafetyCentrePage: React.FC = () => {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tight mb-1">Safety Centre</h1>
-          <p className="text-text-dim font-medium italic">Your command hub for vault integrity and recovery</p>
+          <p className="text-text-dim font-medium ">Your command hub for vault integrity and recovery</p>
         </div>
         
         <div className="flex bg-white/5 border border-white/10 p-1 rounded-full">
@@ -74,7 +74,7 @@ const SafetyCentrePage: React.FC = () => {
                       <p className="text-xs text-text-dim font-medium">{event.details}</p>
                     </div>
                     
-                    <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest italic">{event.timestamp}</span>
+                    <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest ">{event.timestamp}</span>
                   </div>
                 ))}
               </motion.div>
@@ -122,7 +122,7 @@ const SafetyCentrePage: React.FC = () => {
                         <span className="material-symbols-outlined text-3xl">{edu.icon}</span>
                       </div>
                       <div>
-                        <h3 className="text-xl font-black italic tracking-tighter mb-1">{edu.title}</h3>
+                        <h3 className="text-xl font-black  tracking-tighter mb-1">{edu.title}</h3>
                         <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">{edu.time}</span>
                       </div>
                     </div>

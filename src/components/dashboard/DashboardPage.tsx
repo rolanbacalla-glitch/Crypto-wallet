@@ -95,7 +95,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-bold uppercase tracking-widest text-text-muted">Total Wallet Value</span>
                 <div className="flex items-center gap-6">
-                  <h2 className="text-6xl font-black tracking-tighter italic">{totalWalletValue}</h2>
+                  <h2 className="text-6xl font-black tracking-tighter ">{totalWalletValue}</h2>
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-black shadow-[0_0_15px_rgba(212,255,59,0.15)]">
                     <span className="material-symbols-outlined text-sm">trending_up</span>
                     +12.4%
@@ -197,7 +197,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
                 <span className="material-symbols-outlined text-primary text-2xl group-hover:drop-shadow-[0_0_8px_rgba(212,255,59,0.5)]">gpp_maybe</span>
                 <h3 className="text-lg font-black tracking-tight">Security Score</h3>
               </div>
-              <span className="text-2xl font-black italic tracking-tighter text-warning group-hover:text-primary transition-colors">85 / 100</span>
+              <span className="text-2xl font-black  tracking-tighter text-warning group-hover:text-primary transition-colors">85 / 100</span>
             </div>
             
             <div className="flex flex-col gap-2 relative z-10">
