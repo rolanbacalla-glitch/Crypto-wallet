@@ -4,6 +4,8 @@ import MainLayout from './components/layout/MainLayout';
 import OnboardingWizard from './components/onboarding/OnboardingWizard';
 import './styles/theme.css';
 
+import { AssetProvider } from './context/AssetContext';
+
 import DashboardPage from './components/dashboard/DashboardPage';
 import MarketPage from './components/market/MarketPage';
 import TradePage from './components/trade/TradePage';
@@ -27,24 +29,26 @@ function App() {
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route 
-          path="/onboarding" 
-          element={hasOnboarded ? <Navigate to="/" /> : <OnboardingWizard onComplete={handleOnboardingComplete} />} 
-        />
-        
-        <Route path="/" element={hasOnboarded ? <MainLayout /> : <Navigate to="/onboarding" />}>
-          <Route index element={<DashboardPage profile={profile} />} />
-          <Route path="market" element={<MarketPage />} />
-          <Route path="trade" element={<TradePage />} />
-          <Route path="portfolio" element={<PortfolioPage />} />
-          <Route path="assets" element={<AssetsPage />} />
-          <Route path="safety" element={<SafetyCentre />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Route>
-      </Routes>
-    </Router>
+    <AssetProvider>
+      <Router>
+        <Routes>
+          <Route 
+            path="/onboarding" 
+            element={hasOnboarded ? <Navigate to="/" /> : <OnboardingWizard onComplete={handleOnboardingComplete} />} 
+          />
+          
+          <Route path="/" element={hasOnboarded ? <MainLayout /> : <Navigate to="/onboarding" />}>
+            <Route index element={<DashboardPage profile={profile} />} />
+            <Route path="market" element={<MarketPage />} />
+            <Route path="trade" element={<TradePage />} />
+            <Route path="portfolio" element={<PortfolioPage />} />
+            <Route path="assets" element={<AssetsPage />} />
+            <Route path="safety" element={<SafetyCentre />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AssetProvider>
   );
 }
 

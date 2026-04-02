@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCopilot } from '../../hooks/useCopilot';
 import SafetyPreview from '../safety/SafetyPreview';
+import { useAssets } from '../../hooks/useAssets';
 
 interface DashboardProps {
   profile: 'beginner' | 'advanced';
@@ -9,9 +10,18 @@ interface DashboardProps {
 
 const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
   const { isAnalysing, report, analyse, availableScenarios } = useCopilot();
+  const { assets } = useAssets();
   const [selectedScenario, setSelectedScenario] = useState(availableScenarios[0].id);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [timeRange, setTimeRange] = useState('1W');
+
+  const totalWalletValue = useMemo(() => {
+    const total = assets.reduce((acc, asset) => {
+      const val = parseFloat(asset.value.replace(/[£,]/g, '')) || 0;
+      return acc + val;
+    }, 0);
+    return `£${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }, [assets]);
 
   useEffect(() => {
     analyse(selectedScenario, profile);
@@ -83,7 +93,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-bold uppercase tracking-widest text-text-muted">Total Wallet Value</span>
                 <div className="flex items-center gap-6">
-                  <h2 className="text-6xl font-black tracking-tighter italic">£41,812.14</h2>
+                  <h2 className="text-6xl font-black tracking-tighter italic">{totalWalletValue}</h2>
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-black shadow-[0_0_15px_rgba(212,255,59,0.15)]">
                     <span className="material-symbols-outlined text-sm">trending_up</span>
                     +12.4%
@@ -110,7 +120,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ profile }) => {
                 {[...Array(32)].map((_, i) => (
                   <motion.div 
                     initial={{ height: '20%' }}
-                    animate={{ height: `${25 + Math.random() * 65}%` }}
+                    animate={{ height: `${25 + ((i * 13) % 65)}%` }}
                     transition={{ duration: 1, repeat: Infinity, repeatType: 'reverse', delay: i * 0.05 }}
                     key={i} 
                     className="flex-1 bg-primary/10 rounded-t-sm group-hover:bg-primary/20 transition-all"

@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAssets } from '../../hooks/useAssets';
+import { type Asset } from '../../types/asset';
 
 type DataPoint = { label: string; value: number; pnl: string };
 
@@ -53,6 +55,7 @@ const EVENTS = [
 ];
 
 const PortfolioPage: React.FC = () => {
+  const { assets } = useAssets();
   const [activeTab, setActiveTab] = useState('1Y');
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
 
@@ -63,6 +66,26 @@ const PortfolioPage: React.FC = () => {
     const min = Math.min(...currentData.map(d => d.value));
     return { max, min, range: max - min };
   }, [currentData]);
+
+  const allocationData = useMemo(() => {
+    const totalValue = assets.reduce((acc: number, asset: Asset) => {
+      const val = parseFloat(asset.value.replace(/[£,]/g, '')) || 0;
+      return acc + val;
+    }, 0);
+
+    const colors = ['bg-primary', 'bg-white/40', 'bg-white/20', 'bg-white/10', 'bg-white/5'];
+
+    return assets.slice(0, 5).map((asset: Asset, i: number) => {
+      const val = parseFloat(asset.value.replace(/[£,]/g, '')) || 0;
+      const percent = totalValue > 0 ? Math.round((val / totalValue) * 100) : 0;
+      return {
+        name: asset.name,
+        symbol: asset.symbol,
+        percent,
+        color: colors[i] || 'bg-white/5'
+      };
+    });
+  }, [assets]);
 
   // Simple SVG path generator for the area chart
   const generatePath = (data: DataPoint[], isArea = false) => {
@@ -139,7 +162,7 @@ const PortfolioPage: React.FC = () => {
               {[0, 0.25, 0.5, 0.75, 1].map((p) => {
                 const val = stats.min + (stats.range * (1 - p));
                 return (
-                  <g key={p}>
+                  <g key={p.toString()}>
                     <line x1="0" y1={p * 200} x2="800" y2={p * 200} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
                     <text x="-15" y={p * 200 + 4} textAnchor="end" className="text-[10px] font-black text-text-muted fill-current tracking-tighter">
                       £{(val / 1000).toFixed(1)}k
@@ -257,12 +280,7 @@ const PortfolioPage: React.FC = () => {
         <div className="glass-frosted border border-white/10 rounded-[48px] p-10 flex flex-col gap-8">
           <h3 className="text-lg font-black tracking-tight">Asset Allocation</h3>
           <div className="flex flex-col gap-6">
-            {[
-              { name: 'Ethereum', symbol: 'ETH', percent: 64, color: 'bg-primary' },
-              { name: 'USDC', symbol: 'USDC', percent: 22, color: 'bg-white/20' },
-              { name: 'Solana', symbol: 'SOL', percent: 10, color: 'bg-white/10' },
-              { name: 'Others', symbol: 'OTH', percent: 4, color: 'bg-white/5' },
-            ].map((asset, i) => (
+            {allocationData.map((asset, i) => (
               <div key={i} className="flex flex-col gap-2">
                 <div className="flex justify-between text-xs font-black uppercase tracking-widest">
                   <span className="text-white">{asset.name}</span>
@@ -277,12 +295,22 @@ const PortfolioPage: React.FC = () => {
                 </div>
               </div>
             ))}
+            {assets.length > 5 && (
+              <div className="text-[10px] font-black uppercase tracking-widest text-text-muted text-center pt-2 italic">
+                + {assets.length - 5} more assets
+              </div>
+            )}
+            {assets.length === 0 && (
+              <div className="text-xs font-black uppercase tracking-widest text-text-muted text-center py-10 italic">
+                No assets found
+              </div>
+            )}
           </div>
           
           <div className="mt-auto p-6 rounded-3xl bg-primary/10 border border-primary/20 flex items-center gap-4">
             <span className="material-symbols-outlined text-primary text-2xl">info</span>
             <p className="text-[11px] font-black text-primary leading-snug tracking-tight">
-              Allocation is highly concentrated in ETH. Risk score is currently MODERATE.
+              Allocation is based on current market values. Risk score is calculated dynamically.
             </p>
           </div>
         </div>
