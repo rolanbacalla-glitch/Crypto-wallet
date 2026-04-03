@@ -98,7 +98,7 @@ const DashboardPage: React.FC<DashboardProps> = () => {
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-bold uppercase tracking-widest text-text-muted">Total Wallet Value</span>
                 <div className="flex items-center gap-6">
-                  <h2 className="text-6xl tabular-numbers">{totalWalletValue}</h2>
+                  <h2 className="text-6xl tabular-numbers font-bold">{totalWalletValue}</h2>
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-[10px] font-black shadow-lux">
                     <span className="material-symbols-outlined text-sm">trending_up</span>
                     +12.4%
