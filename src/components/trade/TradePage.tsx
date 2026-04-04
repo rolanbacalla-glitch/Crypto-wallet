@@ -1,23 +1,75 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useMemo, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCopilot } from '../../hooks/useCopilot';
 import SafetyPreview from '../safety/SafetyPreview';
 import { useSettings } from '../../context/SettingsContext';
 import ConfirmButton from '../ui/ConfirmButton';
+import { TOP_10_ASSETS, type Asset } from '../../data/assets';
 
 const TradePage: React.FC = () => {
   const { persona, settings } = useSettings();
   const { isAnalysing, report, analyse } = useCopilot();
   const [fromAmount, setFromAmount] = useState('1.0');
   const [hasStartedSimulation, setHasStartedSimulation] = useState(false);
+  
+  const [fromAsset, setFromAsset] = useState<Asset>(() => {
+    const defaultEth = TOP_10_ASSETS.find(a => a.symbol === 'ETH') || TOP_10_ASSETS[1];
+    return defaultEth;
+  });
+  const [toAsset, setToAsset] = useState<Asset>(() => {
+    const assetSymbol = new URLSearchParams(window.location.search).get('asset');
+    const selected = assetSymbol ? TOP_10_ASSETS.find(a => a.symbol === assetSymbol) : null;
+    const defaultUsdc = TOP_10_ASSETS.find(a => a.symbol === 'USDC') || TOP_10_ASSETS[5];
+    
+    if (selected && selected.symbol !== fromAsset.symbol) {
+      return selected;
+    }
+    return defaultUsdc;
+  });
+  const [selectorTarget, setSelectorTarget] = useState<'from' | 'to' | null>(null);
 
-  const startTradeSim = () => {
+  const swapAssets = useCallback(() => {
+    const temp = fromAsset;
+    setFromAsset(toAsset);
+    setToAsset(temp);
+    setHasStartedSimulation(false);
+  }, [fromAsset, toAsset]);
+
+  const selectAsset = useCallback((asset: Asset) => {
+    if (selectorTarget === 'from') {
+      setFromAsset(asset);
+    } else {
+      setToAsset(asset);
+    }
+    setSelectorTarget(null);
+    setHasStartedSimulation(false);
+  }, [selectorTarget]);
+
+  const startTradeSim = useCallback(() => {
     setHasStartedSimulation(true);
     analyse('uniswap_v3_swap', persona);
-  };
+  }, [analyse, persona]);
+
+  const exchangeRate = useMemo(() => {
+    return fromAsset.price / toAsset.price;
+  }, [fromAsset.price, toAsset.price]);
+
+  const toAmount = useMemo(() => {
+    const amount = parseFloat(fromAmount) || 0;
+    const result = amount * exchangeRate;
+    return result.toLocaleString(undefined, { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 6 
+    });
+  }, [fromAmount, exchangeRate]);
+
 
   return (
-    <div className="flex flex-col gap-10 items-center py-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col gap-10 items-center py-6 relative"
+    >
       <div className="text-center">
         <h1 className="text-4xl font-extrabold tracking-tight mb-1">Secure Swap</h1>
         <p className="text-text-dim font-medium max-w-md mx-auto">Trade assets with institutional-grade pre-trade verification</p>
@@ -25,40 +77,74 @@ const TradePage: React.FC = () => {
 
       <div className="w-full max-w-[500px] flex flex-col gap-6">
         {/* Swap Widget */}
-        <div className="glass-frosted border border-white/10 rounded-[48px] p-8 flex flex-col gap-4 shadow-2xl">
+        <div className="glass-frosted border border-white/10 rounded-[48px] p-8 flex flex-col gap-4 shadow-2xl relative">
+          
+          {/* From Asset */}
           <div className="flex flex-col gap-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-text-muted px-4">From Asset</span>
             <div className="flex items-center gap-4 bg-white/5 border border-white/5 rounded-3xl p-4 hover:bg-white/10 transition-all group">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-black text-xs text-primary shadow-[0_0_15px_rgba(224,199,154,0.2)]">E</div>
+              <button 
+                onClick={() => setSelectorTarget('from')}
+                className="flex items-center gap-3 bg-white/5 hover:bg-white/10 p-2 pr-4 rounded-2xl transition-colors border border-white/5"
+              >
+                <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-primary/10">
+                  <img src={fromAsset.logo} alt={fromAsset.symbol} className="w-full h-full object-contain p-1" />
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-xs font-black uppercase tracking-tight">{fromAsset.symbol}</span>
+                  <span className="material-symbols-outlined text-text-muted text-xs">expand_more</span>
+                </div>
+              </button>
+              
               <div className="flex flex-col flex-1">
-                <span className="text-xs font-black uppercase tracking-widest text-text-muted">Ethereum</span>
                 <input
                   type="text"
                   value={fromAmount}
                   onChange={(e) => setFromAmount(e.target.value)}
-                  className="bg-transparent border-none text-2xl font-black  tracking-tighter focus:outline-none w-full"
-                  aria-label="Swap Amount"
+                  className="bg-transparent border-none text-2xl font-black tracking-tighter focus:outline-none w-full text-right"
+                  placeholder="0.0"
                 />
+                <span className="text-[10px] text-text-muted font-medium text-right lowercase italic">
+                  ≈ ${(parseFloat(fromAmount || '0') * fromAsset.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
               </div>
-              <span className="text-sm font-black  text-text-dim tabular-numbers">ETH</span>
             </div>
           </div>
 
           <div className="flex justify-center -my-6 relative z-10">
-            <div className="w-12 h-12 glass-frosted rounded-full flex items-center justify-center border border-white/10 hover:border-primary/50 transition-all cursor-pointer group shadow-xl">
+            <button 
+              onClick={swapAssets}
+              className="w-12 h-12 glass-frosted rounded-full flex items-center justify-center border border-white/10 hover:border-primary/50 transition-all cursor-pointer group shadow-xl active:scale-95"
+            >
               <span className="material-symbols-outlined text-text-dim group-hover:text-primary transition-colors">swap_vert</span>
-            </div>
+            </button>
           </div>
 
+          {/* To Asset */}
           <div className="flex flex-col gap-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-text-muted px-4">To Asset</span>
-            <div className="flex items-center gap-4 bg-white/5 border border-white/5 rounded-3xl p-4 hover:bg-white/10 transition-all group cursor-pointer border-dashed">
-              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-black text-xs">?</div>
-              <div className="flex flex-col flex-1">
-                <span className="text-xs font-black uppercase tracking-widest text-text-muted">Select Target Asset</span>
-                <span className="text-2xl font-black  tracking-tighter text-text-muted">Select...</span>
+            <div className="flex items-center gap-4 bg-white/5 border border-white/5 rounded-3xl p-4 hover:bg-white/10 transition-all group">
+              <button 
+                onClick={() => setSelectorTarget('to')}
+                className="flex items-center gap-3 bg-white/5 hover:bg-white/10 p-2 pr-4 rounded-2xl transition-colors border border-white/5"
+              >
+                <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-primary/10">
+                  <img src={toAsset.logo} alt={toAsset.symbol} className="w-full h-full object-contain p-1" />
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-xs font-black uppercase tracking-tight">{toAsset.symbol}</span>
+                  <span className="material-symbols-outlined text-text-muted text-xs">expand_more</span>
+                </div>
+              </button>
+              
+              <div className="flex flex-col flex-1 text-right">
+                <span className="text-2xl font-black tracking-tighter min-h-[32px]">
+                  {toAmount}
+                </span>
+                <span className="text-[10px] text-text-muted font-medium lowercase italic">
+                  1 {fromAsset.symbol} = {exchangeRate.toFixed(4)} {toAsset.symbol}
+                </span>
               </div>
-              <span className="material-symbols-outlined text-text-muted">expand_more</span>
             </div>
           </div>
 
@@ -75,6 +161,43 @@ const TradePage: React.FC = () => {
               {isAnalysing ? 'Analysing...' : 'Run Safety Simulation'}
             </button>
           </div>
+
+          {/* Asset Selector Overlay */}
+          <AnimatePresence>
+            {selectorTarget && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="absolute inset-0 z-50 glass-frosted rounded-[48px] p-6 flex flex-col gap-4 overflow-hidden"
+              >
+                <div className="flex justify-between items-center px-2">
+                  <span className="text-xs font-black uppercase tracking-widest text-text-muted">Select Asset</span>
+                  <button onClick={() => setSelectorTarget(null)} className="material-symbols-outlined text-text-muted hover:text-white">close</button>
+                </div>
+                <div className="flex flex-col gap-2 overflow-y-auto max-h-full pr-2 custom-scrollbar">
+                  {TOP_10_ASSETS.map((asset) => (
+                    <button
+                      key={asset.id}
+                      onClick={() => selectAsset(asset)}
+                      className="flex items-center gap-4 p-4 rounded-3xl hover:bg-white/10 transition-all border border-transparent hover:border-white/5 text-left group"
+                    >
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-white/5 flex items-center justify-center">
+                        <img src={asset.logo} alt={asset.name} className="w-full h-full object-contain p-1" />
+                      </div>
+                      <div className="flex flex-col flex-1">
+                        <span className="text-sm font-black tracking-tight">{asset.name}</span>
+                        <span className="text-[10px] font-medium text-text-muted uppercase">{asset.symbol}</span>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-xs font-black">${asset.price.toLocaleString()}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Safety Intelligence Integration */}
@@ -108,7 +231,7 @@ const TradePage: React.FC = () => {
           </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

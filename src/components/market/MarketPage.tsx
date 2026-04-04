@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const MOCK_TOKENS = [
   { id: 'btc', name: 'Bitcoin', symbol: 'BTC', price: '£54,212.80', change: '-0.8%', numericChange: -0.8, safety: 'High', score: 96, icon: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BTCB-1DE/logo.png' },
@@ -26,6 +27,7 @@ const MOCK_TOKENS = [
 
 const MarketPage: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
 
   // Sorting by 24h change (descending) as requested
   const sortedTokens = useMemo(() => {
@@ -116,7 +118,10 @@ const MarketPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-8 py-6 text-right">
-                    <button className="bg-white/5 border border-white/10 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-black transition-all">
+                    <button 
+                      onClick={() => navigate(`/trade?asset=${token.symbol}`)}
+                      className="bg-white/5 border border-white/10 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-black transition-all"
+                    >
                       Trade
                     </button>
                   </td>

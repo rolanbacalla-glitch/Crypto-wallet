@@ -12,12 +12,23 @@ const MainLayout: React.FC = () => {
         <div className="w-full max-w-[1600px] mx-auto px-8 flex justify-between items-center">
           
           <div className="flex items-center gap-16">
-            <div className="flex items-center">
-              <span className="text-3xl font-bold tracking-tighter hover:text-primary transition-colors cursor-default logo-font">
+            <NavLink to="/" className="flex items-center gap-4 group">
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lux group-hover:scale-105 transition-transform duration-300">
+                <img 
+                  src="/nest-logo.png" 
+                  alt="Nest Logo" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="text-3xl font-bold tracking-tighter text-gradient logo-font">
                 nest
               </span>
-            </div>
-            
+            </NavLink>
+
+            <button className="bg-primary text-black font-black px-6 py-2.5 rounded-full border-none shadow-lux hover:brightness-110 active:scale-95 transition-all text-[11px] tracking-widest uppercase flex items-center gap-2">
+              <span className="material-symbols-outlined text-lg">add_circle</span>
+              Buy Crypto
+            </button>
             <nav className="flex gap-10">
               {['Dashboard', 'Market', 'Trade', 'Portfolio', 'Assets', 'Audit', 'Safety'].map((item) => (
                 <NavLink 
