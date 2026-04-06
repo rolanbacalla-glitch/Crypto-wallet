@@ -1,8 +1,8 @@
 :root {
   /* Obsidian Wealth Palette */
-  --color-primary: #E0C79A; /* Champagne Gold */
-  --color-primary-rgb: 224, 199, 154;
-  --color-primary-soft: rgba(224, 199, 154, 0.08);
+  --color-primary: #CEFF00; /* Electric Lime */
+  --color-primary-rgb: 206, 255, 0;
+  --color-primary-soft: rgba(206, 255, 0, 0.08);
   --color-bg: #050505; /* Deep Obsidian */
   --color-surface: #111111; /* Charcoal Surface */
   --color-safe: #B5D397; /* Sage Safety */
@@ -117,7 +117,7 @@ input {
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #E0C79A 0%, #A69F94 100%);
+  background: linear-gradient(135deg, #CEFF00 0%, #A69F94 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
