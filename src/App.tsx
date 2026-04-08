@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShieldCheck, 
@@ -32,8 +32,17 @@ import { ExpertDashboard } from './components/ExpertDashboard';
 function App() {
   const [appState, setAppState] = useState<AppState>('onboarding');
   const [userPersona, setUserPersona] = useState<UserPersona>('normal');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Overview');
+
+  // Auto-open sidebar on desktop, close on mobile
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const handler = (e: MediaQueryListEvent | MediaQueryList) => setIsSidebarOpen(e.matches);
+    handler(mq);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   // --- Render Helpers ---
 
@@ -117,14 +126,30 @@ function App() {
       "min-h-screen bg-[#030303] flex text-white relative",
       userPersona === 'normal' ? "bg-grid" : "bg-grid-blue"
     )}>
+      {/* Mobile Sidebar Backdrop */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.aside
+            key="sidebar"
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             exit={{ x: -300 }}
-            className="w-72 border-r border-white/5 bg-black/50 backdrop-blur-2xl hidden lg:flex flex-col p-6 sticky top-0 h-screen z-50"
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="fixed lg:sticky top-0 left-0 w-72 border-r border-white/5 bg-black/90 lg:bg-black/50 backdrop-blur-2xl flex flex-col p-6 h-screen z-50"
           >
             <div className="flex items-center gap-3 mb-12">
               <div className={cn(
@@ -137,16 +162,16 @@ function App() {
             </div>
 
             <nav className="flex-1 space-y-2">
-              <SidebarItem icon={LayoutDashboard} label="Dashboard" active={activeTab === 'Overview'} onClick={() => setActiveTab('Overview')} persona={userPersona} />
-              <SidebarItem icon={Wallet} label="Assets" active={activeTab === 'Assets'} onClick={() => setActiveTab('Assets')} persona={userPersona} />
-              <SidebarItem icon={Activity} label="Activities" active={activeTab === 'Activities'} onClick={() => setActiveTab('Activities')} persona={userPersona} />
-              <SidebarItem icon={History} label="History" active={activeTab === 'History'} onClick={() => setActiveTab('History')} persona={userPersona} />
+              <SidebarItem icon={LayoutDashboard} label="Dashboard" active={activeTab === 'Overview'} onClick={() => { setActiveTab('Overview'); setIsSidebarOpen(false); }} persona={userPersona} />
+              <SidebarItem icon={Wallet} label="Assets" active={activeTab === 'Assets'} onClick={() => { setActiveTab('Assets'); setIsSidebarOpen(false); }} persona={userPersona} />
+              <SidebarItem icon={Activity} label="Activities" active={activeTab === 'Activities'} onClick={() => { setActiveTab('Activities'); setIsSidebarOpen(false); }} persona={userPersona} />
+              <SidebarItem icon={History} label="History" active={activeTab === 'History'} onClick={() => { setActiveTab('History'); setIsSidebarOpen(false); }} persona={userPersona} />
             </nav>
 
             <div className="mt-auto pt-6 border-t border-white/5 space-y-2">
-              <SidebarItem icon={SettingsIcon} label="Settings" active={activeTab === 'Settings'} onClick={() => setActiveTab('Settings')} persona={userPersona} />
+              <SidebarItem icon={SettingsIcon} label="Settings" active={activeTab === 'Settings'} onClick={() => { setActiveTab('Settings'); setIsSidebarOpen(false); }} persona={userPersona} />
               <div 
-                onClick={() => setAppState('onboarding')}
+                onClick={() => { setAppState('onboarding'); setIsSidebarOpen(false); }}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer text-white/30 hover:text-white transition-colors group"
               >
                 <LayoutDashboard className="w-5 h-5 group-hover:text-red-400" />
@@ -164,9 +189,20 @@ function App() {
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="lg:hidden w-12 h-12 glass rounded-2xl flex items-center justify-center hover:bg-white/10"
+              aria-label="Toggle navigation menu"
+              className="lg:hidden w-12 h-12 glass rounded-2xl flex items-center justify-center hover:bg-white/10 transition-colors"
             >
-              <Menu className="w-6 h-6" />
+              <AnimatePresence mode="wait">
+                {isSidebarOpen ? (
+                  <motion.span key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                    <X className="w-6 h-6" />
+                  </motion.span>
+                ) : (
+                  <motion.span key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                    <Menu className="w-6 h-6" />
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
             <div>
               <h2 className="text-2xl font-serif font-bold">
@@ -183,7 +219,7 @@ function App() {
                 <Search className="w-4 h-4 text-white/30" />
                 <span className="text-sm text-white/30">Search assets...</span>
              </div>
-             <button className="w-12 h-12 glass rounded-2xl flex items-center justify-center border-white/5 hover:bg-white/5 relative">
+             <button aria-label="View notifications" className="w-12 h-12 glass rounded-2xl flex items-center justify-center border-white/5 hover:bg-white/5 relative">
                 <Bell className="w-5 h-5 text-white/60" />
                 <div className={cn("absolute top-3 right-3 w-2 h-2 rounded-full border-2 border-black", userPersona === 'normal' ? "bg-lime-500" : "bg-blue-500")} />
              </button>
