@@ -1,97 +1,63 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Roboto+Serif:opsz,wght@8..144,400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --font-serif: "Roboto Serif", serif;
-  --font-sans: "Outfit", sans-serif;
+@layer base {
+  body {
+    @apply bg-[#030303] text-white selection:bg-lime-500/30;
+    font-family: var(--font-sans);
+  }
 
-  --color-lime-50: #f7fee7;
-  --color-lime-100: #ecfccb;
-  --color-lime-200: #d9f99d;
-  --color-lime-300: #bef264;
-  --color-lime-400: #a3e635;
-  --color-lime-500: #84cc16;
-  --color-lime-600: #65a30d;
-  --color-lime-700: #4d7c0f;
-  --color-lime-800: #3f6212;
-  --color-lime-900: #365314;
-  --color-lime-950: #1a2e05;
-
-  --color-blue-500: #3b82f6;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+  }
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer components {
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+  
+  .glass-lime {
+    @apply bg-lime-500/5 backdrop-blur-xl border border-lime-500/20;
+  }
+
+  .glass-blue {
+    @apply bg-blue-500/5 backdrop-blur-xl border border-blue-500/20;
+  }
 }
 
-body {
-  background-color: #030303;
-  color: white;
-  font-family: var(--font-sans);
-  overflow-x: hidden;
-}
+@layer utilities {
+  .text-glow-lime {
+    text-shadow: 0 0 20px rgba(132, 204, 22, 0.5);
+  }
 
-::selection {
-  background-color: rgba(132, 204, 22, 0.3);
-}
+  .text-glow-blue {
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-}
+  .bg-grid-blue {
+    background-size: 30px 30px;
+    background-image: 
+      linear-gradient(to right, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+  }
 
-/* Utilities */
+  .bg-grid {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  }
 
-.glass {
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 15s ease infinite;
+  }
 
-.glass-lime {
-  background-color: rgba(132, 204, 22, 0.05);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(132, 204, 22, 0.2);
-}
-
-.text-glow-lime {
-  text-shadow: 0 0 20px rgba(132, 204, 22, 0.5);
-}
-
-.glass-blue {
-  background-color: rgba(59, 130, 246, 0.05);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-.text-glow-blue {
-  text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-}
-
-.bg-grid-blue {
-  background-size: 30px 30px;
-  background-image: 
-    linear-gradient(to right, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
-}
-
-.bg-grid {
-  background-size: 40px 40px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient 15s ease infinite;
-}
-
-@keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 }
