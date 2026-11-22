@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowDownLeft,
   ArrowDownUp,
@@ -16,9 +17,19 @@ import {
   NETWORKS,
   PORTFOLIO_HISTORY_SERIES,
 } from '../data/initialWalletData';
+import { APPLE_REDUCED_CROSSFADE, APPLE_SPRING_NAV_PUSH } from '../motion/appleMotion';
+import { SlidingSegmentedControl, type SegmentedOption } from './SlidingSegmentedControl';
 import { TokenIcon } from './TokenIcon';
 
 type TimeRange = '7D' | '30D' | '90D';
+
+const RANGE_OPTIONS: Array<SegmentedOption<TimeRange>> = [
+  { value: '7D', label: '7D' },
+  { value: '30D', label: '30D' },
+  { value: '90D', label: '90D' },
+];
+
+const RANGE_ORDER: Record<TimeRange, number> = { '7D': 0, '30D': 1, '90D': 2 };
 
 export function OverviewView() {
   const {
@@ -37,7 +48,17 @@ export function OverviewView() {
     setActiveTab,
   } = useWallet();
 
+  const prefersReducedMotion = useReducedMotion();
   const [range, setRange] = useState<TimeRange>('30D');
+  const [rangeDir, setRangeDir] = useState<number>(1);
+  const prevRangeRef = useRef<TimeRange>('30D');
+
+  const handleRangeChange = (next: TimeRange) => {
+    if (next === prevRangeRef.current) return;
+    setRangeDir(RANGE_ORDER[next] > RANGE_ORDER[prevRangeRef.current] ? 1 : -1);
+    prevRangeRef.current = next;
+    setRange(next);
+  };
 
   // Anchor the sparkline's final point to the live computed portfolio total
   const chartPoints = useMemo(() => {
@@ -145,55 +166,59 @@ export function OverviewView() {
           <div className="lg:col-span-5 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs text-[#9EA9B8]">Portfolio trend</span>
-              <div className="inline-flex items-center gap-1 p-0.5 glass-control rounded-lg">
-                {(['7D', '30D', '90D'] as TimeRange[]).map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => setRange(item)}
-                    className={`px-2 py-0.5 text-[11px] font-mono rounded-md transition-colors whitespace-nowrap ${
-                      range === item
-                        ? 'glass-thumb text-[#F4F7FB] font-medium'
-                        : 'text-[#9EA9B8] hover:text-white'
-                    }`}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
+              <SlidingSegmentedControl
+                layoutId="overviewRangeThumb"
+                options={RANGE_OPTIONS}
+                value={range}
+                onChange={handleRangeChange}
+                ariaLabel="Portfolio trend timeframe"
+                size="xs"
+                mono
+              />
             </div>
-            <div className="w-full h-[92px] overflow-hidden">
-              <svg
-                viewBox={`0 0 ${sparkline.width} ${sparkline.height}`}
-                preserveAspectRatio="none"
-                className="w-full h-full"
-                role="img"
-                aria-label={`${range} portfolio performance trend`}
-              >
-                <defs>
-                  <linearGradient id="nestPortfolioArea" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="0%"
-                      stopColor={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
-                      stopOpacity="0.22"
+            <div className="w-full h-[92px] overflow-hidden relative">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={range}
+                  initial={prefersReducedMotion ? { opacity: 0 } : { x: rangeDir * 18, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={prefersReducedMotion ? { opacity: 0 } : { x: rangeDir * -18, opacity: 0 }}
+                  transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_NAV_PUSH}
+                  className="w-full h-full"
+                >
+                  <svg
+                    viewBox={`0 0 ${sparkline.width} ${sparkline.height}`}
+                    preserveAspectRatio="none"
+                    className="w-full h-full"
+                    role="img"
+                    aria-label={`${range} portfolio performance trend`}
+                  >
+                    <defs>
+                      <linearGradient id="nestPortfolioArea" x1="0" y1="0" x2="0" y2="1">
+                        <stop
+                          offset="0%"
+                          stopColor={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
+                          stopOpacity="0.22"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
+                          stopOpacity="0"
+                        />
+                      </linearGradient>
+                    </defs>
+                    <path d={sparkline.areaPath} fill="url(#nestPortfolioArea)" />
+                    <path
+                      d={sparkline.linePath}
+                      fill="none"
+                      stroke={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     />
-                    <stop
-                      offset="100%"
-                      stopColor={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
-                      stopOpacity="0"
-                    />
-                  </linearGradient>
-                </defs>
-                <path d={sparkline.areaPath} fill="url(#nestPortfolioArea)" />
-                <path
-                  d={sparkline.linePath}
-                  fill="none"
-                  stroke={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+                  </svg>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>

@@ -38,7 +38,15 @@ import type {
 } from '../types/wallet';
 import { PreSignSimulationSheet } from './PreSignSimulationSheet';
 import { SlideOverSheet } from './SlideOverSheet';
+import { SlidingSegmentedControl } from './SlidingSegmentedControl';
 import { TokenIcon } from './TokenIcon';
+
+const RECEIVE_NETWORK_ORDER: Record<NetworkId, number> = {
+  ethereum: 0,
+  base: 1,
+  arbitrum: 2,
+  optimism: 3,
+};
 
 const TAB_ORDER: Record<ActionDrawerTab, number> = {
   send: 0,
@@ -84,9 +92,18 @@ export function ActionDrawer() {
 
   // Receive Form State
   const [receiveNetwork, setReceiveNetwork] = useState<NetworkId>('ethereum');
+  const [receiveNetDir, setReceiveNetDir] = useState<number>(1);
+  const prevReceiveNetRef = useRef<NetworkId>('ethereum');
   const [requestSymbol, setRequestSymbol] = useState<string>('USDC');
   const [requestAmount, setRequestAmount] = useState<string>('');
   const [copiedAddress, setCopiedAddress] = useState(false);
+
+  const handleReceiveNetworkChange = (next: NetworkId) => {
+    if (next === prevReceiveNetRef.current) return;
+    setReceiveNetDir(RECEIVE_NETWORK_ORDER[next] > RECEIVE_NETWORK_ORDER[prevReceiveNetRef.current] ? 1 : -1);
+    prevReceiveNetRef.current = next;
+    setReceiveNetwork(next);
+  };
 
   useEffect(() => {
     if (prevTabRef.current !== actionDrawer.tab) {
@@ -526,22 +543,19 @@ export function ActionDrawer() {
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
                           <span className="block text-[11px] text-[#9AA4B2]">Priority speed</span>
-                          <div className="grid grid-cols-3 gap-1 p-0.5 bg-[#090B0E] rounded-md border border-white/[0.08]">
-                            {(['standard', 'fast', 'priority'] as GasSpeed[]).map((spd) => (
-                              <button
-                                key={spd}
-                                type="button"
-                                onClick={() => setGasSpeed(spd)}
-                                className={`py-1 text-[11px] rounded capitalize transition-colors ${
-                                  gasSpeed === spd
-                                    ? 'bg-sky-500/20 text-sky-300 font-medium'
-                                    : 'text-[#9AA4B2] hover:text-white'
-                                }`}
-                              >
-                                {spd === 'standard' ? 'Std' : spd === 'fast' ? 'Fast' : 'Max'}
-                              </button>
-                            ))}
-                          </div>
+                          <SlidingSegmentedControl<GasSpeed>
+                            layoutId="sendGasSpeedThumb"
+                            ariaLabel="Priority gas speed"
+                            value={gasSpeed}
+                            onChange={setGasSpeed}
+                            size="xs"
+                            fullWidth
+                            options={[
+                              { value: 'standard', label: 'Std', accent: 'sky' },
+                              { value: 'fast', label: 'Fast', accent: 'sky' },
+                              { value: 'priority', label: 'Max', accent: 'sky' },
+                            ]}
+                          />
                         </div>
                         <div className="space-y-1.5">
                           <label htmlFor="send-mev-relay" className="block text-[11px] text-[#9AA4B2]">
@@ -759,22 +773,20 @@ export function ActionDrawer() {
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
                           <span className="block text-[11px] text-[#9AA4B2]">Max slippage</span>
-                          <div className="grid grid-cols-3 gap-1 p-0.5 bg-[#090B0E] rounded-md border border-white/[0.08]">
-                            {[0.1, 0.5, 1.0].map((val) => (
-                              <button
-                                key={val}
-                                type="button"
-                                onClick={() => setSlippagePct(val)}
-                                className={`py-1 text-[11px] font-mono tabular-nums rounded transition-colors ${
-                                  slippagePct === val
-                                    ? 'bg-sky-500/20 text-sky-300 font-medium'
-                                    : 'text-[#9AA4B2] hover:text-white'
-                                }`}
-                              >
-                                {val}%
-                              </button>
-                            ))}
-                          </div>
+                          <SlidingSegmentedControl<string>
+                            layoutId="swapSlippageThumb"
+                            ariaLabel="Max swap slippage"
+                            value={String(slippagePct)}
+                            onChange={(val) => setSlippagePct(Number(val))}
+                            size="xs"
+                            fullWidth
+                            mono
+                            options={[
+                              { value: '0.1', label: '0.1%', accent: 'sky' },
+                              { value: '0.5', label: '0.5%', accent: 'sky' },
+                              { value: '1', label: '1%', accent: 'sky' },
+                            ]}
+                          />
                         </div>
                         <div className="space-y-1.5">
                           <label htmlFor="swap-mev-relay" className="block text-[11px] text-[#9AA4B2]">
@@ -815,32 +827,42 @@ export function ActionDrawer() {
               ) : (
                 /* RECEIVE TAB */
                 <div className="space-y-5">
-                  {/* Network Selector */}
+                  {/* Network Selector with Sliding Glass Thumb */}
                   <div className="space-y-2">
                     <span className="block text-xs font-medium text-[#9AA4B2]">Receiving network</span>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                      {(Object.keys(NETWORKS) as NetworkId[]).map((netId) => {
-                        const active = receiveNetwork === netId;
-                        return (
-                          <button
-                            key={netId}
-                            type="button"
-                            onClick={() => setReceiveNetwork(netId)}
-                            className={`py-2 px-2.5 rounded-lg text-xs font-medium border transition-colors whitespace-nowrap ${
-                              active
-                                ? 'bg-[#1A212C] border-white/[0.18] text-[#F3F5F8]'
-                                : 'bg-[#0D1015] border-white/[0.06] text-[#9AA4B2] hover:text-white'
-                            }`}
-                          >
-                            {NETWORKS[netId].shortName}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <SlidingSegmentedControl<NetworkId>
+                      layoutId="receiveNetworkThumb"
+                      ariaLabel="Select receiving network"
+                      value={receiveNetwork}
+                      onChange={handleReceiveNetworkChange}
+                      fullWidth
+                      options={[
+                        { value: 'ethereum', label: NETWORKS.ethereum.shortName },
+                        { value: 'base', label: NETWORKS.base.shortName },
+                        { value: 'arbitrum', label: NETWORKS.arbitrum.shortName },
+                        { value: 'optimism', label: NETWORKS.optimism.shortName },
+                      ]}
+                    />
                   </div>
 
-                  {/* QR Display */}
-                  <div className="p-6 rounded-xl bg-[#0D1015] border border-white/[0.08] flex flex-col items-center text-center space-y-4">
+                  {/* QR Display with Directional Slide on Network Change */}
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={receiveNetwork}
+                      initial={
+                        prefersReducedMotion
+                          ? { opacity: 0 }
+                          : { x: receiveNetDir * 20, opacity: 0 }
+                      }
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={
+                        prefersReducedMotion
+                          ? { opacity: 0 }
+                          : { x: receiveNetDir * -20, opacity: 0 }
+                      }
+                      transition={navTransition}
+                      className="p-6 glass-recessed flex flex-col items-center text-center space-y-4"
+                    >
                     <div className="p-3.5 rounded-xl bg-white">
                       <svg
                         width="180"
@@ -892,7 +914,8 @@ export function ActionDrawer() {
                         </>
                       )}
                     </button>
-                  </div>
+                    </motion.div>
+                  </AnimatePresence>
 
                   {/* Optional Payment Request */}
                   <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">

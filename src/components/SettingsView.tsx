@@ -1,7 +1,8 @@
 import React from 'react';
-import { Lock, RotateCcw } from 'lucide-react';
+import { Lock, RotateCcw, Shield, Terminal } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import type { CurrencyCode, MevRelay, WalletMode } from '../types/wallet';
+import { SlidingSegmentedControl } from './SlidingSegmentedControl';
 
 export function SettingsView() {
   const { mode, setMode, settings, updateSettings, resetSandbox, lockVault, addToast } = useWallet();
@@ -26,24 +27,17 @@ export function SettingsView() {
               Guardian emphasizes plain-English clarity; Sentinel exposes calldata, gas, and traces.
             </p>
           </div>
-          <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#090B0E] border border-white/[0.08] shrink-0">
-            {(['guardian', 'sentinel'] as WalletMode[]).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setMode(m)}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-colors whitespace-nowrap ${
-                  mode === m
-                    ? m === 'sentinel'
-                      ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
-                      : 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30'
-                    : 'text-[#9AA4B2] hover:text-white'
-                }`}
-              >
-                {m}
-              </button>
-            ))}
-          </div>
+          <SlidingSegmentedControl<WalletMode>
+            layoutId="settingsModeThumb"
+            ariaLabel="Default interface mode"
+            value={mode}
+            onChange={setMode}
+            options={[
+              { value: 'guardian', label: 'Guardian', icon: Shield, accent: 'emerald' },
+              { value: 'sentinel', label: 'Sentinel', icon: Terminal, accent: 'sky' },
+            ]}
+            className="shrink-0"
+          />
         </div>
 
         <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -53,25 +47,22 @@ export function SettingsView() {
               Converts all balances, diffs, and spend limits live across the app.
             </p>
           </div>
-          <div className="inline-flex items-center gap-1 p-1 glass-control shrink-0">
-            {(['USD', 'GBP', 'EUR'] as CurrencyCode[]).map((cur) => (
-              <button
-                key={cur}
-                type="button"
-                onClick={() => {
-                  updateSettings({ currency: cur });
-                  addToast({ tone: 'info', title: `Currency switched to ${cur}` });
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${
-                  settings.currency === cur
-                    ? 'glass-thumb text-[#F4F7FB] font-medium'
-                    : 'text-[#9EA9B8] hover:text-white'
-                }`}
-              >
-                {cur}
-              </button>
-            ))}
-          </div>
+          <SlidingSegmentedControl<CurrencyCode>
+            layoutId="settingsCurrencyThumb"
+            ariaLabel="Display currency"
+            value={settings.currency}
+            onChange={(cur) => {
+              updateSettings({ currency: cur });
+              addToast({ tone: 'info', title: `Currency switched to ${cur}` });
+            }}
+            mono
+            options={[
+              { value: 'USD', label: 'USD' },
+              { value: 'GBP', label: 'GBP' },
+              { value: 'EUR', label: 'EUR' },
+            ]}
+            className="shrink-0"
+          />
         </div>
 
         <div className="px-5 py-4 flex items-center justify-between gap-4">

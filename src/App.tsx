@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   Activity,
   ArrowUpRight,
@@ -29,10 +29,19 @@ import { useWallet, WalletProvider } from './context/WalletContext';
 import { shortenAddress } from './data/initialWalletData';
 import {
   APPLE_REDUCED_CROSSFADE,
+  APPLE_SPRING_NAV_PUSH,
   APPLE_SPRING_SHEET,
   APPLE_SPRING_SNAPPY,
 } from './motion/appleMotion';
 import type { NavTab, WalletMode } from './types/wallet';
+
+const NAV_ORDER: Record<NavTab, number> = {
+  overview: 0,
+  assets: 1,
+  activity: 2,
+  approvals: 3,
+  settings: 4,
+};
 
 const NAV_META: Record<NavTab, { label: string; heading: string; subtitle: string; icon: React.ElementType }> = {
   overview: {
@@ -126,6 +135,17 @@ function WalletShell() {
   const prefersReducedMotion = useReducedMotion();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [copiedAddr, setCopiedAddr] = useState(false);
+  const [navDirection, setNavDirection] = useState<number>(1);
+  const prevTabRef = useRef<NavTab>(activeTab);
+
+  const handleSelectNavTab = (next: NavTab) => {
+    if (next !== prevTabRef.current) {
+      setNavDirection(NAV_ORDER[next] > NAV_ORDER[prevTabRef.current] ? 1 : -1);
+      prevTabRef.current = next;
+      setActiveTab(next);
+    }
+    setMobileNavOpen(false);
+  };
 
   if (isLocked) {
     return <VaultLockScreen />;
@@ -149,16 +169,13 @@ function WalletShell() {
     window.setTimeout(() => setCopiedAddr(false), 1800);
   };
 
-  const renderSidebarContent = () => (
+  const renderSidebarContent = (variant: 'desktop' | 'mobile') => (
     <div className="flex flex-col h-full">
       {/* Brand Wordmark */}
       <div className="h-16 px-5 border-b border-white/[0.08] flex items-center justify-between shrink-0">
         <button
           type="button"
-          onClick={() => {
-            setActiveTab('overview');
-            setMobileNavOpen(false);
-          }}
+          onClick={() => handleSelectNavTab('overview')}
           className="flex items-center gap-2.5 text-left focus-ring rounded-md"
         >
           <div
@@ -184,7 +201,7 @@ function WalletShell() {
         </button>
       </div>
 
-      {/* Primary Navigation */}
+      {/* Primary Navigation with Gliding Glass Highlight */}
       <nav aria-label="Primary navigation" className="flex-1 px-3 py-4 space-y-1">
         {(Object.keys(NAV_META) as NavTab[]).map((tabKey) => {
           const item = NAV_META[tabKey];
@@ -194,17 +211,22 @@ function WalletShell() {
             <button
               key={tabKey}
               type="button"
-              onClick={() => {
-                setActiveTab(tabKey);
-                setMobileNavOpen(false);
-              }}
-              className={`w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap focus-ring ${
+              onClick={() => handleSelectNavTab(tabKey)}
+              className={`relative w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap focus-ring ${
                 active
-                  ? 'glass-thumb text-[#F4F7FB]'
-                  : 'text-[#9EA9B8] hover:text-[#F4F7FB] hover:bg-white/[0.04] border border-transparent'
+                  ? 'text-[#F4F7FB]'
+                  : 'text-[#9EA9B8] hover:text-[#F4F7FB] hover:bg-white/[0.04]'
               }`}
             >
-              <span className="flex items-center gap-2.5 min-w-0">
+              {active && (
+                <motion.span
+                  layoutId={`sidebarNavThumb-${variant}`}
+                  transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SNAPPY}
+                  style={{ willChange: 'transform' }}
+                  className="absolute inset-0 rounded-xl glass-thumb"
+                />
+              )}
+              <span className="flex items-center gap-2.5 min-w-0 relative z-10">
                 <Icon
                   className={`w-4 h-4 shrink-0 ${
                     active
@@ -217,7 +239,7 @@ function WalletShell() {
                 <span className="truncate">{item.label}</span>
               </span>
               {tabKey === 'approvals' && atRiskApprovalsCount > 0 && (
-                <span className="font-mono tabular-nums text-xs text-amber-400 shrink-0">
+                <span className="font-mono tabular-nums text-xs text-amber-400 shrink-0 relative z-10">
                   {atRiskApprovalsCount}
                 </span>
               )}
@@ -298,7 +320,7 @@ function WalletShell() {
       >
         {/* Desktop Sidebar — Apple Navigation Chrome Glass */}
         <aside className="hidden lg:flex w-64 shrink-0 border-r border-white/[0.09] glass-chrome sticky top-0 h-screen flex-col">
-          {renderSidebarContent()}
+          {renderSidebarContent('desktop')}
         </aside>
 
         {/* Main Content Shell */}
@@ -395,12 +417,27 @@ function WalletShell() {
               </div>
             </div>
 
-            {/* Active Route View */}
-            {activeTab === 'overview' && <OverviewView />}
-            {activeTab === 'assets' && <AssetsView />}
-            {activeTab === 'activity' && <ActivityView />}
-            {activeTab === 'approvals' && <ApprovalsView />}
-            {activeTab === 'settings' && <SettingsView />}
+            {/* Active Route View with Smooth Directional Slide Transition */}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={activeTab}
+                initial={
+                  prefersReducedMotion ? { opacity: 0 } : { y: navDirection * 14, opacity: 0 }
+                }
+                animate={{ y: 0, opacity: 1 }}
+                exit={
+                  prefersReducedMotion ? { opacity: 0 } : { y: navDirection * -14, opacity: 0 }
+                }
+                transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_NAV_PUSH}
+                style={{ willChange: 'transform, opacity' }}
+              >
+                {activeTab === 'overview' && <OverviewView />}
+                {activeTab === 'assets' && <AssetsView />}
+                {activeTab === 'activity' && <ActivityView />}
+                {activeTab === 'approvals' && <ApprovalsView />}
+                {activeTab === 'settings' && <SettingsView />}
+              </motion.div>
+            </AnimatePresence>
           </main>
         </div>
       </motion.div>
@@ -412,7 +449,7 @@ function WalletShell() {
         ariaLabel="Navigation menu"
         side="left"
       >
-        {renderSidebarContent()}
+        {renderSidebarContent('mobile')}
       </SlideOverSheet>
 
       {/* Flagship Interactive Action Drawer (Send / Swap / Receive + Pre-Sign Simulation) */}
