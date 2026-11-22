@@ -30,24 +30,24 @@ export function ApprovalsView() {
       {/* Exposure Summary Row */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="surface-panel p-4 space-y-1">
-          <p className="text-xs text-[#9AA4B2]">Active contract approvals</p>
-          <p className="font-mono tabular-nums text-2xl font-semibold text-[#F3F5F8]">
+          <p className="text-xs text-[#8E929B]">Active contract approvals</p>
+          <p className="font-mono tabular-nums text-2xl font-semibold text-[#F7F8FA]">
             {approvals.length}
           </p>
         </div>
         <div className="surface-panel p-4 space-y-1">
-          <p className="text-xs text-[#9AA4B2]">Unlimited spenders</p>
+          <p className="text-xs text-[#8E929B]">Unlimited spenders</p>
           <p
             className={`font-mono tabular-nums text-2xl font-semibold ${
-              unlimitedCount > 0 ? 'text-amber-300' : 'text-emerald-400'
+              unlimitedCount > 0 ? 'text-[#FFB547]' : 'text-[#2DF5C6]'
             }`}
           >
             {unlimitedCount}
           </p>
         </div>
         <div className="surface-panel p-4 space-y-1">
-          <p className="text-xs text-[#9AA4B2]">Total approved exposure</p>
-          <p className="font-mono tabular-nums text-2xl font-semibold text-[#F3F5F8]">
+          <p className="text-xs text-[#8E929B]">Total approved exposure</p>
+          <p className="font-mono tabular-nums text-2xl font-semibold text-[#F7F8FA]">
             {formatFiat(totalExposedUsd, settings.currency)}
           </p>
         </div>
@@ -55,20 +55,20 @@ export function ApprovalsView() {
 
       {/* Approvals Table */}
       <section className="surface-panel overflow-hidden">
-        <div className="px-5 py-4 border-b border-white/[0.08]">
-          <h3 className="font-display text-base font-semibold text-[#F3F5F8]">
+        <div className="px-5 py-4 border-b border-white/[0.07]">
+          <h3 className="font-display text-base font-semibold text-[#F7F8FA]">
             Token spending permissions
           </h3>
-          <p className="text-xs text-[#9AA4B2] mt-0.5">
+          <p className="text-xs text-[#8E929B] mt-0.5">
             Revoking sets a contract’s ERC-20 allowance back to zero so it cannot move your tokens.
           </p>
         </div>
 
         {approvals.length === 0 ? (
           <div className="px-6 py-16 text-center space-y-2.5">
-            <ShieldCheck className="w-8 h-8 text-emerald-400 mx-auto" />
-            <p className="text-sm font-medium text-[#F3F5F8]">Zero active spending allowances</p>
-            <p className="text-xs text-[#9AA4B2] max-w-md mx-auto">
+            <ShieldCheck className="w-8 h-8 text-[#2DF5C6] mx-auto" />
+            <p className="text-sm font-medium text-[#F7F8FA]">Zero active spending allowances</p>
+            <p className="text-xs text-[#8E929B] max-w-md mx-auto">
               No external smart contracts currently hold permission to spend your tokens.
             </p>
           </div>
@@ -86,27 +86,27 @@ export function ApprovalsView() {
                     <TokenIcon symbol={item.tokenSymbol} size={36} />
                     <div className="min-w-0 space-y-1">
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                        <p className="text-sm font-medium text-[#F3F5F8]">{item.spenderName}</p>
-                        <span className="text-xs text-[#6B7686]">·</span>
-                        <span className="text-xs text-[#9AA4B2]">{NETWORKS[item.network].shortName}</span>
+                        <p className="text-sm font-medium text-[#F7F8FA]">{item.spenderName}</p>
+                        <span className="text-xs text-[#5C606A]">·</span>
+                        <span className="text-xs text-[#8E929B]">{NETWORKS[item.network].shortName}</span>
                         {mode === 'sentinel' && (
                           <>
-                            <span className="text-xs text-[#6B7686]">·</span>
-                            <span className="font-mono text-xs text-[#9AA4B2]">
+                            <span className="text-xs text-[#5C606A]">·</span>
+                            <span className="font-mono text-xs text-[#19C8FF]">
                               {shortenAddress(item.spenderAddress)}
                             </span>
                           </>
                         )}
                       </div>
-                      <p className="text-xs text-[#9AA4B2] leading-relaxed">{item.riskReason}</p>
+                      <p className="text-xs text-[#8E929B] leading-relaxed">{item.riskReason}</p>
                       <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs pt-0.5">
                         <span
                           className={`inline-flex items-center gap-1 font-medium ${
                             isCritical
-                              ? 'text-red-400'
+                              ? 'text-[#FF5B5B]'
                               : isCaution
-                                ? 'text-amber-400'
-                                : 'text-emerald-400'
+                                ? 'text-[#FFB547]'
+                                : 'text-[#2DF5C6]'
                           }`}
                         >
                           {isCritical ? (
@@ -120,12 +120,12 @@ export function ApprovalsView() {
                             {isCritical ? 'Critical risk' : isCaution ? 'Review recommended' : 'Bounded & verified'}
                           </span>
                         </span>
-                        <span className="text-[#6B7686]">·</span>
-                        <span className="font-mono tabular-nums text-[#C7D0DC]">
+                        <span className="text-[#5C606A]">·</span>
+                        <span className="font-mono tabular-nums text-[#D2D5DC]">
                           Allowance: {item.allowanceLabel} ({formatFiat(item.exposureUsd, settings.currency)})
                         </span>
-                        <span className="text-[#6B7686]">·</span>
-                        <span className="text-[#6B7686]">Granted {item.grantedAt}</span>
+                        <span className="text-[#5C606A]">·</span>
+                        <span className="text-[#5C606A]">Granted {item.grantedAt}</span>
                       </div>
                     </div>
                   </div>
@@ -136,8 +136,8 @@ export function ApprovalsView() {
                     onClick={() => handleRevoke(item.id)}
                     className={`px-4 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 disabled:opacity-50 focus-ring ${
                       isCritical
-                        ? 'bg-red-600 hover:bg-red-500 text-white'
-                        : 'bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-[#F3F5F8]'
+                        ? 'bg-[#FF5B5B] hover:bg-[#FF7070] text-white'
+                        : 'glass-btn text-[#F7F8FA]'
                     }`}
                   >
                     {revokingId === item.id ? 'Revoking…' : 'Revoke access'}

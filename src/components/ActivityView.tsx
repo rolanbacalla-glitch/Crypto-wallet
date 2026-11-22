@@ -86,14 +86,14 @@ export function ActivityView() {
         />
 
         <div className="relative w-full lg:w-72">
-          <Search className="w-4 h-4 text-[#6E7A8A] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-[#5C606A] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search counterparty or hash…"
             aria-label="Search transaction history"
-            className="w-full h-10 pl-9 pr-3 glass-control text-sm text-[#F4F7FB] placeholder:text-[#6E7A8A] focus:border-emerald-400/50 focus:outline-none"
+            className="w-full h-10 pl-9 pr-3 glass-control text-sm text-[#F7F8FA] placeholder:text-[#5C606A] focus:border-[#2DF5C6]/50 focus:outline-none"
           />
         </div>
       </div>
@@ -108,8 +108,8 @@ export function ActivityView() {
         >
             {filtered.length === 0 ? (
               <div className="px-6 py-16 text-center space-y-3">
-                <p className="text-sm font-medium text-[#F3F5F8]">No transactions match this filter</p>
-                <p className="text-xs text-[#9AA4B2]">
+                <p className="text-sm font-medium text-[#F7F8FA]">No transactions match this filter</p>
+                <p className="text-xs text-[#8E929B]">
                   Execute a Send, Swap, or threat simulation to populate live ledger records here.
                 </p>
                 <button
@@ -118,7 +118,7 @@ export function ActivityView() {
                     handleFilterChange('all');
                     setQuery('');
                   }}
-                  className="px-4 py-2 rounded-lg text-xs font-medium glass-btn text-[#F3F5F8]"
+                  className="px-4 py-2 rounded-lg text-xs font-medium glass-btn text-[#F7F8FA]"
                 >
                   Show all activity
                 </button>
@@ -138,12 +138,12 @@ export function ActivityView() {
                         <div
                           className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ${
                             isBlocked
-                              ? 'bg-red-500/[0.1] border-red-500/25 text-red-400'
+                              ? 'bg-[#FF5B5B]/[0.12] border-[#FF5B5B]/30 text-[#FF5B5B]'
                               : tx.type === 'receive'
-                                ? 'bg-emerald-500/[0.1] border-emerald-500/25 text-emerald-400'
+                                ? 'bg-[#2DF5C6]/[0.12] border-[#2DF5C6]/30 text-[#2DF5C6]'
                                 : tx.type === 'revoke'
-                                  ? 'bg-sky-500/[0.1] border-sky-500/25 text-sky-400'
-                                  : 'bg-white/[0.04] border-white/[0.08] text-[#C7D0DC]'
+                                  ? 'bg-[#19C8FF]/[0.12] border-[#19C8FF]/30 text-[#19C8FF]'
+                                  : 'bg-[#0B0C0E] border-white/[0.08] text-[#D2D5DC]'
                           }`}
                         >
                           {isBlocked ? (
@@ -159,8 +159,8 @@ export function ActivityView() {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-[#F3F5F8] truncate">{tx.title}</p>
-                          <p className="text-xs text-[#9AA4B2] truncate mt-0.5">
+                          <p className="text-sm font-medium text-[#F7F8FA] truncate">{tx.title}</p>
+                          <p className="text-xs text-[#8E929B] truncate mt-0.5">
                             {isBlocked ? 'Intercepted & Blocked' : 'Confirmed'} ·{' '}
                             {NETWORKS[tx.network].shortName} · {tx.counterparty} ·{' '}
                             {formatRelativeTime(tx.timestamp)}
@@ -176,10 +176,10 @@ export function ActivityView() {
                                 key={idx}
                                 className={`text-xs font-medium ${
                                   isBlocked
-                                    ? 'text-red-400 line-through'
+                                    ? 'text-[#FF5B5B] line-through'
                                     : diff.direction === 'in'
-                                      ? 'text-emerald-400'
-                                      : 'text-[#F3F5F8]'
+                                      ? 'text-[#2DF5C6]'
+                                      : 'text-[#F7F8FA]'
                                 }`}
                               >
                                 {diff.direction === 'in' ? '+' : '-'}
@@ -187,10 +187,10 @@ export function ActivityView() {
                               </p>
                             ))
                           ) : (
-                            <p className="text-xs text-sky-400">Allowance = 0</p>
+                            <p className="text-xs text-[#19C8FF]">Allowance = 0</p>
                           )}
                         </div>
-                        <ChevronRight className="w-4 h-4 text-[#6B7686] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                        <ChevronRight className="w-4 h-4 text-[#5C606A] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
                       </div>
                     </button>
                   );

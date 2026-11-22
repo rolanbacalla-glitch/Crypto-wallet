@@ -296,9 +296,9 @@ export function ActionDrawer() {
       maxWidthClass="sm:max-w-[520px]"
     >
       {/* Drawer Header */}
-      <div className="px-6 py-4 border-b border-white/[0.08] flex items-center justify-between gap-4 shrink-0">
+      <div className="px-6 py-4 border-b border-white/[0.07] flex items-center justify-between gap-4 shrink-0">
         <div>
-          <h2 className="font-display text-lg font-semibold text-[#F3F5F8]">
+          <h2 className="font-display text-lg font-semibold text-[#F7F8FA]">
             {activeSimulation
               ? 'Pre-sign simulation'
               : actionDrawer.tab === 'send'
@@ -307,7 +307,7 @@ export function ActionDrawer() {
                   ? 'Swap assets'
                   : 'Receive assets'}
           </h2>
-          <p className="text-xs text-[#9AA4B2] mt-0.5">
+          <p className="text-xs text-[#8E929B] mt-0.5">
             {activeSimulation
               ? mode === 'sentinel'
                 ? 'Inspecting calldata, state diff, and threat heuristics'
@@ -319,7 +319,7 @@ export function ActionDrawer() {
           type="button"
           onClick={closeActionDrawer}
           aria-label="Close panel"
-          className="w-9 h-9 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] flex items-center justify-center text-[#9AA4B2] hover:text-white transition-colors focus-ring shrink-0"
+          className="w-9 h-9 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] flex items-center justify-center text-[#8E929B] hover:text-[#F7F8FA] transition-colors focus-ring shrink-0"
         >
           <X className="w-4 h-4" />
         </button>
@@ -347,7 +347,7 @@ export function ActionDrawer() {
                       type="button"
                       onClick={() => switchTab(tab)}
                       className={`relative flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-medium transition-colors whitespace-nowrap focus-ring ${
-                        isActive ? 'text-[#F4F7FB]' : 'text-[#9EA9B8] hover:text-[#F4F7FB]'
+                        isActive ? 'text-[#F7F8FA]' : 'text-[#8E929B] hover:text-[#F7F8FA]'
                       }`}
                     >
                       {isActive && (
@@ -401,14 +401,14 @@ export function ActionDrawer() {
                 <form onSubmit={handleSimulateSend} className="space-y-5">
                   {/* Token Selector */}
                   <div className="space-y-2">
-                    <label htmlFor="send-asset" className="block text-xs font-medium text-[#9AA4B2]">
+                    <label htmlFor="send-asset" className="block text-xs font-medium text-[#8E929B]">
                       Asset & network
                     </label>
                     <select
                       id="send-asset"
                       value={sendTokenId}
                       onChange={(e) => setSendTokenId(e.target.value)}
-                      className="w-full h-11 px-3.5 rounded-lg bg-[#090B0E] border border-white/[0.1] text-sm text-[#F3F5F8] focus:border-emerald-400/60 focus:outline-none"
+                      className="w-full h-11 px-3.5 rounded-lg bg-[#0B0C0E] border border-white/[0.09] text-sm text-[#F7F8FA] focus:border-[#2DF5C6]/60 focus:outline-none"
                     >
                       {assets.map((asset) => (
                         <option key={asset.id} value={asset.id}>
@@ -421,14 +421,14 @@ export function ActionDrawer() {
                   {/* Amount Input */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                      <label htmlFor="send-amount" className="font-medium text-[#9AA4B2]">
+                      <label htmlFor="send-amount" className="font-medium text-[#8E929B]">
                         Amount
                       </label>
-                      <span className="text-[#9AA4B2] font-mono tabular-nums">
+                      <span className="text-[#8E929B] font-mono tabular-nums">
                         Balance: {formatTokenAmount(selectedSendToken.balance)} {selectedSendToken.symbol}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#090B0E] border border-white/[0.1] focus-within:border-emerald-400/60">
+                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#0B0C0E] border border-white/[0.09] focus-within:border-[#2DF5C6]/60">
                       <TokenIcon symbol={selectedSendToken.symbol} size={28} />
                       <input
                         id="send-amount"
@@ -438,9 +438,9 @@ export function ActionDrawer() {
                         value={sendAmount}
                         onChange={(e) => setSendAmount(e.target.value)}
                         placeholder="0.00"
-                        className="flex-1 bg-transparent text-lg font-mono tabular-nums text-[#F3F5F8] placeholder:text-[#6B7686] focus:outline-none min-w-0"
+                        className="flex-1 bg-transparent text-lg font-mono tabular-nums text-[#F7F8FA] placeholder:text-[#5C606A] focus:outline-none min-w-0"
                       />
-                      <span className="text-xs font-mono tabular-nums text-[#9AA4B2] shrink-0">
+                      <span className="text-xs font-mono tabular-nums text-[#8E929B] shrink-0">
                         {formatFiat(sendAmountUsd, settings.currency)}
                       </span>
                     </div>
@@ -452,7 +452,7 @@ export function ActionDrawer() {
                           onClick={() =>
                             setSendAmount(String(Number((selectedSendToken.balance * pct).toFixed(4))))
                           }
-                          className="px-2.5 py-1 rounded-md text-xs font-mono tabular-nums bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-[#C7D0DC] transition-colors whitespace-nowrap"
+                          className="px-2.5 py-1 rounded-md text-xs font-mono tabular-nums bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.08] text-[#D2D5DC] transition-colors whitespace-nowrap"
                         >
                           {pct === 1 ? 'Max' : `${pct * 100}%`}
                         </button>
@@ -462,7 +462,7 @@ export function ActionDrawer() {
 
                   {/* Recipient Input */}
                   <div className="space-y-2">
-                    <label htmlFor="send-recipient" className="block text-xs font-medium text-[#9AA4B2]">
+                    <label htmlFor="send-recipient" className="block text-xs font-medium text-[#8E929B]">
                       Recipient address or ENS
                     </label>
                     <input
@@ -471,13 +471,13 @@ export function ActionDrawer() {
                       value={recipientInput}
                       onChange={(e) => setRecipientInput(e.target.value)}
                       placeholder="0x… or name.eth"
-                      className="w-full h-11 px-3.5 rounded-lg bg-[#090B0E] border border-white/[0.1] font-mono text-xs text-[#F3F5F8] placeholder:text-[#6B7686] focus:border-emerald-400/60 focus:outline-none"
+                      className="w-full h-11 px-3.5 rounded-lg bg-[#0B0C0E] border border-white/[0.09] font-mono text-xs text-[#F7F8FA] placeholder:text-[#5C606A] focus:border-[#2DF5C6]/60 focus:outline-none"
                     />
                   </div>
 
                   {/* Quick Safety Test Presets */}
                   <div className="space-y-2">
-                    <p className="text-xs font-medium text-[#9AA4B2]">
+                    <p className="text-xs font-medium text-[#8E929B]">
                       Contacts & threat simulation presets
                     </p>
                     <div className="grid grid-cols-1 gap-1.5">
@@ -490,24 +490,24 @@ export function ActionDrawer() {
                             onClick={() => setRecipientInput(preset.address)}
                             className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${
                               selected
-                                ? 'bg-[#18202B] border-white/[0.18]'
-                                : 'bg-[#0D1015] border-white/[0.06] hover:border-white/[0.12]'
+                                ? 'bg-[#202227] border-white/[0.18]'
+                                : 'bg-[#0B0C0E] border-white/[0.07] hover:border-white/[0.14]'
                             }`}
                           >
                             <div className="flex items-center justify-between gap-2">
-                              <span className="text-xs font-medium text-[#F3F5F8] flex items-center gap-1.5">
+                              <span className="text-xs font-medium text-[#F7F8FA] flex items-center gap-1.5">
                                 {preset.category === 'threat' && (
-                                  <ShieldAlert className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                                  <ShieldAlert className="w-3.5 h-3.5 text-[#FF5B5B] shrink-0" />
                                 )}
                                 {preset.label}
                               </span>
                               <span
-                                className={`text-[11px] shrink-0 ${
+                                className={`text-[11px] font-medium shrink-0 ${
                                   preset.category === 'threat'
-                                    ? 'text-red-400'
+                                    ? 'text-[#FF5B5B]'
                                     : preset.category === 'unverified'
-                                      ? 'text-amber-400'
-                                      : 'text-emerald-400'
+                                      ? 'text-[#FFB547]'
+                                      : 'text-[#2DF5C6]'
                                 }`}
                               >
                                 {preset.category === 'threat'
@@ -517,7 +517,7 @@ export function ActionDrawer() {
                                     : 'Verified'}
                               </span>
                             </div>
-                            <p className="text-[11px] text-[#9AA4B2] mt-0.5">{preset.description}</p>
+                            <p className="text-[11px] text-[#8E929B] mt-0.5">{preset.description}</p>
                           </button>
                         );
                       })}
@@ -526,16 +526,16 @@ export function ActionDrawer() {
 
                   {/* Sentinel Execution Controls */}
                   {mode === 'sentinel' && (
-                    <div className="p-3.5 rounded-xl bg-[#0D1015] border border-sky-400/20 space-y-3">
+                    <div className="p-3.5 rounded-xl bg-[#0B0C0E] border border-[#19C8FF]/25 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium text-sky-300">Sentinel execution controls</span>
-                        <span className="text-[11px] font-mono tabular-nums text-[#9AA4B2]">
+                        <span className="text-xs font-medium text-[#19C8FF]">Sentinel execution controls</span>
+                        <span className="text-[11px] font-mono tabular-nums text-[#8E929B]">
                           Base {NETWORKS[selectedSendToken.network].baseFeeGwei} gwei
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
-                          <span className="block text-[11px] text-[#9AA4B2]">Priority speed</span>
+                          <span className="block text-[11px] text-[#8E929B]">Priority speed</span>
                           <SlidingSegmentedControl<GasSpeed>
                             layoutId="sendGasSpeedThumb"
                             ariaLabel="Priority gas speed"
@@ -551,14 +551,14 @@ export function ActionDrawer() {
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <label htmlFor="send-mev-relay" className="block text-[11px] text-[#9AA4B2]">
+                          <label htmlFor="send-mev-relay" className="block text-[11px] text-[#8E929B]">
                             MEV orderflow relay
                           </label>
                           <select
                             id="send-mev-relay"
                             value={mevRelay}
                             onChange={(e) => setMevRelay(e.target.value as MevRelay)}
-                            className="w-full h-8 px-2 rounded-md bg-[#090B0E] border border-white/[0.08] text-xs text-[#F3F5F8] focus:outline-none"
+                            className="w-full h-8 px-2 rounded-md bg-[#16171B] border border-white/[0.08] text-xs text-[#F7F8FA] focus:outline-none"
                           >
                             <option value="flashbots">Flashbots Protect</option>
                             <option value="mev-blocker">MEV Blocker</option>
@@ -570,17 +570,13 @@ export function ActionDrawer() {
                   )}
 
                   {sendValidationError && (
-                    <p className="text-xs text-amber-300">{sendValidationError}</p>
+                    <p className="text-xs text-[#FFB547]">{sendValidationError}</p>
                   )}
 
                   <button
                     type="submit"
                     disabled={Boolean(sendValidationError)}
-                    className={`w-full py-3 px-4 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 btn-specular focus-ring ${
-                      mode === 'sentinel'
-                        ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
-                        : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
-                    }`}
+                    className="w-full py-3 px-4 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 btn-primary-white focus-ring"
                   >
                     <Shield className="w-4 h-4" />
                     <span>Review & simulate transfer</span>
@@ -590,7 +586,7 @@ export function ActionDrawer() {
                 <form onSubmit={handleSimulateSwap} className="space-y-5">
                   {/* Curated Scenario Strip */}
                   <div className="space-y-2">
-                    <p className="text-xs font-medium text-[#9AA4B2]">Swap test scenarios</p>
+                    <p className="text-xs font-medium text-[#8E929B]">Swap test scenarios</p>
                     <div className="grid grid-cols-1 gap-1.5">
                       {SWAP_SCENARIOS.map((sc) => {
                         const selected = selectedSwapScenarioId === sc.id;
@@ -601,19 +597,19 @@ export function ActionDrawer() {
                             onClick={() => handleSelectSwapScenario(sc.id)}
                             className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${
                               selected
-                                ? 'bg-[#18202B] border-white/[0.18]'
-                                : 'bg-[#0D1015] border-white/[0.06] hover:border-white/[0.12]'
+                                ? 'bg-[#202227] border-white/[0.18]'
+                                : 'bg-[#0B0C0E] border-white/[0.07] hover:border-white/[0.14]'
                             }`}
                           >
                             <div className="flex items-center justify-between gap-2">
-                              <span className="text-xs font-medium text-[#F3F5F8]">{sc.label}</span>
+                              <span className="text-xs font-medium text-[#F7F8FA]">{sc.label}</span>
                               <span
-                                className={`text-[11px] shrink-0 ${
+                                className={`text-[11px] font-medium shrink-0 ${
                                   sc.category === 'threat'
-                                    ? 'text-red-400'
+                                    ? 'text-[#FF5B5B]'
                                     : sc.category === 'caution'
-                                      ? 'text-amber-400'
-                                      : 'text-emerald-400'
+                                      ? 'text-[#FFB547]'
+                                      : 'text-[#2DF5C6]'
                                 }`}
                               >
                                 {sc.category === 'threat'
@@ -623,7 +619,7 @@ export function ActionDrawer() {
                                     : 'Safe route'}
                               </span>
                             </div>
-                            <p className="text-[11px] text-[#9AA4B2] mt-0.5">{sc.description}</p>
+                            <p className="text-[11px] text-[#8E929B] mt-0.5">{sc.description}</p>
                           </button>
                         );
                       })}
@@ -632,7 +628,7 @@ export function ActionDrawer() {
 
                   {/* Pay Input */}
                   <div className="p-4 glass-recessed space-y-3">
-                    <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
+                    <div className="flex items-center justify-between text-xs text-[#8E929B]">
                       <span>You pay</span>
                       <span className="font-mono tabular-nums">
                         Balance: {formatTokenAmount(fromToken.balance)} {fromToken.symbol}
@@ -655,7 +651,7 @@ export function ActionDrawer() {
                           setSelectedSwapScenarioId('custom');
                           setSwapVenue('Uniswap V3 · 0.05% Pool');
                         }}
-                        className="h-10 px-3 rounded-lg bg-[#161B22] border border-white/[0.1] text-sm font-medium text-[#F3F5F8] focus:outline-none"
+                        className="h-10 px-3 rounded-lg bg-[#16171B] border border-white/[0.1] text-sm font-medium text-[#F7F8FA] focus:outline-none"
                       >
                         {assets.map((a) => (
                           <option key={a.id} value={a.id}>
@@ -676,7 +672,7 @@ export function ActionDrawer() {
                           }
                         }}
                         placeholder="0.00"
-                        className="flex-1 bg-transparent text-right text-xl font-mono tabular-nums font-semibold text-[#F3F5F8] placeholder:text-[#6B7686] focus:outline-none min-w-0"
+                        className="flex-1 bg-transparent text-right text-xl font-mono tabular-nums font-semibold text-[#F7F8FA] placeholder:text-[#5C606A] focus:outline-none min-w-0"
                       />
                     </div>
                   </div>
@@ -687,7 +683,7 @@ export function ActionDrawer() {
                       type="button"
                       onClick={handleFlipSwapTokens}
                       aria-label="Flip swap direction"
-                      className="w-9 h-9 rounded-lg bg-[#161B22] border border-white/[0.12] hover:bg-[#1E2530] flex items-center justify-center text-[#C7D0DC] transition-colors focus-ring"
+                      className="w-9 h-9 rounded-lg bg-[#16171B] border border-white/[0.12] hover:bg-[#22242A] flex items-center justify-center text-[#D2D5DC] transition-colors focus-ring"
                     >
                       <ArrowDownUp className="w-4 h-4" />
                     </button>
@@ -695,7 +691,7 @@ export function ActionDrawer() {
 
                   {/* Receive Quote */}
                   <div className="p-4 glass-recessed space-y-3">
-                    <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
+                    <div className="flex items-center justify-between text-xs text-[#8E929B]">
                       <span>Estimated receive</span>
                       <span className="font-mono tabular-nums">
                         {toToken ? NETWORKS[toToken.network].shortName : ''}
@@ -711,7 +707,7 @@ export function ActionDrawer() {
                           setMaliciousSwapFlag(false);
                           setSelectedSwapScenarioId('custom');
                         }}
-                        className="h-10 px-3 rounded-lg bg-[#161B22] border border-white/[0.1] text-sm font-medium text-[#F3F5F8] focus:outline-none"
+                        className="h-10 px-3 rounded-lg bg-[#16171B] border border-white/[0.1] text-sm font-medium text-[#F7F8FA] focus:outline-none"
                       >
                         {(sameNetworkTargets.length > 0 ? sameNetworkTargets : assets.filter((a) => a.id !== fromToken.id)).map(
                           (a) => (
@@ -721,7 +717,7 @@ export function ActionDrawer() {
                           )
                         )}
                       </select>
-                      <div className="flex-1 text-right font-mono tabular-nums text-xl font-semibold text-[#F3F5F8] truncate">
+                      <div className="flex-1 text-right font-mono tabular-nums text-xl font-semibold text-[#F7F8FA] truncate">
                         {formatTokenAmount(swapQuote.outAmount)}
                       </div>
                     </div>
@@ -730,28 +726,28 @@ export function ActionDrawer() {
                   {/* Route Summary */}
                   <div className="p-3.5 glass-recessed space-y-2 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="text-[#9AA4B2]">Route venue</span>
-                      <span className="text-[#F3F5F8] font-medium">{swapVenue}</span>
+                      <span className="text-[#8E929B]">Route venue</span>
+                      <span className="text-[#F7F8FA] font-medium">{swapVenue}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[#9AA4B2]">Rate</span>
-                      <span className="font-mono tabular-nums text-[#F3F5F8]">
+                      <span className="text-[#8E929B]">Rate</span>
+                      <span className="font-mono tabular-nums text-[#F7F8FA]">
                         1 {fromToken.symbol} = {formatTokenAmount(swapQuote.rate)} {toToken?.symbol}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[#9AA4B2]">Price impact</span>
+                      <span className="text-[#8E929B]">Price impact</span>
                       <span
                         className={`font-mono tabular-nums font-medium ${
-                          swapQuote.impactPct >= 3 ? 'text-amber-400' : 'text-emerald-400'
+                          swapQuote.impactPct >= 3 ? 'text-[#FFB547]' : 'text-[#2DF5C6]'
                         }`}
                       >
                         -{swapQuote.impactPct.toFixed(2)}%
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[#9AA4B2]">Minimum received</span>
-                      <span className="font-mono tabular-nums text-[#C7D0DC]">
+                      <span className="text-[#8E929B]">Minimum received</span>
+                      <span className="font-mono tabular-nums text-[#D2D5DC]">
                         {formatTokenAmount(swapQuote.minReceived)} {toToken?.symbol}
                       </span>
                     </div>
@@ -759,13 +755,13 @@ export function ActionDrawer() {
 
                   {/* Sentinel Slippage & MEV Controls */}
                   {mode === 'sentinel' && (
-                    <div className="p-3.5 rounded-xl bg-[#0D1015] border border-sky-400/20 space-y-3">
-                      <span className="block text-xs font-medium text-sky-300">
+                    <div className="p-3.5 rounded-xl bg-[#0B0C0E] border border-[#19C8FF]/25 space-y-3">
+                      <span className="block text-xs font-medium text-[#19C8FF]">
                         Sentinel execution controls
                       </span>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
-                          <span className="block text-[11px] text-[#9AA4B2]">Max slippage</span>
+                          <span className="block text-[11px] text-[#8E929B]">Max slippage</span>
                           <SlidingSegmentedControl<string>
                             layoutId="swapSlippageThumb"
                             ariaLabel="Max swap slippage"
@@ -782,14 +778,14 @@ export function ActionDrawer() {
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <label htmlFor="swap-mev-relay" className="block text-[11px] text-[#9AA4B2]">
+                          <label htmlFor="swap-mev-relay" className="block text-[11px] text-[#8E929B]">
                             MEV orderflow relay
                           </label>
                           <select
                             id="swap-mev-relay"
                             value={mevRelay}
                             onChange={(e) => setMevRelay(e.target.value as MevRelay)}
-                            className="w-full h-8 px-2 rounded-md bg-[#090B0E] border border-white/[0.08] text-xs text-[#F3F5F8] focus:outline-none"
+                            className="w-full h-8 px-2 rounded-md bg-[#16171B] border border-white/[0.08] text-xs text-[#F7F8FA] focus:outline-none"
                           >
                             <option value="flashbots">Flashbots Protect</option>
                             <option value="mev-blocker">MEV Blocker</option>
@@ -801,17 +797,13 @@ export function ActionDrawer() {
                   )}
 
                   {swapValidationError && (
-                    <p className="text-xs text-amber-300">{swapValidationError}</p>
+                    <p className="text-xs text-[#FFB547]">{swapValidationError}</p>
                   )}
 
                   <button
                     type="submit"
                     disabled={Boolean(swapValidationError)}
-                    className={`w-full py-3 px-4 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 btn-specular focus-ring ${
-                      mode === 'sentinel'
-                        ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
-                        : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
-                    }`}
+                    className="w-full py-3 px-4 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 btn-primary-white focus-ring"
                   >
                     <Shield className="w-4 h-4" />
                     <span>Simulate swap before signing</span>
@@ -822,7 +814,7 @@ export function ActionDrawer() {
                 <div className="space-y-5">
                   {/* Network Selector with Sliding Glass Thumb */}
                   <div className="space-y-2">
-                    <span className="block text-xs font-medium text-[#9AA4B2]">Receiving network</span>
+                    <span className="block text-xs font-medium text-[#8E929B]">Receiving network</span>
                     <SlidingSegmentedControl<NetworkId>
                       layoutId="receiveNetworkThumb"
                       ariaLabel="Select receiving network"
@@ -869,7 +861,7 @@ export function ActionDrawer() {
                                 y={rIdx}
                                 width={1}
                                 height={1}
-                                fill="#090B0E"
+                                fill="#050507"
                               />
                             ) : null
                           )
@@ -878,8 +870,8 @@ export function ActionDrawer() {
                     </div>
 
                     <div className="space-y-1 max-w-full">
-                      <p className="text-sm font-medium text-[#F3F5F8]">{settings.ensName}</p>
-                      <p className="font-mono text-xs text-[#9AA4B2] break-all px-2">
+                      <p className="text-sm font-medium text-[#F7F8FA]">{settings.ensName}</p>
+                      <p className="font-mono text-xs text-[#8E929B] break-all px-2">
                         {settings.walletAddress}
                       </p>
                     </div>
@@ -887,11 +879,11 @@ export function ActionDrawer() {
                     <button
                       type="button"
                       onClick={handleCopyAddress}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-medium text-[#F3F5F8] transition-colors whitespace-nowrap focus-ring"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg glass-btn text-xs font-medium text-[#F7F8FA] transition-colors whitespace-nowrap focus-ring"
                     >
                       {copiedAddress ? (
                         <>
-                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <Check className="w-3.5 h-3.5 text-[#2DF5C6]" />
                           <span>Address copied</span>
                         </>
                       ) : (
@@ -904,8 +896,8 @@ export function ActionDrawer() {
                   </motion.div>
 
                   {/* Optional Payment Request */}
-                  <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">
-                    <h4 className="text-xs font-medium text-[#C7D0DC]">
+                  <div className="p-4 glass-recessed space-y-3">
+                    <h4 className="text-xs font-medium text-[#D2D5DC]">
                       Request specific amount (optional)
                     </h4>
                     <div className="grid grid-cols-3 gap-2">
@@ -913,7 +905,7 @@ export function ActionDrawer() {
                         aria-label="Requested asset"
                         value={requestSymbol}
                         onChange={(e) => setRequestSymbol(e.target.value)}
-                        className="h-10 px-2.5 rounded-lg bg-[#090B0E] border border-white/[0.1] text-xs text-[#F3F5F8] focus:outline-none"
+                        className="h-10 px-2.5 rounded-lg bg-[#0B0C0E] border border-white/[0.09] text-xs text-[#F7F8FA] focus:outline-none"
                       >
                         <option value="USDC">USDC</option>
                         <option value="ETH">ETH</option>
@@ -928,27 +920,27 @@ export function ActionDrawer() {
                         value={requestAmount}
                         onChange={(e) => setRequestAmount(e.target.value)}
                         placeholder="Amount"
-                        className="col-span-2 h-10 px-3 rounded-lg bg-[#090B0E] border border-white/[0.1] font-mono tabular-nums text-xs text-[#F3F5F8] placeholder:text-[#6B7686] focus:outline-none"
+                        className="col-span-2 h-10 px-3 rounded-lg bg-[#0B0C0E] border border-white/[0.09] font-mono tabular-nums text-xs text-[#F7F8FA] placeholder:text-[#5C606A] focus:outline-none"
                       />
                     </div>
                     {mode === 'sentinel' && (
-                      <p className="font-mono text-[11px] text-[#6B7686] break-all">
+                      <p className="font-mono text-[11px] text-[#5C606A] break-all">
                         URI: {paymentUri}
                       </p>
                     )}
                   </div>
 
                   {/* Network Safety Notice + Sandbox Deposit Tester */}
-                  <div className="p-3.5 rounded-xl bg-amber-500/[0.06] border border-amber-500/20 text-xs text-amber-200/90 leading-relaxed">
+                  <div className="p-3.5 rounded-xl bg-[#FFB547]/[0.07] border border-[#FFB547]/25 text-xs text-[#FFD28A] leading-relaxed">
                     Only send EVM-compatible assets on{' '}
-                    <strong className="text-amber-200">{NETWORKS[receiveNetwork].name}</strong> (Chain ID{' '}
+                    <strong className="text-[#FFE4B5]">{NETWORKS[receiveNetwork].name}</strong> (Chain ID{' '}
                     {NETWORKS[receiveNetwork].chainId}). Sending non-EVM tokens may result in permanent loss.
                   </div>
 
                   <button
                     type="button"
                     onClick={handleSimulateTestDeposit}
-                    className="w-full py-2.5 px-4 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-medium text-[#F3F5F8] transition-colors focus-ring"
+                    className="w-full py-2.5 px-4 rounded-lg glass-btn text-xs font-medium text-[#F7F8FA] transition-colors focus-ring"
                   >
                     Simulate incoming test deposit (
                     {Number(requestAmount) > 0 ? requestAmount : requestSymbol === 'ETH' ? '0.5' : '500'}{' '}

@@ -4,16 +4,21 @@
 
 @layer base {
   :root {
-    --bg-canvas: #07090D;
-    --bg-surface: rgba(17, 22, 31, 0.62);
-    --bg-elevated: rgba(22, 28, 39, 0.78);
-    --border-hairline: rgba(255, 255, 255, 0.09);
-    --border-strong: rgba(255, 255, 255, 0.16);
-    --text-primary: #F4F7FB;
-    --text-secondary: #9EA9B8;
-    --text-muted: #6E7A8A;
-    --accent-guardian: #10B981;
-    --accent-sentinel: #38BDF8;
+    --bg-canvas: #050507;
+    --bg-sidebar: #000000;
+    --bg-surface: rgba(22, 23, 27, 0.86);
+    --bg-elevated: rgba(31, 33, 39, 0.88);
+    --border-hairline: rgba(255, 255, 255, 0.075);
+    --border-strong: rgba(255, 255, 255, 0.15);
+    --text-primary: #F7F8FA;
+    --text-secondary: #8E929B;
+    --text-muted: #5C606A;
+    --accent-guardian: #2DF5C6;
+    --accent-sentinel: #19C8FF;
+    --accent-iris: #7C5CFF;
+    --status-safe: #2DF5C6;
+    --status-warn: #FFB547;
+    --status-danger: #FF5B5B;
   }
 
   html {
@@ -39,10 +44,11 @@
 
 @layer components {
   /*
-   * Apple HIG Material & Liquid Glass System
-   * 1. Optical blur + vibrancy saturation boost (prevents muddy gray washout)
-   * 2. Directional top-edge specular rim light (inset 0 1px 0)
-   * 3. Strict material hierarchy: never stack glass-on-glass; inner containers use .glass-recessed
+   * Pitch-Black & Matte Graphite + Apple Liquid Glass System
+   * Inspired by high-contrast crypto fintech dark UI:
+   * - Pure black navigation rail (#000000 / #050507)
+   * - Neutral matte graphite surfaces (#16171B -> #1F2127) with subtle specular edge
+   * - Electric Mint (#2DF5C6) + Electric Cyan (#19C8FF) + crisp Pure White CTAs
    */
 
   /* Regular Glass Surface: primary cards, portfolio hero, tables, settings blocks */
@@ -50,15 +56,15 @@
   .glass-panel {
     background: linear-gradient(
       180deg,
-      rgba(25, 32, 44, 0.66) 0%,
-      rgba(15, 19, 27, 0.58) 100%
+      rgba(26, 28, 32, 0.88) 0%,
+      rgba(20, 21, 25, 0.86) 100%
     );
-    backdrop-filter: blur(20px) saturate(165%);
-    -webkit-backdrop-filter: blur(20px) saturate(165%);
-    border: 1px solid rgba(255, 255, 255, 0.095);
+    backdrop-filter: blur(20px) saturate(145%);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
+    border: 1px solid rgba(255, 255, 255, 0.075);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      0 12px 32px -12px rgba(0, 0, 0, 0.55);
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 14px 36px -14px rgba(0, 0, 0, 0.78);
     @apply rounded-2xl;
   }
 
@@ -70,111 +76,125 @@
   }
 
   .glass-panel-interactive:hover {
-    border-color: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.15);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 16px 38px -12px rgba(0, 0, 0, 0.65);
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 18px 40px -12px rgba(0, 0, 0, 0.85);
   }
 
-  /* Navigation Chrome Glass: sidebar & sticky top bar floating over scrolling content */
+  /* Navigation Chrome Glass: pitch-black sidebar & sticky top bar */
   .glass-chrome {
     background: linear-gradient(
       180deg,
-      rgba(14, 18, 26, 0.76) 0%,
-      rgba(10, 13, 19, 0.72) 100%
+      rgba(8, 9, 11, 0.92) 0%,
+      rgba(4, 4, 6, 0.90) 100%
     );
-    backdrop-filter: blur(26px) saturate(185%);
-    -webkit-backdrop-filter: blur(26px) saturate(185%);
+    backdrop-filter: blur(26px) saturate(160%);
+    -webkit-backdrop-filter: blur(26px) saturate(160%);
   }
 
   /* Thick Elevated Liquid Glass: pop-out sheets, lock modal, floating toasts */
   .glass-sheet {
     background: linear-gradient(
       180deg,
-      rgba(24, 31, 44, 0.84) 0%,
-      rgba(14, 18, 26, 0.86) 100%
+      rgba(24, 26, 30, 0.94) 0%,
+      rgba(15, 16, 19, 0.95) 100%
     );
-    backdrop-filter: blur(34px) saturate(195%);
-    -webkit-backdrop-filter: blur(34px) saturate(195%);
+    backdrop-filter: blur(34px) saturate(170%);
+    -webkit-backdrop-filter: blur(34px) saturate(170%);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 28px 80px rgba(0, 0, 0, 0.72);
+      inset 0 1px 0 rgba(255, 255, 255, 0.13),
+      0 28px 80px rgba(0, 0, 0, 0.9);
   }
 
-  /* Recessed Inner Well: sits inside glass panels & sheets (Apple HIG: no glass-on-glass) */
+  /* Recessed Inner Well: sits inside glass panels & sheets (matches #0B0C0E dark wells) */
   .glass-recessed {
-    background: rgba(7, 10, 15, 0.56);
-    border: 1px solid rgba(255, 255, 255, 0.075);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.32);
+    background: rgba(10, 11, 13, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.065);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
     @apply rounded-xl;
   }
 
-  /* Segmented Control Track & Liquid Specular Thumb */
+  /* Segmented Control Track & Specular Thumb */
   .glass-control {
-    background: rgba(8, 11, 16, 0.62);
-    backdrop-filter: blur(14px) saturate(150%);
-    -webkit-backdrop-filter: blur(14px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+    background: rgba(9, 10, 12, 0.86);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.52);
     @apply rounded-xl;
   }
 
   .glass-thumb {
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.14) 0%,
-      rgba(255, 255, 255, 0.07) 100%
+      rgba(48, 51, 59, 0.90) 0%,
+      rgba(32, 34, 40, 0.92) 100%
     );
     border: 1px solid rgba(255, 255, 255, 0.14);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      0 2px 8px rgba(0, 0, 0, 0.28);
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      0 2px 10px rgba(0, 0, 0, 0.42);
   }
 
-  /* Secondary glass button */
+  /* Secondary dark graphite button */
   .glass-btn {
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.09) 0%,
-      rgba(255, 255, 255, 0.04) 100%
+      rgba(38, 40, 47, 0.82) 0%,
+      rgba(26, 28, 33, 0.82) 100%
     );
-    border: 1px solid rgba(255, 255, 255, 0.11);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
     transition: background-color 160ms ease, border-color 160ms ease;
   }
 
   .glass-btn:hover {
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.14) 0%,
-      rgba(255, 255, 255, 0.07) 100%
+      rgba(50, 53, 62, 0.88) 0%,
+      rgba(34, 36, 43, 0.88) 100%
     );
-    border-color: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.17);
+  }
+
+  /* Crisp Pure-White Primary CTA (matches Cryptoline Deposit/Withdraw action buttons) */
+  .btn-primary-white {
+    background: #FFFFFF;
+    color: #090A0D;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 10px 24px -10px rgba(255, 255, 255, 0.28);
+    transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .btn-primary-white:hover {
+    background: #ECEEF2;
   }
 
   /* Primary CTA Specular Finish */
   .btn-specular {
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.35),
-      0 8px 20px -8px rgba(0, 0, 0, 0.5);
+      0 8px 22px -8px rgba(0, 0, 0, 0.65);
   }
 
   .hairline-divider {
-    @apply border-white/[0.08];
+    @apply border-white/[0.075];
   }
 
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#07090D];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2DF5C6]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050507];
   }
 
   .focus-ring-sentinel {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#07090D];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#19C8FF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050507];
   }
 }
 
 /*
  * Apple HIG Accessibility: Reduce Transparency
- * Swaps translucent materials to high-contrast opaque obsidian surfaces
+ * Swaps translucent materials to crisp opaque matte graphite surfaces
  * both via system preference and the in-app Settings toggle.
  */
 .reduce-transparency .surface-panel,
@@ -188,20 +208,20 @@
 
 .reduce-transparency .surface-panel,
 .reduce-transparency .glass-panel {
-  background: #11161F !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: #16171B !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
 }
 
 .reduce-transparency .glass-chrome {
-  background: #0C1017 !important;
+  background: #050507 !important;
 }
 
 .reduce-transparency .glass-sheet {
-  background: #121721 !important;
+  background: #141518 !important;
 }
 
 .reduce-transparency .glass-recessed {
-  background: #0A0D13 !important;
+  background: #0B0C0E !important;
 }
 
 @media (prefers-reduced-transparency: reduce) {
@@ -216,15 +236,15 @@
 
   .surface-panel,
   .glass-panel {
-    background: #11161F;
+    background: #16171B;
   }
 
   .glass-chrome {
-    background: #0C1017;
+    background: #050507;
   }
 
   .glass-sheet {
-    background: #121721;
+    background: #141518;
   }
 }
 
@@ -245,7 +265,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #07090D;
+  background: #050507;
 }
 
 ::-webkit-scrollbar-thumb {

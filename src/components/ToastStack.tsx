@@ -25,12 +25,12 @@ export function ToastStack() {
                   : Info;
           const iconColor =
             toast.tone === 'success'
-              ? 'text-emerald-400'
+              ? 'text-[#2DF5C6]'
               : toast.tone === 'warning'
-                ? 'text-amber-400'
+                ? 'text-[#FFB547]'
                 : toast.tone === 'danger'
-                  ? 'text-red-400'
-                  : 'text-sky-400';
+                  ? 'text-[#FF5B5B]'
+                  : 'text-[#19C8FF]';
 
           return (
             <motion.div
@@ -49,20 +49,20 @@ export function ToastStack() {
               }
               transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SNAPPY}
               style={{ willChange: 'transform, opacity' }}
-              className="pointer-events-auto glass-sheet border border-white/[0.15] rounded-2xl px-4 py-3.5 flex items-start gap-3"
+              className="pointer-events-auto glass-sheet border border-white/[0.12] rounded-2xl px-4 py-3.5 flex items-start gap-3"
             >
               <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${iconColor}`} />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-[#F3F5F8]">{toast.title}</p>
+                <p className="text-xs font-medium text-[#F7F8FA]">{toast.title}</p>
                 {toast.detail && (
-                  <p className="text-xs text-[#9AA4B2] mt-0.5 leading-snug">{toast.detail}</p>
+                  <p className="text-xs text-[#8E929B] mt-0.5 leading-snug">{toast.detail}</p>
                 )}
               </div>
               <button
                 type="button"
                 onClick={() => dismissToast(toast.id)}
                 aria-label="Dismiss notification"
-                className="text-[#6B7686] hover:text-white transition-colors shrink-0"
+                className="text-[#5C606A] hover:text-white transition-colors shrink-0"
               >
                 <X className="w-3.5 h-3.5" />
               </button>

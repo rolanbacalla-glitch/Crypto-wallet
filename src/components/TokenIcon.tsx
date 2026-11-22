@@ -16,7 +16,7 @@ const TOKEN_META: Record<string, { bg: string; fg: string }> = {
 };
 
 export function TokenIcon({ symbol, size = 34, className = '' }: TokenIconProps) {
-  const palette = TOKEN_META[symbol] || { bg: '#1C222B', fg: '#9AA4B2' };
+  const palette = TOKEN_META[symbol] || { bg: '#202227', fg: '#8E929B' };
 
   return (
     <div

@@ -66,16 +66,16 @@ export function SlidingSegmentedControl<T extends string>({
 
           const activeTextClass =
             accent === 'sky'
-              ? 'text-sky-300 font-medium'
+              ? 'text-[#19C8FF] font-medium'
               : accent === 'emerald'
-                ? 'text-emerald-300 font-medium'
-                : 'text-[#F4F7FB] font-medium';
+                ? 'text-[#2DF5C6] font-medium'
+                : 'text-[#F7F8FA] font-medium';
 
           const thumbSurfaceClass =
             accent === 'sky'
-              ? 'bg-sky-500/20 border border-sky-400/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]'
+              ? 'bg-[#19C8FF]/[0.15] border border-[#19C8FF]/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]'
               : accent === 'emerald'
-                ? 'bg-emerald-500/20 border border-emerald-400/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]'
+                ? 'bg-[#2DF5C6]/[0.14] border border-[#2DF5C6]/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]'
                 : 'glass-thumb';
 
           return (
@@ -87,7 +87,7 @@ export function SlidingSegmentedControl<T extends string>({
               onClick={() => onChange(opt.value)}
               className={`relative inline-flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap shrink-0 focus-ring ${sizeClasses} ${
                 mono ? 'font-mono tabular-nums' : 'font-medium'
-              } ${active ? activeTextClass : 'text-[#9EA9B8] hover:text-[#F4F7FB]'}`}
+              } ${active ? activeTextClass : 'text-[#8E929B] hover:text-[#F7F8FA]'}`}
             >
               {active && (
                 <motion.span

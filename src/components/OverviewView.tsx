@@ -108,18 +108,18 @@ export function OverviewView() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
           <div className="lg:col-span-7 space-y-5">
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs text-[#9AA4B2]">
+              <div className="flex items-center gap-2 text-xs text-[#8E929B]">
                 <span>Total vault balance</span>
                 <span aria-hidden="true">·</span>
                 <span>{assets.length} assets across 4 networks</span>
               </div>
               <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight font-mono tabular-nums text-[#F3F5F8]">
+                <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight font-mono tabular-nums text-[#F7F8FA]">
                   {formatFiat(totalPortfolioUsd, settings.currency)}
                 </h2>
                 <span
                   className={`font-mono tabular-nums text-sm font-medium ${
-                    isPositive24h ? 'text-emerald-400' : 'text-red-400'
+                    isPositive24h ? 'text-[#2DF5C6]' : 'text-[#FF5B5B]'
                   }`}
                 >
                   {isPositive24h ? '+' : ''}
@@ -129,16 +129,12 @@ export function OverviewView() {
               </div>
             </div>
 
-            {/* Primary Transaction Actions */}
+            {/* Primary Transaction Actions (Crisp Pure-White Primary CTA + Dark Graphite Secondaries) */}
             <div className="flex flex-wrap items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => openActionDrawer('send')}
-                className={`px-4 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2 transition-colors whitespace-nowrap shrink-0 btn-specular focus-ring ${
-                  mode === 'sentinel'
-                    ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
-                    : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
-                }`}
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2 whitespace-nowrap shrink-0 btn-primary-white focus-ring"
               >
                 <ArrowUpRight className="w-4 h-4" />
                 <span>Send</span>
@@ -146,17 +142,17 @@ export function OverviewView() {
               <button
                 type="button"
                 onClick={() => openActionDrawer('swap')}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium glass-btn text-[#F4F7FB] inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-ring"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium glass-btn text-[#F7F8FA] inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-ring"
               >
-                <ArrowDownUp className="w-4 h-4 text-[#9EA9B8]" />
+                <ArrowDownUp className="w-4 h-4 text-[#2DF5C6]" />
                 <span>Swap</span>
               </button>
               <button
                 type="button"
                 onClick={() => openActionDrawer('receive')}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium glass-btn text-[#F4F7FB] inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-ring"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium glass-btn text-[#F7F8FA] inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-ring"
               >
-                <Download className="w-4 h-4 text-[#9EA9B8]" />
+                <Download className="w-4 h-4 text-[#19C8FF]" />
                 <span>Receive</span>
               </button>
             </div>
@@ -165,7 +161,7 @@ export function OverviewView() {
           {/* Equity Curve */}
           <div className="lg:col-span-5 space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-[#9EA9B8]">Portfolio trend</span>
+              <span className="text-xs text-[#8E929B]">Portfolio trend</span>
               <SlidingSegmentedControl
                 layoutId="overviewRangeThumb"
                 options={RANGE_OPTIONS}
@@ -195,12 +191,12 @@ export function OverviewView() {
                     <linearGradient id={`nestPortfolioArea-${range}`} x1="0" y1="0" x2="0" y2="1">
                       <stop
                         offset="0%"
-                        stopColor={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
-                        stopOpacity="0.22"
+                        stopColor={mode === 'sentinel' ? '#19C8FF' : '#2DF5C6'}
+                        stopOpacity="0.24"
                       />
                       <stop
                         offset="100%"
-                        stopColor={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
+                        stopColor={mode === 'sentinel' ? '#19C8FF' : '#2DF5C6'}
                         stopOpacity="0"
                       />
                     </linearGradient>
@@ -209,8 +205,8 @@ export function OverviewView() {
                   <path
                     d={sparkline.linePath}
                     fill="none"
-                    stroke={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
-                    strokeWidth="2"
+                    stroke={mode === 'sentinel' ? '#19C8FF' : '#2DF5C6'}
+                    strokeWidth="2.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
@@ -221,18 +217,20 @@ export function OverviewView() {
         </div>
       </section>
 
-      {/* 4-Column Operational Safety Strip */}
+      {/* 4-Column Operational Safety Strip with Signature Vivid Crypto Icon Tiles */}
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="surface-panel p-4 flex flex-col justify-between gap-2">
-          <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
+        <div className="surface-panel p-4 flex flex-col justify-between gap-3">
+          <div className="flex items-center justify-between text-xs text-[#8E929B]">
             <span>Pre-sign shield</span>
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span className="w-7 h-7 rounded-lg bg-[#2DF5C6] text-[#050507] flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-4 h-4 stroke-[2.2]" />
+            </span>
           </div>
           <div>
-            <p className="font-mono tabular-nums text-lg font-semibold text-[#F3F5F8]">
+            <p className="font-mono tabular-nums text-lg font-semibold text-[#F7F8FA]">
               {blockedThreatsCount} {blockedThreatsCount === 1 ? 'threat' : 'threats'} blocked
             </p>
-            <p className="text-xs text-[#9AA4B2] mt-0.5">
+            <p className="text-xs text-[#8E929B] mt-0.5">
               {mode === 'sentinel'
                 ? 'Calldata & Permit2 heuristics armed'
                 : 'Simulates every Send and Swap'}
@@ -243,44 +241,52 @@ export function OverviewView() {
         <button
           type="button"
           onClick={() => setActiveTab('approvals')}
-          className="surface-panel glass-panel-interactive p-4 flex flex-col justify-between gap-2 text-left focus-ring"
+          className="surface-panel glass-panel-interactive p-4 flex flex-col justify-between gap-3 text-left focus-ring"
         >
-          <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
+          <div className="flex items-center justify-between text-xs text-[#8E929B]">
             <span>Token approvals</span>
-            <ShieldAlert
-              className={`w-4 h-4 ${atRiskApprovalsCount > 0 ? 'text-amber-400' : 'text-emerald-400'}`}
-            />
+            <span
+              className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                atRiskApprovalsCount > 0
+                  ? 'bg-[#FFB547] text-[#050507]'
+                  : 'bg-[#2DF5C6] text-[#050507]'
+              }`}
+            >
+              <ShieldAlert className="w-4 h-4 stroke-[2.2]" />
+            </span>
           </div>
           <div>
             <p
               className={`font-mono tabular-nums text-lg font-semibold ${
-                atRiskApprovalsCount > 0 ? 'text-amber-300' : 'text-emerald-400'
+                atRiskApprovalsCount > 0 ? 'text-[#FFB547]' : 'text-[#2DF5C6]'
               }`}
             >
               {atRiskApprovalsCount > 0 ? `${atRiskApprovalsCount} need review` : 'All allowances clean'}
             </p>
-            <p className="text-xs text-[#9AA4B2] mt-0.5">
+            <p className="text-xs text-[#8E929B] mt-0.5">
               {atRiskApprovalsCount > 0 ? 'Inspect & revoke unlimited spenders' : 'Zero unverified spenders active'}
             </p>
           </div>
         </button>
 
-        <div className="surface-panel p-4 flex flex-col justify-between gap-2">
-          <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
+        <div className="surface-panel p-4 flex flex-col justify-between gap-3">
+          <div className="flex items-center justify-between text-xs text-[#8E929B]">
             <span>Daily spend guardrail</span>
-            <span className="font-mono tabular-nums text-[#C7D0DC]">{spendProgressPct.toFixed(0)}%</span>
+            <span className="font-mono tabular-nums text-xs font-semibold text-[#9A7FFF]">
+              {spendProgressPct.toFixed(0)}%
+            </span>
           </div>
           <div className="space-y-2">
-            <p className="font-mono tabular-nums text-lg font-semibold text-[#F3F5F8]">
+            <p className="font-mono tabular-nums text-lg font-semibold text-[#F7F8FA]">
               {formatFiat(todaySpentUsd, settings.currency)}{' '}
-              <span className="text-xs font-normal text-[#9AA4B2]">
+              <span className="text-xs font-normal text-[#8E929B]">
                 / {formatFiat(settings.dailySpendLimitUsd, settings.currency, true)}
               </span>
             </p>
-            <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+            <div className="h-1.5 rounded-full bg-white/[0.07] overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all ${
-                  spendProgressPct > 85 ? 'bg-amber-400' : 'bg-emerald-500'
+                  spendProgressPct > 85 ? 'bg-[#FFB547]' : 'bg-[#7C5CFF]'
                 }`}
                 style={{ width: `${Math.max(4, spendProgressPct)}%` }}
               />
@@ -288,22 +294,22 @@ export function OverviewView() {
           </div>
         </div>
 
-        <div className="surface-panel p-4 flex flex-col justify-between gap-2">
-          <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
+        <div className="surface-panel p-4 flex flex-col justify-between gap-3">
+          <div className="flex items-center justify-between text-xs text-[#8E929B]">
             <span>{mode === 'sentinel' ? 'Orderflow & L1 gas' : 'MEV protection'}</span>
-            <span className="text-xs font-mono text-sky-400">
+            <span className="px-2 py-0.5 rounded-md bg-[#19C8FF]/[0.14] text-xs font-mono font-medium text-[#19C8FF]">
               {NETWORKS.ethereum.baseFeeGwei} gwei
             </span>
           </div>
           <div>
-            <p className="text-lg font-semibold text-[#F3F5F8]">
+            <p className="text-lg font-semibold text-[#F7F8FA]">
               {settings.defaultMevRelay === 'flashbots'
                 ? 'Flashbots Protect'
                 : settings.defaultMevRelay === 'mev-blocker'
                   ? 'MEV Blocker'
                   : 'Public Mempool'}
             </p>
-            <p className="text-xs text-[#9AA4B2] mt-0.5">
+            <p className="text-xs text-[#8E929B] mt-0.5">
               {settings.defaultMevRelay === 'public'
                 ? 'Private shielding disabled in Settings'
                 : 'Private RPC shields swaps from sandwich bots'}
@@ -316,17 +322,17 @@ export function OverviewView() {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
         {/* Top Holdings Table */}
         <section className="xl:col-span-7 surface-panel overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/[0.08] flex items-center justify-between gap-3">
+          <div className="px-5 py-4 border-b border-white/[0.07] flex items-center justify-between gap-3">
             <div>
-              <h3 className="font-display text-base font-semibold text-[#F3F5F8]">Top holdings</h3>
-              <p className="text-xs text-[#9AA4B2] mt-0.5">
+              <h3 className="font-display text-base font-semibold text-[#F7F8FA]">Top holdings</h3>
+              <p className="text-xs text-[#8E929B] mt-0.5">
                 Select any asset to simulate a Send or Swap
               </p>
             </div>
             <button
               type="button"
               onClick={() => setActiveTab('assets')}
-              className="text-xs font-medium text-[#9AA4B2] hover:text-white inline-flex items-center gap-1 transition-colors whitespace-nowrap shrink-0 focus-ring rounded px-1.5 py-1"
+              className="text-xs font-medium text-[#8E929B] hover:text-white inline-flex items-center gap-1 transition-colors whitespace-nowrap shrink-0 focus-ring rounded px-1.5 py-1"
             >
               <span>All assets</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -336,7 +342,7 @@ export function OverviewView() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-white/[0.06] text-[11px] font-medium text-[#6B7686]">
+                <tr className="border-b border-white/[0.06] text-[11px] font-medium text-[#5C606A]">
                   <th className="py-2.5 pl-5 pr-3">Asset</th>
                   <th className="py-2.5 px-3 text-right">Balance</th>
                   <th className="py-2.5 px-3 text-right">Value</th>
@@ -356,26 +362,26 @@ export function OverviewView() {
                         <div className="flex items-center gap-3">
                           <TokenIcon symbol={asset.symbol} size={32} />
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-[#F3F5F8] truncate">
+                            <p className="text-sm font-medium text-[#F7F8FA] truncate">
                               {asset.name}
                             </p>
-                            <p className="text-xs text-[#9AA4B2] truncate">
+                            <p className="text-xs text-[#8E929B] truncate">
                               {asset.symbol} · {net.shortName}
                               {mode === 'sentinel' && asset.stakingApr ? ` · ${asset.stakingApr}% APR` : ''}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="py-3 px-3 text-right font-mono tabular-nums text-xs text-[#C7D0DC] whitespace-nowrap">
+                      <td className="py-3 px-3 text-right font-mono tabular-nums text-xs text-[#D2D5DC] whitespace-nowrap">
                         {formatTokenAmount(asset.balance)} {asset.symbol}
                       </td>
                       <td className="py-3 px-3 text-right font-mono tabular-nums whitespace-nowrap">
-                        <p className="text-sm font-medium text-[#F3F5F8]">
+                        <p className="text-sm font-medium text-[#F7F8FA]">
                           {formatFiat(valueUsd, settings.currency)}
                         </p>
                         <p
                           className={`text-[11px] ${
-                            asset.change24hPct >= 0 ? 'text-emerald-400' : 'text-red-400'
+                            asset.change24hPct >= 0 ? 'text-[#2DF5C6]' : 'text-[#FF5B5B]'
                           }`}
                         >
                           {asset.change24hPct >= 0 ? '+' : ''}
@@ -387,14 +393,14 @@ export function OverviewView() {
                           <button
                             type="button"
                             onClick={() => openActionDrawer('send', asset.id)}
-                            className="px-2.5 py-1 rounded-md text-xs font-medium bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] text-[#F3F5F8] transition-colors"
+                            className="px-2.5 py-1 rounded-md text-xs font-medium glass-btn text-[#F7F8FA]"
                           >
                             Send
                           </button>
                           <button
                             type="button"
                             onClick={() => openActionDrawer('swap', asset.id)}
-                            className="px-2.5 py-1 rounded-md text-xs font-medium bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] text-[#C7D0DC] transition-colors"
+                            className="px-2.5 py-1 rounded-md text-xs font-medium glass-btn text-[#D2D5DC]"
                           >
                             Swap
                           </button>
@@ -410,17 +416,17 @@ export function OverviewView() {
 
         {/* Recent Activity Feed */}
         <section className="xl:col-span-5 surface-panel overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/[0.08] flex items-center justify-between gap-3">
+          <div className="px-5 py-4 border-b border-white/[0.07] flex items-center justify-between gap-3">
             <div>
-              <h3 className="font-display text-base font-semibold text-[#F3F5F8]">Recent activity</h3>
-              <p className="text-xs text-[#9AA4B2] mt-0.5">
+              <h3 className="font-display text-base font-semibold text-[#F7F8FA]">Recent activity</h3>
+              <p className="text-xs text-[#8E929B] mt-0.5">
                 Confirmed transfers and intercepted threats
               </p>
             </div>
             <button
               type="button"
               onClick={() => setActiveTab('activity')}
-              className="text-xs font-medium text-[#9AA4B2] hover:text-white inline-flex items-center gap-1 transition-colors whitespace-nowrap shrink-0 focus-ring rounded px-1.5 py-1"
+              className="text-xs font-medium text-[#8E929B] hover:text-white inline-flex items-center gap-1 transition-colors whitespace-nowrap shrink-0 focus-ring rounded px-1.5 py-1"
             >
               <span>Full log</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -442,10 +448,10 @@ export function OverviewView() {
                     <div
                       className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 ${
                         isBlocked
-                          ? 'bg-red-500/[0.1] border-red-500/25 text-red-400'
+                          ? 'bg-[#FF5B5B]/[0.12] border-[#FF5B5B]/30 text-[#FF5B5B]'
                           : tx.type === 'receive'
-                            ? 'bg-emerald-500/[0.1] border-emerald-500/25 text-emerald-400'
-                            : 'bg-white/[0.04] border-white/[0.08] text-[#C7D0DC]'
+                            ? 'bg-[#2DF5C6]/[0.12] border-[#2DF5C6]/30 text-[#2DF5C6]'
+                            : 'bg-[#0B0C0E] border-white/[0.08] text-[#D2D5DC]'
                       }`}
                     >
                       {isBlocked ? (
@@ -459,8 +465,8 @@ export function OverviewView() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-[#F3F5F8] truncate">{tx.title}</p>
-                      <p className="text-xs text-[#9AA4B2] truncate">
+                      <p className="text-sm font-medium text-[#F7F8FA] truncate">{tx.title}</p>
+                      <p className="text-xs text-[#8E929B] truncate">
                         {isBlocked ? 'Blocked by Nest' : NETWORKS[tx.network].shortName} ·{' '}
                         {formatRelativeTime(tx.timestamp)}
                         {mode === 'sentinel' && tx.mevProtected ? ' · MEV shielded' : ''}
@@ -472,19 +478,19 @@ export function OverviewView() {
                       <p
                         className={`text-xs font-medium ${
                           isBlocked
-                            ? 'text-red-400 line-through'
+                            ? 'text-[#FF5B5B] line-through'
                             : primaryDiff.direction === 'in'
-                              ? 'text-emerald-400'
-                              : 'text-[#F3F5F8]'
+                              ? 'text-[#2DF5C6]'
+                              : 'text-[#F7F8FA]'
                         }`}
                       >
                         {primaryDiff.direction === 'in' ? '+' : '-'}
                         {formatTokenAmount(Math.abs(primaryDiff.delta))} {primaryDiff.symbol}
                       </p>
                     ) : (
-                      <p className="text-xs text-emerald-400">Revoked</p>
+                      <p className="text-xs text-[#19C8FF]">Revoked</p>
                     )}
-                    <p className="text-[11px] text-[#6B7686]">
+                    <p className="text-[11px] text-[#5C606A]">
                       {isBlocked ? 'Protected' : formatFiat(primaryDiff?.usdValue || 0, settings.currency)}
                     </p>
                   </div>
