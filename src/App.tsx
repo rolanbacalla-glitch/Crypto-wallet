@@ -12,7 +12,6 @@ import {
   Settings,
   Shield,
   ShieldCheck,
-  Terminal,
   Wallet,
   X,
 } from 'lucide-react';
@@ -33,7 +32,7 @@ import {
   APPLE_SPRING_SHEET,
   APPLE_SPRING_SNAPPY,
 } from './motion/appleMotion';
-import type { NavTab, WalletMode } from './types/wallet';
+import type { NavTab } from './types/wallet';
 
 const NAV_ORDER: Record<NavTab, number> = {
   overview: 0,
@@ -118,7 +117,6 @@ function VaultLockScreen() {
 function WalletShell() {
   const {
     mode,
-    setMode,
     activeTab,
     setActiveTab,
     isLocked,
@@ -361,64 +359,14 @@ function WalletShell() {
 
           {/* Main Workspace Canvas */}
           <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-8 py-6 md:py-8 space-y-6">
-            {/* Workspace Toolbar: Section Title + Instant Guardian / Sentinel Toggle */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-3 border-b border-white/[0.07]">
+            {/* Workspace Toolbar: Section Title */}
+            <div className="pb-3 border-b border-white/[0.07]">
               <div className="space-y-1">
                 <h1 className="font-display text-2xl font-bold text-[#F7F8FA] text-balance">
                   {currentMeta.heading}
                 </h1>
                 <p className="text-sm text-[#8E929B]">{currentMeta.subtitle}</p>
               </div>
-
-              {/* Instant Mode Switcher with Apple Liquid Glass Track & Specular Thumb */}
-              <LayoutGroup id="wallet-mode-switcher">
-                <div
-                  role="group"
-                  aria-label="Safety interface mode"
-                  className="inline-flex items-center gap-1 p-1 glass-control self-start sm:self-auto shrink-0 relative"
-                >
-                  {(
-                    [
-                      { id: 'guardian', label: 'Guardian', icon: Shield },
-                      { id: 'sentinel', label: 'Sentinel', icon: Terminal },
-                    ] as Array<{ id: WalletMode; label: string; icon: React.ElementType }>
-                  ).map((item) => {
-                    const active = mode === item.id;
-                    const Icon = item.icon;
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => setMode(item.id)}
-                        aria-pressed={active}
-                        className={`relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 focus-ring ${
-                          active
-                            ? item.id === 'sentinel'
-                              ? 'text-[#19C8FF]'
-                              : 'text-[#2DF5C6]'
-                            : 'text-[#8E929B] hover:text-white'
-                        }`}
-                      >
-                        {active && (
-                          <motion.span
-                            layoutId="walletModeThumb"
-                            transition={
-                              prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SNAPPY
-                            }
-                            className={`absolute inset-0 rounded-lg border shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] ${
-                              item.id === 'sentinel'
-                                ? 'bg-[#19C8FF]/[0.15] border-[#19C8FF]/35'
-                                : 'bg-[#2DF5C6]/[0.14] border-[#2DF5C6]/35'
-                            }`}
-                          />
-                        )}
-                        <Icon className="w-3.5 h-3.5 relative z-10" />
-                        <span className="relative z-10">{item.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </LayoutGroup>
             </div>
 
             {/* Active Route View with Instant Directional Slide Transition (never blocks or deadlocks nested layoutId controls) */}
