@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,25 +8,21 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        serif: ["Roboto Serif", "serif"],
-        sans: ["Outfit", "sans-serif"],
+        display: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
-        lime: {
-          50: '#f7fee7',
-          100: '#ecfccb',
-          200: '#d9f99d',
-          300: '#bef264',
-          400: '#a3e635',
-          500: '#84cc16',
-          600: '#65a30d',
-          700: '#4d7c0f',
-          800: '#3f6212',
-          900: '#365314',
-          950: '#1a2e05',
+        obsidian: {
+          950: '#090B0E',
+          900: '#0E1116',
+          850: '#11151C',
+          800: '#161B22',
+          750: '#1C222B',
+          700: '#242C37',
         },
       },
     },
   },
   plugins: [],
-}
+};

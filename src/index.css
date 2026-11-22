@@ -3,61 +3,96 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-[#030303] text-white selection:bg-lime-500/30;
-    font-family: var(--font-sans);
+  :root {
+    --bg-canvas: #090B0E;
+    --bg-surface: #11151C;
+    --bg-elevated: #161B22;
+    --border-hairline: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --text-primary: #F3F5F8;
+    --text-secondary: #9AA4B2;
+    --text-muted: #6B7686;
+    --accent-guardian: #10B981;
+    --accent-sentinel: #38BDF8;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-serif);
+  html {
+    color-scheme: dark;
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+  }
+
+  body {
+    font-family: "DM Sans", system-ui, sans-serif;
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    letter-spacing: -0.015em;
   }
 }
 
 @layer components {
-  .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10;
-  }
-  
-  .glass-lime {
-    @apply bg-lime-500/5 backdrop-blur-xl border border-lime-500/20;
+  .surface-panel {
+    @apply bg-[#11151C] border border-white/[0.08] rounded-xl;
   }
 
-  .glass-blue {
-    @apply bg-blue-500/5 backdrop-blur-xl border border-blue-500/20;
+  .surface-elevated {
+    @apply bg-[#161B22] border border-white/[0.09] rounded-xl;
+  }
+
+  .hairline-divider {
+    @apply border-white/[0.08];
+  }
+
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#090B0E];
+  }
+
+  .focus-ring-sentinel {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#090B0E];
   }
 }
 
 @layer utilities {
-  .text-glow-lime {
-    text-shadow: 0 0 20px rgba(132, 204, 22, 0.5);
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 
-  .text-glow-blue {
-    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  .text-balance {
+    text-wrap: balance;
   }
+}
 
-  .bg-grid-blue {
-    background-size: 30px 30px;
-    background-image: 
-      linear-gradient(to right, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
-  }
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-  .bg-grid {
-    background-size: 40px 40px;
-    background-image: 
-      linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  }
+::-webkit-scrollbar-track {
+  background: #090B0E;
+}
 
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient 15s ease infinite;
-  }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
 
-  @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

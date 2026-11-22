@@ -1,256 +1,365 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ShieldCheck, 
-  TrendingUp, 
-  ArrowUpRight, 
-  ArrowDownLeft, 
-  Zap, 
-  Plus, 
-  AlertCircle,
-  LayoutDashboard,
-  Wallet,
-  History,
-  Settings as SettingsIcon,
-  Shield,
+import React, { useState } from 'react';
+import {
   Activity,
-  Terminal as TerminalIcon,
+  ArrowUpRight,
+  Check,
+  Copy,
+  KeyRound,
+  LayoutDashboard,
+  Lock,
   Menu,
+  Settings,
+  Shield,
+  ShieldCheck,
+  Terminal,
+  Wallet,
   X,
-  Search,
-  Bell
 } from 'lucide-react';
-import { 
-  cn, 
-  AppState, 
-  UserPersona, 
-  SidebarItem 
-} from './components/Shared';
-import { BeginnerDashboard } from './components/BeginnerDashboard';
-import { ExpertDashboard } from './components/ExpertDashboard';
+import { ActionDrawer } from './components/ActionDrawer';
+import { ActivityView } from './components/ActivityView';
+import { ApprovalsView } from './components/ApprovalsView';
+import { AssetsView } from './components/AssetsView';
+import { OverviewView } from './components/OverviewView';
+import { SettingsView } from './components/SettingsView';
+import { ToastStack } from './components/ToastStack';
+import { useWallet, WalletProvider } from './context/WalletContext';
+import { shortenAddress } from './data/initialWalletData';
+import type { NavTab, WalletMode } from './types/wallet';
 
-function App() {
-  const [appState, setAppState] = useState<AppState>('onboarding');
-  const [userPersona, setUserPersona] = useState<UserPersona>('normal');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('Overview');
+const NAV_META: Record<NavTab, { label: string; heading: string; subtitle: string; icon: React.ElementType }> = {
+  overview: {
+    label: 'Overview',
+    heading: 'Portfolio overview',
+    subtitle: 'Simulate every transfer and swap before signing.',
+    icon: LayoutDashboard,
+  },
+  assets: {
+    label: 'Assets',
+    heading: 'Multi-chain assets',
+    subtitle: 'Live holdings across Ethereum, Base, Arbitrum, and Optimism.',
+    icon: Wallet,
+  },
+  activity: {
+    label: 'Activity',
+    heading: 'Transaction ledger',
+    subtitle: 'Chronological record of confirmed transfers and intercepted threats.',
+    icon: Activity,
+  },
+  approvals: {
+    label: 'Approvals',
+    heading: 'Token approvals',
+    subtitle: 'Audit active smart contract allowances and revoke unnecessary spenders.',
+    icon: ShieldCheck,
+  },
+  settings: {
+    label: 'Settings',
+    heading: 'Vault settings',
+    subtitle: 'Configure guardrails, MEV orderflow relays, and display preferences.',
+    icon: Settings,
+  },
+};
 
-  // Auto-open sidebar on desktop, close on mobile
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const handler = (e: MediaQueryListEvent | MediaQueryList) => setIsSidebarOpen(e.matches);
-    handler(mq);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-
-  // --- Render Helpers ---
-
-  if (appState === 'auth') {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4 bg-grid">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="glass max-w-md w-full p-8 rounded-[2rem] text-center border-white/5"
+function VaultLockScreen() {
+  const { unlockVault, settings } = useWallet();
+  return (
+    <div className="min-h-screen bg-[#090B0E] flex items-center justify-center p-6">
+      <div className="w-full max-w-md surface-panel p-8 space-y-6 text-center">
+        <div className="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto">
+          <Lock className="w-5 h-5 text-emerald-400" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="font-display text-2xl font-bold text-[#F3F5F8] text-balance">
+            Nest Wallet is locked
+          </h1>
+          <p className="text-sm text-[#9AA4B2]">
+            {settings.walletLabel} · <span className="font-mono">{shortenAddress(settings.walletAddress)}</span>
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={unlockVault}
+          className="w-full py-3 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-[#04140D] font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors focus-ring"
         >
-          <div className="w-20 h-20 bg-lime-500 rounded-3xl mx-auto mb-8 flex items-center justify-center shadow-[0_0_50px_rgba(132,204,22,0.3)]">
-            <ShieldCheck className="w-10 h-10 text-black" />
-          </div>
-          <h1 className="text-4xl font-serif font-bold mb-4">Welcome Back</h1>
-          <p className="text-white/40 mb-8 font-medium">Verify your identity to access your secure vault.</p>
-          <button 
-            onClick={() => setAppState('onboarding')}
-            className="w-full py-4 bg-white text-black font-black text-sm rounded-2xl hover:bg-lime-400 transition-all active:scale-95"
-          >
-            UNLOCK WALLET
-          </button>
-        </motion.div>
+          <KeyRound className="w-4 h-4" />
+          <span>Unlock with Passkey</span>
+        </button>
       </div>
-    );
+    </div>
+  );
+}
+
+function WalletShell() {
+  const {
+    mode,
+    setMode,
+    activeTab,
+    setActiveTab,
+    isLocked,
+    lockVault,
+    settings,
+    atRiskApprovalsCount,
+    openActionDrawer,
+    addToast,
+  } = useWallet();
+
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [copiedAddr, setCopiedAddr] = useState(false);
+
+  if (isLocked) {
+    return <VaultLockScreen />;
   }
 
-  if (appState === 'onboarding') {
-    return (
-      <div className="min-h-screen bg-[#030303] flex items-center justify-center p-4 bg-grid">
-        <div className="max-w-4xl w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+  const currentMeta = NAV_META[activeTab];
+
+  const handleCopyWallet = async () => {
+    try {
+      await navigator.clipboard.writeText(settings.walletAddress);
+    } catch {
+      // Clipboard may be restricted in embedded preview
+    }
+    setCopiedAddr(true);
+    addToast({
+      tone: 'success',
+      title: 'Vault address copied',
+      detail: shortenAddress(settings.walletAddress),
+    });
+    window.setTimeout(() => setCopiedAddr(false), 1800);
+  };
+
+  const renderSidebarContent = () => (
+    <div className="flex flex-col h-full">
+      {/* Brand Wordmark */}
+      <div className="h-16 px-5 border-b border-white/[0.08] flex items-center justify-between shrink-0">
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('overview');
+            setMobileNavOpen(false);
+          }}
+          className="flex items-center gap-2.5 text-left focus-ring rounded-md"
+        >
+          <div
+            className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+              mode === 'sentinel'
+                ? 'bg-sky-500/15 border border-sky-400/35 text-sky-400'
+                : 'bg-emerald-500/15 border border-emerald-400/35 text-emerald-400'
+            }`}
           >
-            <h1 className="text-5xl md:text-6xl font-serif font-black mb-6 tracking-tight">Tailor your experience</h1>
-            <p className="text-white/40 text-lg max-w-xl mx-auto">Choose how you'd like to interact with the Ethereum network.</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <motion.div
-              whileHover={{ y: -10 }}
-              onClick={() => { setUserPersona('normal'); setAppState('dashboard'); }}
-              className="glass p-8 rounded-[2.5rem] cursor-pointer group border-white/5 hover:border-lime-500/30 transition-all text-left"
-            >
-              <div className="w-16 h-16 bg-lime-500/10 rounded-2xl mb-8 flex items-center justify-center border border-lime-500/20 group-hover:bg-lime-500 transition-colors">
-                <ShieldCheck className="w-8 h-8 text-lime-400 group-hover:text-black" />
-              </div>
-              <h3 className="text-3xl font-serif font-bold mb-4">I'm a beginner</h3>
-              <p className="text-white/40 text-sm leading-relaxed mb-8">Focus on safety, easy transactions, and clear protection alerts. No technical jargon.</p>
-              <div className="flex items-center gap-2 text-lime-400 text-xs font-black uppercase tracking-widest">
-                <span>Select Guardian Mode</span>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </div>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ y: -10 }}
-              onClick={() => { setUserPersona('advanced'); setAppState('dashboard'); }}
-              className="glass p-8 rounded-[2.5rem] cursor-pointer group border-white/5 hover:border-blue-500/30 transition-all text-left"
-            >
-              <div className="w-16 h-16 bg-blue-500/10 rounded-2xl mb-8 flex items-center justify-center border border-blue-500/20 group-hover:bg-blue-500 transition-colors">
-                <TerminalIcon className="w-8 h-8 text-blue-400 group-hover:text-black" />
-              </div>
-              <h3 className="text-3xl font-serif font-bold mb-4">I'm an expert</h3>
-              <p className="text-white/40 text-sm leading-relaxed mb-8">Full access to raw traces, mempool monitoring, MEV protection, and multi-chain orchestration.</p>
-              <div className="flex items-center gap-2 text-blue-400 text-xs font-black uppercase tracking-widest">
-                <span>Select Sentinel Mode</span>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </div>
-            </motion.div>
+            <Shield className="w-4 h-4" />
           </div>
+          <span className="font-display text-base font-bold text-[#F3F5F8] whitespace-nowrap">
+            Nest Wallet
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileNavOpen(false)}
+          aria-label="Close navigation"
+          className="lg:hidden w-8 h-8 rounded-lg hover:bg-white/[0.06] flex items-center justify-center text-[#9AA4B2]"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Primary Navigation */}
+      <nav aria-label="Primary navigation" className="flex-1 px-3 py-4 space-y-1">
+        {(Object.keys(NAV_META) as NavTab[]).map((tabKey) => {
+          const item = NAV_META[tabKey];
+          const Icon = item.icon;
+          const active = activeTab === tabKey;
+          return (
+            <button
+              key={tabKey}
+              type="button"
+              onClick={() => {
+                setActiveTab(tabKey);
+                setMobileNavOpen(false);
+              }}
+              className={`w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap focus-ring ${
+                active
+                  ? 'bg-[#181E27] text-[#F3F5F8] border border-white/[0.08]'
+                  : 'text-[#9AA4B2] hover:text-[#F3F5F8] hover:bg-white/[0.03] border border-transparent'
+              }`}
+            >
+              <span className="flex items-center gap-2.5 min-w-0">
+                <Icon
+                  className={`w-4 h-4 shrink-0 ${
+                    active
+                      ? mode === 'sentinel'
+                        ? 'text-sky-400'
+                        : 'text-emerald-400'
+                      : 'text-[#6B7686]'
+                  }`}
+                />
+                <span className="truncate">{item.label}</span>
+              </span>
+              {tabKey === 'approvals' && atRiskApprovalsCount > 0 && (
+                <span className="font-mono tabular-nums text-xs text-amber-400 shrink-0">
+                  {atRiskApprovalsCount}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Vault Account Footer */}
+      <div className="p-3 border-t border-white/[0.08] space-y-2 shrink-0">
+        <div className="px-3 py-2.5 rounded-lg bg-[#0D1015] border border-white/[0.07] flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={handleCopyWallet}
+            className="min-w-0 text-left group focus-ring rounded"
+            title="Copy vault address"
+          >
+            <p className="text-xs font-medium text-[#F3F5F8] truncate">{settings.walletLabel}</p>
+            <p className="font-mono text-[11px] text-[#9AA4B2] group-hover:text-white transition-colors truncate flex items-center gap-1">
+              <span>{shortenAddress(settings.walletAddress)}</span>
+              {copiedAddr ? (
+                <Check className="w-3 h-3 text-emerald-400 shrink-0" />
+              ) : (
+                <Copy className="w-3 h-3 text-[#6B7686] shrink-0" />
+              )}
+            </p>
+          </button>
+          <button
+            type="button"
+            onClick={lockVault}
+            aria-label="Lock vault"
+            title="Lock vault"
+            className="w-8 h-8 rounded-md hover:bg-white/[0.06] flex items-center justify-center text-[#9AA4B2] hover:text-white transition-colors shrink-0 focus-ring"
+          >
+            <Lock className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
-    <div className={cn(
-      "min-h-screen bg-[#030303] flex text-white relative",
-      userPersona === 'normal' ? "bg-grid" : "bg-grid-blue"
-    )}>
-      {/* Mobile Sidebar Backdrop */}
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsSidebarOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+    <div className="min-h-screen bg-[#090B0E] text-[#F3F5F8] flex">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex w-64 shrink-0 border-r border-white/[0.08] bg-[#0C0F14] sticky top-0 h-screen flex-col">
+        {renderSidebarContent()}
+      </aside>
+
+      {/* Mobile Sidebar Drawer */}
+      {mobileNavOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-[2px]"
+            onClick={() => setMobileNavOpen(false)}
           />
-        )}
-      </AnimatePresence>
+          <aside className="relative z-10 w-64 max-w-[82vw] bg-[#0C0F14] border-r border-white/[0.08] h-full flex flex-col">
+            {renderSidebarContent()}
+          </aside>
+        </div>
+      )}
 
-      {/* Sidebar */}
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <motion.aside
-            key="sidebar"
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            exit={{ x: -300 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed lg:sticky top-0 left-0 w-72 border-r border-white/5 bg-black/90 lg:bg-black/50 backdrop-blur-2xl flex flex-col p-6 h-screen z-50"
-          >
-            <div className="flex items-center gap-3 mb-12">
-              <div className={cn(
-                "w-10 h-10 rounded-xl flex items-center justify-center shadow-lg",
-                userPersona === 'normal' ? "bg-lime-500 shadow-lime-500/20" : "bg-blue-500 shadow-blue-500/20"
-              )}>
-                <ShieldCheck className="w-6 h-6 text-black" />
-              </div>
-              <h1 className="text-xl font-serif font-bold tracking-tight">Nest Wallet</h1>
-            </div>
-
-            <nav className="flex-1 space-y-2">
-              <SidebarItem icon={LayoutDashboard} label="Dashboard" active={activeTab === 'Overview'} onClick={() => { setActiveTab('Overview'); setIsSidebarOpen(false); }} persona={userPersona} />
-              <SidebarItem icon={Wallet} label="Assets" active={activeTab === 'Assets'} onClick={() => { setActiveTab('Assets'); setIsSidebarOpen(false); }} persona={userPersona} />
-              <SidebarItem icon={Activity} label="Activities" active={activeTab === 'Activities'} onClick={() => { setActiveTab('Activities'); setIsSidebarOpen(false); }} persona={userPersona} />
-              <SidebarItem icon={History} label="History" active={activeTab === 'History'} onClick={() => { setActiveTab('History'); setIsSidebarOpen(false); }} persona={userPersona} />
-            </nav>
-
-            <div className="mt-auto pt-6 border-t border-white/5 space-y-2">
-              <SidebarItem icon={SettingsIcon} label="Settings" active={activeTab === 'Settings'} onClick={() => { setActiveTab('Settings'); setIsSidebarOpen(false); }} persona={userPersona} />
-              <div 
-                onClick={() => { setAppState('onboarding'); setIsSidebarOpen(false); }}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer text-white/30 hover:text-white transition-colors group"
-              >
-                <LayoutDashboard className="w-5 h-5 group-hover:text-red-400" />
-                <span className="text-sm font-medium">Switch Mode</span>
-              </div>
-            </div>
-          </motion.aside>
-        )}
-      </AnimatePresence>
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-x-hidden min-h-screen flex flex-col">
-        {/* Header */}
-        <header className="h-24 px-4 md:px-8 flex items-center justify-between border-b border-white/5 sticky top-0 bg-black/20 backdrop-blur-md z-40">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              aria-label="Toggle navigation menu"
-              className="lg:hidden w-12 h-12 glass rounded-2xl flex items-center justify-center hover:bg-white/10 transition-colors"
+      {/* Main Content Shell */}
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* Clean 3-Zone Top Bar */}
+        <header className="h-16 px-4 md:px-8 border-b border-white/[0.08] bg-[#090B0E]/90 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen(true)}
+              aria-label="Open navigation menu"
+              className="lg:hidden w-9 h-9 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] flex items-center justify-center text-[#C7D0DC] shrink-0"
             >
-              <AnimatePresence mode="wait">
-                {isSidebarOpen ? (
-                  <motion.span key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                    <X className="w-6 h-6" />
-                  </motion.span>
-                ) : (
-                  <motion.span key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                    <Menu className="w-6 h-6" />
-                  </motion.span>
-                )}
-              </AnimatePresence>
+              <Menu className="w-4 h-4" />
             </button>
-            <div>
-              <h2 className="text-2xl font-serif font-bold">
-                {userPersona === 'normal' ? 'Guardian Dashboard' : 'Sentinel Terminal'}
-              </h2>
-              <p className="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em] mt-0.5">
-                {userPersona === 'normal' ? 'PROTECTING YOUR SAVINGS' : 'EVM_PROTOCOL_COMMANDER'}
-              </p>
+            <div className="flex items-center gap-2 text-sm min-w-0 whitespace-nowrap">
+              <span className="text-[#6B7686] hidden sm:inline">Nest Wallet</span>
+              <span className="text-[#6B7686] hidden sm:inline" aria-hidden="true">/</span>
+              <span className="font-medium text-[#F3F5F8] truncate">{currentMeta.label}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-             <div className="hidden md:flex items-center gap-2 glass px-4 py-2.5 rounded-2xl border-white/5 cursor-pointer hover:bg-white/5 transition-colors">
-                <Search className="w-4 h-4 text-white/30" />
-                <span className="text-sm text-white/30">Search assets...</span>
-             </div>
-             <button aria-label="View notifications" className="w-12 h-12 glass rounded-2xl flex items-center justify-center border-white/5 hover:bg-white/5 relative">
-                <Bell className="w-5 h-5 text-white/60" />
-                <div className={cn("absolute top-3 right-3 w-2 h-2 rounded-full border-2 border-black", userPersona === 'normal' ? "bg-lime-500" : "bg-blue-500")} />
-             </button>
-             <div className="flex items-center gap-3 glass p-1.5 pr-4 rounded-2xl border-white/5 cursor-pointer hover:bg-white/5 transition-colors">
-                <div className="w-9 h-9 bg-neutral-800 rounded-xl flex items-center justify-center font-bold text-xs ring-1 ring-white/10">0x</div>
-                <div className="hidden sm:block">
-                   <p className="text-[10px] font-black text-white uppercase tracking-widest">Main Wallet</p>
-                   <p className="text-[10px] text-white/30 font-mono">0x7a2...fE3</p>
-                </div>
-             </div>
-          </div>
+          <button
+            type="button"
+            onClick={() => openActionDrawer('send')}
+            className={`px-3.5 py-2 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 focus-ring ${
+              mode === 'sentinel'
+                ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
+                : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
+            }`}
+          >
+            <ArrowUpRight className="w-3.5 h-3.5" />
+            <span>New transaction</span>
+          </button>
         </header>
 
-        {/* Dynamic Content */}
-        <div className="scroll-smooth">
-          {userPersona === 'normal' ? (
-            <BeginnerDashboard />
-          ) : (
-            <ExpertDashboard />
-          )}
-        </div>
-      </main>
+        {/* Main Workspace Canvas */}
+        <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-8 py-6 md:py-8 space-y-6">
+          {/* Workspace Toolbar: Section Title + Instant Guardian / Sentinel Toggle */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-white/[0.06]">
+            <div className="space-y-1">
+              <h1 className="font-display text-2xl font-bold text-[#F3F5F8] text-balance">
+                {currentMeta.heading}
+              </h1>
+              <p className="text-sm text-[#9AA4B2]">{currentMeta.subtitle}</p>
+            </div>
 
-      {/* Floating Action Button for Mobile */}
-      <button className={cn(
-        "fixed bottom-8 right-8 w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl lg:hidden z-50 animate-bounce",
-        userPersona === 'normal' ? "bg-lime-500 shadow-lime-500/20" : "bg-blue-500 shadow-blue-500/20"
-      )}>
-        <Plus className="w-6 h-6 text-black" />
-      </button>
+            {/* Instant Mode Switcher */}
+            <div
+              role="group"
+              aria-label="Safety interface mode"
+              className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#11151C] border border-white/[0.08] self-start sm:self-auto shrink-0"
+            >
+              {(
+                [
+                  { id: 'guardian', label: 'Guardian', icon: Shield },
+                  { id: 'sentinel', label: 'Sentinel', icon: Terminal },
+                ] as Array<{ id: WalletMode; label: string; icon: React.ElementType }>
+              ).map((item) => {
+                const active = mode === item.id;
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setMode(item.id)}
+                    aria-pressed={active}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap shrink-0 focus-ring ${
+                      active
+                        ? item.id === 'sentinel'
+                          ? 'bg-sky-500/15 text-sky-300 border border-sky-400/30'
+                          : 'bg-emerald-500/15 text-emerald-300 border border-emerald-400/30'
+                        : 'text-[#9AA4B2] hover:text-white border border-transparent'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Active Route View */}
+          {activeTab === 'overview' && <OverviewView />}
+          {activeTab === 'assets' && <AssetsView />}
+          {activeTab === 'activity' && <ActivityView />}
+          {activeTab === 'approvals' && <ApprovalsView />}
+          {activeTab === 'settings' && <SettingsView />}
+        </main>
+      </div>
+
+      {/* Flagship Interactive Action Drawer (Send / Swap / Receive + Pre-Sign Simulation) */}
+      <ActionDrawer />
+
+      {/* Live Toast Notifications */}
+      <ToastStack />
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <WalletProvider>
+      <WalletShell />
+    </WalletProvider>
   );
 }
 

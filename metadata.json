@@ -1,0 +1,8 @@
+{
+  "name": "Nest Wallet",
+  "description": "The intelligent safety layer for your crypto assets. Simulate Send and Swap transactions before signing, audit token approvals, and toggle seamlessly between Guardian clarity and Sentinel execution depth.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
