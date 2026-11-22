@@ -156,6 +156,7 @@ export interface VaultSettings {
   defaultMevRelay: MevRelay;
   requireRiskConfirmation: boolean;
   simulateBeforeSign: boolean;
+  reduceTransparency: boolean;
   walletAddress: string;
   walletLabel: string;
   ensName: string;

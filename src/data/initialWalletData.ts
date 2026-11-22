@@ -65,6 +65,7 @@ export const INITIAL_SETTINGS: VaultSettings = {
   defaultMevRelay: 'flashbots',
   requireRiskConfirmation: true,
   simulateBeforeSign: true,
+  reduceTransparency: false,
   walletAddress: '0x7a2F94c8B13E4409d3812A1b299C88D73a1B8fE3',
   walletLabel: 'Primary Vault',
   ensName: 'rolan.nest.eth',

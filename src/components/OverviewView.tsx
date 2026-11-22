@@ -113,7 +113,7 @@ export function OverviewView() {
               <button
                 type="button"
                 onClick={() => openActionDrawer('send')}
-                className={`px-4 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2 transition-colors whitespace-nowrap shrink-0 focus-ring ${
+                className={`px-4 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2 transition-colors whitespace-nowrap shrink-0 btn-specular focus-ring ${
                   mode === 'sentinel'
                     ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
                     : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
@@ -125,17 +125,17 @@ export function OverviewView() {
               <button
                 type="button"
                 onClick={() => openActionDrawer('swap')}
-                className="px-4 py-2.5 rounded-lg text-sm font-medium bg-[#181E27] hover:bg-[#202834] border border-white/[0.1] text-[#F3F5F8] inline-flex items-center gap-2 transition-colors whitespace-nowrap shrink-0 focus-ring"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium glass-btn text-[#F4F7FB] inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-ring"
               >
-                <ArrowDownUp className="w-4 h-4 text-[#9AA4B2]" />
+                <ArrowDownUp className="w-4 h-4 text-[#9EA9B8]" />
                 <span>Swap</span>
               </button>
               <button
                 type="button"
                 onClick={() => openActionDrawer('receive')}
-                className="px-4 py-2.5 rounded-lg text-sm font-medium bg-[#181E27] hover:bg-[#202834] border border-white/[0.1] text-[#F3F5F8] inline-flex items-center gap-2 transition-colors whitespace-nowrap shrink-0 focus-ring"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium glass-btn text-[#F4F7FB] inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-ring"
               >
-                <Download className="w-4 h-4 text-[#9AA4B2]" />
+                <Download className="w-4 h-4 text-[#9EA9B8]" />
                 <span>Receive</span>
               </button>
             </div>
@@ -144,17 +144,17 @@ export function OverviewView() {
           {/* Equity Curve */}
           <div className="lg:col-span-5 space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-[#9AA4B2]">Portfolio trend</span>
-              <div className="inline-flex items-center gap-1 p-0.5 rounded-md bg-[#090B0E] border border-white/[0.08]">
+              <span className="text-xs text-[#9EA9B8]">Portfolio trend</span>
+              <div className="inline-flex items-center gap-1 p-0.5 glass-control rounded-lg">
                 {(['7D', '30D', '90D'] as TimeRange[]).map((item) => (
                   <button
                     key={item}
                     type="button"
                     onClick={() => setRange(item)}
-                    className={`px-2 py-0.5 text-[11px] font-mono rounded transition-colors whitespace-nowrap ${
+                    className={`px-2 py-0.5 text-[11px] font-mono rounded-md transition-colors whitespace-nowrap ${
                       range === item
-                        ? 'bg-[#1C232E] text-[#F3F5F8] font-medium'
-                        : 'text-[#9AA4B2] hover:text-white'
+                        ? 'glass-thumb text-[#F4F7FB] font-medium'
+                        : 'text-[#9EA9B8] hover:text-white'
                     }`}
                   >
                     {item}
@@ -221,7 +221,7 @@ export function OverviewView() {
         <button
           type="button"
           onClick={() => setActiveTab('approvals')}
-          className="surface-panel p-4 flex flex-col justify-between gap-2 text-left hover:border-white/[0.16] transition-colors focus-ring"
+          className="surface-panel glass-panel-interactive p-4 flex flex-col justify-between gap-2 text-left focus-ring"
         >
           <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
             <span>Token approvals</span>

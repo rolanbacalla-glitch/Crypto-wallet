@@ -44,7 +44,7 @@ export function ActivityView() {
     <div className="space-y-6">
       {/* Filter Toolbar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="flex items-center gap-1 p-1 rounded-lg bg-[#11151C] border border-white/[0.08] overflow-x-auto">
+        <div className="flex items-center gap-1 p-1 glass-control overflow-x-auto">
           {(
             [
               { id: 'all', label: 'All' },
@@ -61,10 +61,10 @@ export function ActivityView() {
                 key={item.id}
                 type="button"
                 onClick={() => setFilter(item.id)}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap shrink-0 focus-ring ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 focus-ring ${
                   active
-                    ? 'bg-[#1D2430] text-[#F3F5F8] border border-white/[0.1]'
-                    : 'text-[#9AA4B2] hover:text-white'
+                    ? 'glass-thumb text-[#F4F7FB]'
+                    : 'text-[#9EA9B8] hover:text-white'
                 }`}
               >
                 {item.label}
@@ -74,14 +74,14 @@ export function ActivityView() {
         </div>
 
         <div className="relative w-full lg:w-72">
-          <Search className="w-4 h-4 text-[#6B7686] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-[#6E7A8A] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search counterparty or hash…"
             aria-label="Search transaction history"
-            className="w-full h-10 pl-9 pr-3 rounded-lg bg-[#11151C] border border-white/[0.08] text-sm text-[#F3F5F8] placeholder:text-[#6B7686] focus:border-emerald-400/50 focus:outline-none"
+            className="w-full h-10 pl-9 pr-3 glass-control text-sm text-[#F4F7FB] placeholder:text-[#6E7A8A] focus:border-emerald-400/50 focus:outline-none"
           />
         </div>
       </div>

@@ -319,7 +319,7 @@ export function ActionDrawer() {
             transition={tabTransition}
             className="px-6 pt-4 shrink-0"
           >
-            <div className="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[#090B0E] border border-white/[0.08] relative">
+            <div className="grid grid-cols-3 gap-1 p-1 glass-control relative">
               {(['send', 'swap', 'receive'] as ActionDrawerTab[]).map((tab) => {
                 const isActive = actionDrawer.tab === tab;
                 const Icon = tab === 'send' ? ArrowUpRight : tab === 'swap' ? ArrowDownUp : Download;
@@ -328,15 +328,15 @@ export function ActionDrawer() {
                     key={tab}
                     type="button"
                     onClick={() => switchTab(tab)}
-                    className={`relative flex items-center justify-center gap-1.5 py-2 px-3 rounded-md text-xs font-medium transition-colors whitespace-nowrap focus-ring ${
-                      isActive ? 'text-[#F3F5F8]' : 'text-[#9AA4B2] hover:text-[#F3F5F8]'
+                    className={`relative flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-medium transition-colors whitespace-nowrap focus-ring ${
+                      isActive ? 'text-[#F4F7FB]' : 'text-[#9EA9B8] hover:text-[#F4F7FB]'
                     }`}
                   >
                     {isActive && (
                       <motion.span
                         layoutId="actionDrawerTabThumb"
                         transition={tabTransition}
-                        className="absolute inset-0 rounded-md bg-[#1A212C] border border-white/[0.1]"
+                        className="absolute inset-0 rounded-lg glass-thumb"
                       />
                     )}
                     <Icon className="w-3.5 h-3.5 relative z-10" />
@@ -569,7 +569,7 @@ export function ActionDrawer() {
                   <button
                     type="submit"
                     disabled={Boolean(sendValidationError)}
-                    className={`w-full py-3 px-4 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-ring ${
+                    className={`w-full py-3 px-4 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 btn-specular focus-ring ${
                       mode === 'sentinel'
                         ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
                         : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
@@ -624,7 +624,7 @@ export function ActionDrawer() {
                   </div>
 
                   {/* Pay Input */}
-                  <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">
+                  <div className="p-4 glass-recessed space-y-3">
                     <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
                       <span>You pay</span>
                       <span className="font-mono tabular-nums">
@@ -687,7 +687,7 @@ export function ActionDrawer() {
                   </div>
 
                   {/* Receive Quote */}
-                  <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">
+                  <div className="p-4 glass-recessed space-y-3">
                     <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
                       <span>Estimated receive</span>
                       <span className="font-mono tabular-nums">
@@ -721,7 +721,7 @@ export function ActionDrawer() {
                   </div>
 
                   {/* Route Summary */}
-                  <div className="p-3.5 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-2 text-xs">
+                  <div className="p-3.5 glass-recessed space-y-2 text-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-[#9AA4B2]">Route venue</span>
                       <span className="text-[#F3F5F8] font-medium">{swapVenue}</span>
@@ -802,7 +802,7 @@ export function ActionDrawer() {
                   <button
                     type="submit"
                     disabled={Boolean(swapValidationError)}
-                    className={`w-full py-3 px-4 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-ring ${
+                    className={`w-full py-3 px-4 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 btn-specular focus-ring ${
                       mode === 'sentinel'
                         ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
                         : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'

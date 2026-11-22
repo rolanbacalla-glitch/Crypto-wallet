@@ -101,10 +101,10 @@ export function SlideOverSheet({
       : 'items-stretch justify-start';
 
   const panelClasses = isBottomSheet
-    ? 'w-full max-h-[92dvh] rounded-t-[20px] border-t border-x border-white/[0.11] bg-[#11151C]'
+    ? 'w-full max-h-[92dvh] rounded-t-[24px] border-t border-x border-white/[0.15] glass-sheet'
     : side === 'right'
-      ? `w-full ${maxWidthClass} h-full border-l border-white/[0.09] bg-[#11151C]`
-      : `w-64 max-w-[82vw] h-full border-r border-white/[0.09] bg-[#0C0F14]`;
+      ? `w-full ${maxWidthClass} h-full border-l border-white/[0.14] glass-sheet`
+      : `w-64 max-w-[82vw] h-full border-r border-white/[0.14] glass-sheet`;
 
   return (
     <AnimatePresence>
@@ -123,10 +123,10 @@ export function SlideOverSheet({
             exit={{ opacity: 0 }}
             transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_BACKDROP_EASE}
             onClick={onClose}
-            className="fixed inset-0 bg-black/68 backdrop-blur-[3px]"
+            className="fixed inset-0 bg-black/55 backdrop-blur-[6px]"
           />
 
-          {/* Spring Slide-In Surface with Velocity-Aware Gesture Dismiss */}
+          {/* Spring Slide-In Liquid Glass Surface with Velocity-Aware Gesture Dismiss */}
           <motion.div
             key="sheet-panel"
             initial={sheetVariants.initial}
@@ -151,7 +151,7 @@ export function SlideOverSheet({
             dragMomentum={false}
             onDragEnd={handleDragEnd}
             style={{ willChange: 'transform' }}
-            className={`relative z-10 flex flex-col shadow-[0_24px_80px_rgba(0,0,0,0.75)] overflow-hidden ${panelClasses}`}
+            className={`relative z-10 flex flex-col overflow-hidden ${panelClasses}`}
           >
             {/* Native iOS Grabber Indicator on Mobile Bottom Sheets */}
             {isBottomSheet && (

@@ -180,7 +180,7 @@ export function PreSignSimulationSheet({ simulation, onBack, onComplete }: PreSi
       </div>
 
       {/* Expected Balance Changes */}
-      <section className="bg-[#0D1015] border border-white/[0.08] rounded-xl divide-y divide-white/[0.06]">
+      <section className="glass-recessed divide-y divide-white/[0.06]">
         <div className="px-4 py-3 flex items-center justify-between">
           <h4 className="text-xs font-medium text-[#9AA4B2]">Simulated balance impact</h4>
           <span className="text-xs text-[#6B7686] font-mono tabular-nums">
@@ -234,7 +234,7 @@ export function PreSignSimulationSheet({ simulation, onBack, onComplete }: PreSi
             {simulation.counterpartyLabel} · {shortenAddress(simulation.counterpartyAddress)}
           </span>
         </div>
-        <div className="bg-[#0D1015] border border-white/[0.08] rounded-xl divide-y divide-white/[0.06]">
+        <div className="glass-recessed divide-y divide-white/[0.06]">
           {simulation.checks.map((check) => (
             <div key={check.id} className="px-4 py-3 flex items-start gap-3">
               {check.status === 'pass' && (
@@ -256,7 +256,7 @@ export function PreSignSimulationSheet({ simulation, onBack, onComplete }: PreSi
       </section>
 
       {/* Optional AI Risk Explanation */}
-      <section className="bg-[#0D1015] border border-white/[0.08] rounded-xl p-4 space-y-3">
+      <section className="glass-recessed p-4 space-y-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-sky-400 shrink-0" />
@@ -319,7 +319,7 @@ export function PreSignSimulationSheet({ simulation, onBack, onComplete }: PreSi
       </section>
 
       {/* Sentinel Technical Execution Inspector */}
-      <section className="bg-[#0D1015] border border-white/[0.08] rounded-xl overflow-hidden">
+      <section className="glass-recessed overflow-hidden">
         <button
           type="button"
           onClick={() => setShowTechnicalDetails((prev) => !prev)}

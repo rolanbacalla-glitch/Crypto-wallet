@@ -49,7 +49,7 @@ export function ToastStack() {
               }
               transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SNAPPY}
               style={{ willChange: 'transform, opacity' }}
-              className="pointer-events-auto bg-[#161B22] border border-white/[0.12] rounded-xl px-4 py-3 shadow-2xl flex items-start gap-3"
+              className="pointer-events-auto glass-sheet border border-white/[0.15] rounded-2xl px-4 py-3.5 flex items-start gap-3"
             >
               <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${iconColor}`} />
               <div className="flex-1 min-w-0">

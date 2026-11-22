@@ -40,7 +40,7 @@ export function AssetsView() {
     <div className="space-y-6">
       {/* Toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-1 p-1 rounded-lg bg-[#11151C] border border-white/[0.08] overflow-x-auto">
+        <div className="flex items-center gap-1 p-1 glass-control overflow-x-auto">
           {(['all', 'ethereum', 'base', 'arbitrum', 'optimism'] as NetworkFilter[]).map((net) => {
             const active = networkFilter === net;
             return (
@@ -48,10 +48,10 @@ export function AssetsView() {
                 key={net}
                 type="button"
                 onClick={() => setNetworkFilter(net)}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap shrink-0 focus-ring ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 focus-ring ${
                   active
-                    ? 'bg-[#1D2430] text-[#F3F5F8] border border-white/[0.1]'
-                    : 'text-[#9AA4B2] hover:text-white'
+                    ? 'glass-thumb text-[#F4F7FB]'
+                    : 'text-[#9EA9B8] hover:text-white'
                 }`}
               >
                 {net === 'all' ? 'All networks' : NETWORKS[net].shortName}
@@ -61,14 +61,14 @@ export function AssetsView() {
         </div>
 
         <div className="relative w-full md:w-72">
-          <Search className="w-4 h-4 text-[#6B7686] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-[#6E7A8A] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Filter by token or network…"
             aria-label="Filter assets"
-            className="w-full h-10 pl-9 pr-3 rounded-lg bg-[#11151C] border border-white/[0.08] text-sm text-[#F3F5F8] placeholder:text-[#6B7686] focus:border-emerald-400/50 focus:outline-none"
+            className="w-full h-10 pl-9 pr-3 glass-control text-sm text-[#F4F7FB] placeholder:text-[#6E7A8A] focus:border-emerald-400/50 focus:outline-none"
           />
         </div>
       </div>

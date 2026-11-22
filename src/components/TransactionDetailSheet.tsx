@@ -128,7 +128,7 @@ export function TransactionDetailSheet({ transaction, onClose }: TransactionDeta
             </div>
 
             {/* Balance Movements */}
-            <section className="bg-[#0D1015] border border-white/[0.08] rounded-xl divide-y divide-white/[0.06]">
+            <section className="glass-recessed divide-y divide-white/[0.06]">
               <div className="px-4 py-3 text-xs font-medium text-[#9AA4B2]">
                 {isBlocked ? 'Prevented balance movement' : 'Recorded balance changes'}
               </div>
@@ -174,7 +174,7 @@ export function TransactionDetailSheet({ transaction, onClose }: TransactionDeta
             </section>
 
             {/* Execution Metadata */}
-            <section className="bg-[#0D1015] border border-white/[0.08] rounded-xl divide-y divide-white/[0.06] text-xs">
+            <section className="glass-recessed divide-y divide-white/[0.06] text-xs">
               <div className="px-4 py-3 flex items-center justify-between gap-3">
                 <span className="text-[#9AA4B2]">Counterparty</span>
                 <span className="text-[#F3F5F8] font-medium truncate">{transaction.counterparty}</span>

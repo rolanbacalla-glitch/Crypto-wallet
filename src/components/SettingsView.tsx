@@ -53,7 +53,7 @@ export function SettingsView() {
               Converts all balances, diffs, and spend limits live across the app.
             </p>
           </div>
-          <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#090B0E] border border-white/[0.08] shrink-0">
+          <div className="inline-flex items-center gap-1 p-1 glass-control shrink-0">
             {(['USD', 'GBP', 'EUR'] as CurrencyCode[]).map((cur) => (
               <button
                 key={cur}
@@ -62,16 +62,47 @@ export function SettingsView() {
                   updateSettings({ currency: cur });
                   addToast({ tone: 'info', title: `Currency switched to ${cur}` });
                 }}
-                className={`px-3 py-1.5 rounded-md text-xs font-mono transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${
                   settings.currency === cur
-                    ? 'bg-[#1D2430] text-[#F3F5F8] font-medium'
-                    : 'text-[#9AA4B2] hover:text-white'
+                    ? 'glass-thumb text-[#F4F7FB] font-medium'
+                    : 'text-[#9EA9B8] hover:text-white'
                 }`}
               >
                 {cur}
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="px-5 py-4 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-[#F3F5F8]">Reduce transparency</p>
+            <p className="text-xs text-[#9AA4B2]">
+              Replaces translucent Liquid Glass materials with high-contrast opaque obsidian surfaces.
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={settings.reduceTransparency}
+            onClick={() => {
+              const next = !settings.reduceTransparency;
+              updateSettings({ reduceTransparency: next });
+              addToast({
+                tone: 'info',
+                title: next ? 'Reduced transparency enabled' : 'Liquid Glass transparency restored',
+              });
+            }}
+            className={`w-11 h-6 rounded-full transition-colors relative shrink-0 focus-ring ${
+              settings.reduceTransparency ? 'bg-emerald-500' : 'bg-white/[0.14]'
+            }`}
+          >
+            <span
+              className={`block w-4 h-4 rounded-full bg-white transition-transform absolute top-1 ${
+                settings.reduceTransparency ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
         </div>
       </section>
 
