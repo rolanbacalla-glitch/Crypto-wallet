@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { LayoutGroup, motion, useReducedMotion } from 'framer-motion';
 import { APPLE_REDUCED_CROSSFADE, APPLE_SPRING_SNAPPY } from '../motion/appleMotion';
 
 export interface SegmentedOption<T extends string> {
@@ -46,61 +46,62 @@ export function SlidingSegmentedControl<T extends string>({
   const trackPadding = size === 'xs' ? 'p-0.5 rounded-lg' : 'p-1';
 
   return (
-    <div
-      role="tablist"
-      aria-label={ariaLabel}
-      className={`glass-control relative ${trackPadding} ${
-        fullWidth ? 'grid' : 'inline-flex items-center overflow-x-auto'
-      } gap-1 ${className}`}
-      style={
-        fullWidth
-          ? { gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }
-          : undefined
-      }
-    >
-      {options.map((opt) => {
-        const active = opt.value === value;
-        const Icon = opt.icon;
-        const accent = opt.accent || 'default';
+    <LayoutGroup id={layoutId}>
+      <div
+        role="tablist"
+        aria-label={ariaLabel}
+        className={`glass-control relative ${trackPadding} ${
+          fullWidth ? 'grid' : 'inline-flex items-center overflow-x-auto'
+        } gap-1 ${className}`}
+        style={
+          fullWidth
+            ? { gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }
+            : undefined
+        }
+      >
+        {options.map((opt) => {
+          const active = opt.value === value;
+          const Icon = opt.icon;
+          const accent = opt.accent || 'default';
 
-        const activeTextClass =
-          accent === 'sky'
-            ? 'text-sky-300 font-medium'
-            : accent === 'emerald'
-              ? 'text-emerald-300 font-medium'
-              : 'text-[#F4F7FB] font-medium';
+          const activeTextClass =
+            accent === 'sky'
+              ? 'text-sky-300 font-medium'
+              : accent === 'emerald'
+                ? 'text-emerald-300 font-medium'
+                : 'text-[#F4F7FB] font-medium';
 
-        const thumbSurfaceClass =
-          accent === 'sky'
-            ? 'bg-sky-500/20 border border-sky-400/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]'
-            : accent === 'emerald'
-              ? 'bg-emerald-500/20 border border-emerald-400/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]'
-              : 'glass-thumb';
+          const thumbSurfaceClass =
+            accent === 'sky'
+              ? 'bg-sky-500/20 border border-sky-400/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]'
+              : accent === 'emerald'
+                ? 'bg-emerald-500/20 border border-emerald-400/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]'
+                : 'glass-thumb';
 
-        return (
-          <button
-            key={opt.value}
-            type="button"
-            role="tab"
-            aria-selected={active}
-            onClick={() => onChange(opt.value)}
-            className={`relative inline-flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap shrink-0 focus-ring ${sizeClasses} ${
-              mono ? 'font-mono tabular-nums' : 'font-medium'
-            } ${active ? activeTextClass : 'text-[#9EA9B8] hover:text-[#F4F7FB]'}`}
-          >
-            {active && (
-              <motion.span
-                layoutId={layoutId}
-                transition={transition}
-                style={{ willChange: 'transform' }}
-                className={`absolute inset-0 ${size === 'xs' ? 'rounded-md' : 'rounded-lg'} ${thumbSurfaceClass}`}
-              />
-            )}
-            {Icon && <Icon className="w-3.5 h-3.5 relative z-10 shrink-0" />}
-            <span className="relative z-10">{opt.label}</span>
-          </button>
-        );
-      })}
-    </div>
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => onChange(opt.value)}
+              className={`relative inline-flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap shrink-0 focus-ring ${sizeClasses} ${
+                mono ? 'font-mono tabular-nums' : 'font-medium'
+              } ${active ? activeTextClass : 'text-[#9EA9B8] hover:text-[#F4F7FB]'}`}
+            >
+              {active && (
+                <motion.span
+                  layoutId={layoutId}
+                  transition={transition}
+                  className={`absolute inset-0 ${size === 'xs' ? 'rounded-md' : 'rounded-lg'} ${thumbSurfaceClass}`}
+                />
+              )}
+              {Icon && <Icon className="w-3.5 h-3.5 relative z-10 shrink-0" />}
+              <span className="relative z-10">{opt.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </LayoutGroup>
   );
 }

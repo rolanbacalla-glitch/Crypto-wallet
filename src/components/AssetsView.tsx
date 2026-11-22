@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowDownUp, ArrowUpRight, Search } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import {
@@ -111,15 +111,12 @@ export function AssetsView() {
           )}
         </div>
 
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={networkFilter}
-            initial={prefersReducedMotion ? { opacity: 0 } : { x: slideDirection * 24, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={prefersReducedMotion ? { opacity: 0 } : { x: slideDirection * -24, opacity: 0 }}
-            transition={panelTransition}
-            style={{ willChange: 'transform, opacity' }}
-          >
+        <motion.div
+          key={networkFilter}
+          initial={prefersReducedMotion ? { opacity: 0 } : { x: slideDirection * 22, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={panelTransition}
+        >
             {filteredAssets.length === 0 ? (
               <div className="px-6 py-16 text-center space-y-3">
                 <p className="text-sm font-medium text-[#F3F5F8]">No assets match your current filter</p>
@@ -230,8 +227,7 @@ export function AssetsView() {
                 </table>
               </div>
             )}
-          </motion.div>
-        </AnimatePresence>
+        </motion.div>
       </section>
     </div>
   );

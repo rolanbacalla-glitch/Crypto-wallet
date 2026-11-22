@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowDownLeft,
   ArrowDownUp,
@@ -177,48 +177,45 @@ export function OverviewView() {
               />
             </div>
             <div className="w-full h-[92px] overflow-hidden relative">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={range}
-                  initial={prefersReducedMotion ? { opacity: 0 } : { x: rangeDir * 18, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={prefersReducedMotion ? { opacity: 0 } : { x: rangeDir * -18, opacity: 0 }}
-                  transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_NAV_PUSH}
+              <motion.div
+                key={range}
+                initial={prefersReducedMotion ? { opacity: 0 } : { x: rangeDir * 18, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_NAV_PUSH}
+                className="w-full h-full"
+              >
+                <svg
+                  viewBox={`0 0 ${sparkline.width} ${sparkline.height}`}
+                  preserveAspectRatio="none"
                   className="w-full h-full"
+                  role="img"
+                  aria-label={`${range} portfolio performance trend`}
                 >
-                  <svg
-                    viewBox={`0 0 ${sparkline.width} ${sparkline.height}`}
-                    preserveAspectRatio="none"
-                    className="w-full h-full"
-                    role="img"
-                    aria-label={`${range} portfolio performance trend`}
-                  >
-                    <defs>
-                      <linearGradient id="nestPortfolioArea" x1="0" y1="0" x2="0" y2="1">
-                        <stop
-                          offset="0%"
-                          stopColor={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
-                          stopOpacity="0.22"
-                        />
-                        <stop
-                          offset="100%"
-                          stopColor={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
-                          stopOpacity="0"
-                        />
-                      </linearGradient>
-                    </defs>
-                    <path d={sparkline.areaPath} fill="url(#nestPortfolioArea)" />
-                    <path
-                      d={sparkline.linePath}
-                      fill="none"
-                      stroke={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </motion.div>
-              </AnimatePresence>
+                  <defs>
+                    <linearGradient id={`nestPortfolioArea-${range}`} x1="0" y1="0" x2="0" y2="1">
+                      <stop
+                        offset="0%"
+                        stopColor={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
+                        stopOpacity="0.22"
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
+                        stopOpacity="0"
+                      />
+                    </linearGradient>
+                  </defs>
+                  <path d={sparkline.areaPath} fill={`url(#nestPortfolioArea-${range})`} />
+                  <path
+                    d={sparkline.linePath}
+                    fill="none"
+                    stroke={mode === 'sentinel' ? '#38BDF8' : '#10B981'}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </motion.div>
             </div>
           </div>
         </div>

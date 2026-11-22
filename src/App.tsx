@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { LayoutGroup, motion, useReducedMotion } from 'framer-motion';
 import {
   Activity,
   ArrowUpRight,
@@ -138,11 +138,20 @@ function WalletShell() {
   const [navDirection, setNavDirection] = useState<number>(1);
   const prevTabRef = useRef<NavTab>(activeTab);
 
+  // Keep direction synced even when child views call setActiveTab directly (e.g. Overview links)
+  useEffect(() => {
+    if (activeTab !== prevTabRef.current) {
+      setNavDirection(NAV_ORDER[activeTab] > NAV_ORDER[prevTabRef.current] ? 1 : -1);
+      prevTabRef.current = activeTab;
+    }
+  }, [activeTab]);
+
   const handleSelectNavTab = (next: NavTab) => {
-    if (next !== prevTabRef.current) {
-      setNavDirection(NAV_ORDER[next] > NAV_ORDER[prevTabRef.current] ? 1 : -1);
+    if (next !== activeTab) {
+      setNavDirection(NAV_ORDER[next] > NAV_ORDER[activeTab] ? 1 : -1);
       prevTabRef.current = next;
       setActiveTab(next);
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     }
     setMobileNavOpen(false);
   };
@@ -202,51 +211,52 @@ function WalletShell() {
       </div>
 
       {/* Primary Navigation with Gliding Glass Highlight */}
-      <nav aria-label="Primary navigation" className="flex-1 px-3 py-4 space-y-1">
-        {(Object.keys(NAV_META) as NavTab[]).map((tabKey) => {
-          const item = NAV_META[tabKey];
-          const Icon = item.icon;
-          const active = activeTab === tabKey;
-          return (
-            <button
-              key={tabKey}
-              type="button"
-              onClick={() => handleSelectNavTab(tabKey)}
-              className={`relative w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap focus-ring ${
-                active
-                  ? 'text-[#F4F7FB]'
-                  : 'text-[#9EA9B8] hover:text-[#F4F7FB] hover:bg-white/[0.04]'
-              }`}
-            >
-              {active && (
-                <motion.span
-                  layoutId={`sidebarNavThumb-${variant}`}
-                  transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SNAPPY}
-                  style={{ willChange: 'transform' }}
-                  className="absolute inset-0 rounded-xl glass-thumb"
-                />
-              )}
-              <span className="flex items-center gap-2.5 min-w-0 relative z-10">
-                <Icon
-                  className={`w-4 h-4 shrink-0 ${
-                    active
-                      ? mode === 'sentinel'
-                        ? 'text-sky-400'
-                        : 'text-emerald-400'
-                      : 'text-[#6E7A8A]'
-                  }`}
-                />
-                <span className="truncate">{item.label}</span>
-              </span>
-              {tabKey === 'approvals' && atRiskApprovalsCount > 0 && (
-                <span className="font-mono tabular-nums text-xs text-amber-400 shrink-0 relative z-10">
-                  {atRiskApprovalsCount}
+      <LayoutGroup id={`sidebar-nav-${variant}`}>
+        <nav aria-label="Primary navigation" className="flex-1 px-3 py-4 space-y-1">
+          {(Object.keys(NAV_META) as NavTab[]).map((tabKey) => {
+            const item = NAV_META[tabKey];
+            const Icon = item.icon;
+            const active = activeTab === tabKey;
+            return (
+              <button
+                key={tabKey}
+                type="button"
+                onClick={() => handleSelectNavTab(tabKey)}
+                className={`relative w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap focus-ring ${
+                  active
+                    ? 'text-[#F4F7FB]'
+                    : 'text-[#9EA9B8] hover:text-[#F4F7FB] hover:bg-white/[0.04]'
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId={`sidebarNavThumb-${variant}`}
+                    transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SNAPPY}
+                    className="absolute inset-0 rounded-xl glass-thumb"
+                  />
+                )}
+                <span className="flex items-center gap-2.5 min-w-0 relative z-10">
+                  <Icon
+                    className={`w-4 h-4 shrink-0 ${
+                      active
+                        ? mode === 'sentinel'
+                          ? 'text-sky-400'
+                          : 'text-emerald-400'
+                        : 'text-[#6E7A8A]'
+                    }`}
+                  />
+                  <span className="truncate">{item.label}</span>
                 </span>
-              )}
-            </button>
-          );
-        })}
-      </nav>
+                {tabKey === 'approvals' && atRiskApprovalsCount > 0 && (
+                  <span className="font-mono tabular-nums text-xs text-amber-400 shrink-0 relative z-10">
+                    {atRiskApprovalsCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+      </LayoutGroup>
 
       {/* Vault Account Footer */}
       <div className="p-3 border-t border-white/[0.08] space-y-2 shrink-0">
@@ -283,7 +293,7 @@ function WalletShell() {
 
   return (
     <div
-      className={`min-h-screen bg-[#07090D] text-[#F4F7FB] overflow-x-hidden relative ${
+      className={`min-h-screen bg-[#07090D] text-[#F4F7FB] overflow-x-clip relative ${
         settings.reduceTransparency ? 'reduce-transparency' : ''
       }`}
     >
@@ -315,7 +325,7 @@ function WalletShell() {
               }
         }
         transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SHEET}
-        style={{ transformOrigin: 'center top', willChange: 'transform, opacity' }}
+        style={{ transformOrigin: 'center top' }}
         className="relative z-10 min-h-screen flex"
       >
         {/* Desktop Sidebar — Apple Navigation Chrome Glass */}
@@ -369,75 +379,71 @@ function WalletShell() {
               </div>
 
               {/* Instant Mode Switcher with Apple Liquid Glass Track & Specular Thumb */}
-              <div
-                role="group"
-                aria-label="Safety interface mode"
-                className="inline-flex items-center gap-1 p-1 glass-control self-start sm:self-auto shrink-0 relative"
-              >
-                {(
-                  [
-                    { id: 'guardian', label: 'Guardian', icon: Shield },
-                    { id: 'sentinel', label: 'Sentinel', icon: Terminal },
-                  ] as Array<{ id: WalletMode; label: string; icon: React.ElementType }>
-                ).map((item) => {
-                  const active = mode === item.id;
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setMode(item.id)}
-                      aria-pressed={active}
-                      className={`relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 focus-ring ${
-                        active
-                          ? item.id === 'sentinel'
-                            ? 'text-sky-300'
-                            : 'text-emerald-300'
-                          : 'text-[#9EA9B8] hover:text-white'
-                      }`}
-                    >
-                      {active && (
-                        <motion.span
-                          layoutId="walletModeThumb"
-                          transition={
-                            prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SNAPPY
-                          }
-                          className={`absolute inset-0 rounded-lg border shadow-[inset_0_1px_0_rgba(255,255,255,0.22)] ${
-                            item.id === 'sentinel'
-                              ? 'bg-sky-500/20 border-sky-400/35'
-                              : 'bg-emerald-500/20 border-emerald-400/35'
-                          }`}
-                        />
-                      )}
-                      <Icon className="w-3.5 h-3.5 relative z-10" />
-                      <span className="relative z-10">{item.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
+              <LayoutGroup id="wallet-mode-switcher">
+                <div
+                  role="group"
+                  aria-label="Safety interface mode"
+                  className="inline-flex items-center gap-1 p-1 glass-control self-start sm:self-auto shrink-0 relative"
+                >
+                  {(
+                    [
+                      { id: 'guardian', label: 'Guardian', icon: Shield },
+                      { id: 'sentinel', label: 'Sentinel', icon: Terminal },
+                    ] as Array<{ id: WalletMode; label: string; icon: React.ElementType }>
+                  ).map((item) => {
+                    const active = mode === item.id;
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setMode(item.id)}
+                        aria-pressed={active}
+                        className={`relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 focus-ring ${
+                          active
+                            ? item.id === 'sentinel'
+                              ? 'text-sky-300'
+                              : 'text-emerald-300'
+                            : 'text-[#9EA9B8] hover:text-white'
+                        }`}
+                      >
+                        {active && (
+                          <motion.span
+                            layoutId="walletModeThumb"
+                            transition={
+                              prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SNAPPY
+                            }
+                            className={`absolute inset-0 rounded-lg border shadow-[inset_0_1px_0_rgba(255,255,255,0.22)] ${
+                              item.id === 'sentinel'
+                                ? 'bg-sky-500/20 border-sky-400/35'
+                                : 'bg-emerald-500/20 border-emerald-400/35'
+                            }`}
+                          />
+                        )}
+                        <Icon className="w-3.5 h-3.5 relative z-10" />
+                        <span className="relative z-10">{item.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </LayoutGroup>
             </div>
 
-            {/* Active Route View with Smooth Directional Slide Transition */}
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={activeTab}
-                initial={
-                  prefersReducedMotion ? { opacity: 0 } : { y: navDirection * 14, opacity: 0 }
-                }
-                animate={{ y: 0, opacity: 1 }}
-                exit={
-                  prefersReducedMotion ? { opacity: 0 } : { y: navDirection * -14, opacity: 0 }
-                }
-                transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_NAV_PUSH}
-                style={{ willChange: 'transform, opacity' }}
-              >
-                {activeTab === 'overview' && <OverviewView />}
-                {activeTab === 'assets' && <AssetsView />}
-                {activeTab === 'activity' && <ActivityView />}
-                {activeTab === 'approvals' && <ApprovalsView />}
-                {activeTab === 'settings' && <SettingsView />}
-              </motion.div>
-            </AnimatePresence>
+            {/* Active Route View with Instant Directional Slide Transition (never blocks or deadlocks nested layoutId controls) */}
+            <motion.div
+              key={activeTab}
+              initial={
+                prefersReducedMotion ? { opacity: 0 } : { y: navDirection * 12, opacity: 0 }
+              }
+              animate={{ y: 0, opacity: 1 }}
+              transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_NAV_PUSH}
+            >
+              {activeTab === 'overview' && <OverviewView />}
+              {activeTab === 'assets' && <AssetsView />}
+              {activeTab === 'activity' && <ActivityView />}
+              {activeTab === 'approvals' && <ApprovalsView />}
+              {activeTab === 'settings' && <SettingsView />}
+            </motion.div>
           </main>
         </div>
       </motion.div>

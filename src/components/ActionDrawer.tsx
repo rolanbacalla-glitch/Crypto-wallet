@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowDownUp,
   ArrowUpRight,
@@ -336,74 +336,67 @@ export function ActionDrawer() {
             transition={tabTransition}
             className="px-6 pt-4 shrink-0"
           >
-            <div className="grid grid-cols-3 gap-1 p-1 glass-control relative">
-              {(['send', 'swap', 'receive'] as ActionDrawerTab[]).map((tab) => {
-                const isActive = actionDrawer.tab === tab;
-                const Icon = tab === 'send' ? ArrowUpRight : tab === 'swap' ? ArrowDownUp : Download;
-                return (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => switchTab(tab)}
-                    className={`relative flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-medium transition-colors whitespace-nowrap focus-ring ${
-                      isActive ? 'text-[#F4F7FB]' : 'text-[#9EA9B8] hover:text-[#F4F7FB]'
-                    }`}
-                  >
-                    {isActive && (
-                      <motion.span
-                        layoutId="actionDrawerTabThumb"
-                        transition={tabTransition}
-                        className="absolute inset-0 rounded-lg glass-thumb"
-                      />
-                    )}
-                    <Icon className="w-3.5 h-3.5 relative z-10" />
-                    <span className="capitalize relative z-10">{tab}</span>
-                  </button>
-                );
-              })}
-            </div>
+            <LayoutGroup id="action-drawer-tabs">
+              <div className="grid grid-cols-3 gap-1 p-1 glass-control relative">
+                {(['send', 'swap', 'receive'] as ActionDrawerTab[]).map((tab) => {
+                  const isActive = actionDrawer.tab === tab;
+                  const Icon = tab === 'send' ? ArrowUpRight : tab === 'swap' ? ArrowDownUp : Download;
+                  return (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => switchTab(tab)}
+                      className={`relative flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-medium transition-colors whitespace-nowrap focus-ring ${
+                        isActive ? 'text-[#F4F7FB]' : 'text-[#9EA9B8] hover:text-[#F4F7FB]'
+                      }`}
+                    >
+                      {isActive && (
+                        <motion.span
+                          layoutId="actionDrawerTabThumb"
+                          transition={tabTransition}
+                          className="absolute inset-0 rounded-lg glass-thumb"
+                        />
+                      )}
+                      <Icon className="w-3.5 h-3.5 relative z-10" />
+                      <span className="capitalize relative z-10">{tab}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </LayoutGroup>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Drawer Body with iOS UINavigationController Push / Pop Parallax */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 py-5 relative">
-        <AnimatePresence mode="wait" initial={false}>
-          {activeSimulation ? (
-            <motion.div
-              key="simulation-push-view"
-              initial={prefersReducedMotion ? { opacity: 0 } : { x: '22%', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={prefersReducedMotion ? { opacity: 0 } : { x: '22%', opacity: 0 }}
-              transition={navTransition}
-              style={{ willChange: 'transform, opacity' }}
-            >
-              <PreSignSimulationSheet
-                simulation={activeSimulation}
-                onBack={() => setActiveSimulation(null)}
-                onComplete={() => {
-                  setActiveSimulation(null);
-                  closeActionDrawer();
-                }}
-              />
-            </motion.div>
-          ) : (
-            <motion.div
-              key={`form-view-${actionDrawer.tab}`}
-              initial={
-                prefersReducedMotion
-                  ? { opacity: 0 }
-                  : { x: tabDirection * 24, opacity: 0 }
-              }
-              animate={{ x: 0, opacity: 1 }}
-              exit={
-                prefersReducedMotion
-                  ? { opacity: 0 }
-                  : { x: tabDirection * -24, opacity: 0 }
-              }
-              transition={navTransition}
-              style={{ willChange: 'transform, opacity' }}
-            >
+        {activeSimulation ? (
+          <motion.div
+            key="simulation-push-view"
+            initial={prefersReducedMotion ? { opacity: 0 } : { x: '22%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={navTransition}
+          >
+            <PreSignSimulationSheet
+              simulation={activeSimulation}
+              onBack={() => setActiveSimulation(null)}
+              onComplete={() => {
+                setActiveSimulation(null);
+                closeActionDrawer();
+              }}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key={`form-view-${actionDrawer.tab}`}
+            initial={
+              prefersReducedMotion
+                ? { opacity: 0 }
+                : { x: tabDirection * 24, opacity: 0 }
+            }
+            animate={{ x: 0, opacity: 1 }}
+            transition={navTransition}
+          >
               {actionDrawer.tab === 'send' ? (
                 <form onSubmit={handleSimulateSend} className="space-y-5">
                   {/* Token Selector */}
@@ -846,23 +839,17 @@ export function ActionDrawer() {
                   </div>
 
                   {/* QR Display with Directional Slide on Network Change */}
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={receiveNetwork}
-                      initial={
-                        prefersReducedMotion
-                          ? { opacity: 0 }
-                          : { x: receiveNetDir * 20, opacity: 0 }
-                      }
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={
-                        prefersReducedMotion
-                          ? { opacity: 0 }
-                          : { x: receiveNetDir * -20, opacity: 0 }
-                      }
-                      transition={navTransition}
-                      className="p-6 glass-recessed flex flex-col items-center text-center space-y-4"
-                    >
+                  <motion.div
+                    key={receiveNetwork}
+                    initial={
+                      prefersReducedMotion
+                        ? { opacity: 0 }
+                        : { x: receiveNetDir * 20, opacity: 0 }
+                    }
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={navTransition}
+                    className="p-6 glass-recessed flex flex-col items-center text-center space-y-4"
+                  >
                     <div className="p-3.5 rounded-xl bg-white">
                       <svg
                         width="180"
@@ -914,8 +901,7 @@ export function ActionDrawer() {
                         </>
                       )}
                     </button>
-                    </motion.div>
-                  </AnimatePresence>
+                  </motion.div>
 
                   {/* Optional Payment Request */}
                   <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">
@@ -970,9 +956,8 @@ export function ActionDrawer() {
                   </button>
                 </div>
               )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </motion.div>
+        )}
       </div>
     </SlideOverSheet>
   );

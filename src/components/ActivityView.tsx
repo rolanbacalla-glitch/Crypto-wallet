@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowDownLeft,
   ArrowDownUp,
@@ -100,15 +100,12 @@ export function ActivityView() {
 
       {/* Ledger List with Directional Sliding Transition */}
       <section className="surface-panel overflow-hidden">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={filter}
-            initial={prefersReducedMotion ? { opacity: 0 } : { x: slideDirection * 24, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={prefersReducedMotion ? { opacity: 0 } : { x: slideDirection * -24, opacity: 0 }}
-            transition={panelTransition}
-            style={{ willChange: 'transform, opacity' }}
-          >
+        <motion.div
+          key={filter}
+          initial={prefersReducedMotion ? { opacity: 0 } : { x: slideDirection * 22, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={panelTransition}
+        >
             {filtered.length === 0 ? (
               <div className="px-6 py-16 text-center space-y-3">
                 <p className="text-sm font-medium text-[#F3F5F8]">No transactions match this filter</p>
@@ -200,8 +197,7 @@ export function ActivityView() {
                 })}
               </div>
             )}
-          </motion.div>
-        </AnimatePresence>
+        </motion.div>
       </section>
     </div>
   );
