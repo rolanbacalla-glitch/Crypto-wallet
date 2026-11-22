@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   Activity,
   ArrowUpRight,
@@ -21,9 +22,16 @@ import { ApprovalsView } from './components/ApprovalsView';
 import { AssetsView } from './components/AssetsView';
 import { OverviewView } from './components/OverviewView';
 import { SettingsView } from './components/SettingsView';
+import { SlideOverSheet } from './components/SlideOverSheet';
 import { ToastStack } from './components/ToastStack';
+import { TransactionDetailSheet } from './components/TransactionDetailSheet';
 import { useWallet, WalletProvider } from './context/WalletContext';
 import { shortenAddress } from './data/initialWalletData';
+import {
+  APPLE_REDUCED_CROSSFADE,
+  APPLE_SPRING_SHEET,
+  APPLE_SPRING_SNAPPY,
+} from './motion/appleMotion';
 import type { NavTab, WalletMode } from './types/wallet';
 
 const NAV_META: Record<NavTab, { label: string; heading: string; subtitle: string; icon: React.ElementType }> = {
@@ -98,10 +106,14 @@ function WalletShell() {
     lockVault,
     settings,
     atRiskApprovalsCount,
+    actionDrawer,
     openActionDrawer,
+    inspectedTransaction,
+    closeTransactionDetail,
     addToast,
   } = useWallet();
 
+  const prefersReducedMotion = useReducedMotion();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [copiedAddr, setCopiedAddr] = useState(false);
 
@@ -110,6 +122,7 @@ function WalletShell() {
   }
 
   const currentMeta = NAV_META[activeTab];
+  const anyPopoutOpen = actionDrawer.open || Boolean(inspectedTransaction) || mobileNavOpen;
 
   const handleCopyWallet = async () => {
     try {
@@ -237,119 +250,150 @@ function WalletShell() {
   );
 
   return (
-    <div className="min-h-screen bg-[#090B0E] text-[#F3F5F8] flex">
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 shrink-0 border-r border-white/[0.08] bg-[#0C0F14] sticky top-0 h-screen flex-col">
-        {renderSidebarContent()}
-      </aside>
+    <div className="min-h-screen bg-[#090B0E] text-[#F3F5F8] overflow-x-hidden">
+      {/* iOS Spatial Depth Pushback on Background Shell When a Pop-Out Sheet Opens */}
+      <motion.div
+        animate={
+          prefersReducedMotion
+            ? { opacity: anyPopoutOpen ? 0.92 : 1 }
+            : {
+                scale: anyPopoutOpen ? 0.988 : 1,
+                opacity: anyPopoutOpen ? 0.88 : 1,
+              }
+        }
+        transition={prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SHEET}
+        style={{ transformOrigin: 'center top', willChange: 'transform, opacity' }}
+        className="min-h-screen flex"
+      >
+        {/* Desktop Sidebar */}
+        <aside className="hidden lg:flex w-64 shrink-0 border-r border-white/[0.08] bg-[#0C0F14] sticky top-0 h-screen flex-col">
+          {renderSidebarContent()}
+        </aside>
 
-      {/* Mobile Sidebar Drawer */}
-      {mobileNavOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden flex">
-          <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-[2px]"
-            onClick={() => setMobileNavOpen(false)}
-          />
-          <aside className="relative z-10 w-64 max-w-[82vw] bg-[#0C0F14] border-r border-white/[0.08] h-full flex flex-col">
-            {renderSidebarContent()}
-          </aside>
-        </div>
-      )}
+        {/* Main Content Shell */}
+        <div className="flex-1 min-w-0 flex flex-col">
+          {/* Clean 3-Zone Top Bar */}
+          <header className="h-16 px-4 md:px-8 border-b border-white/[0.08] bg-[#090B0E]/90 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <button
+                type="button"
+                onClick={() => setMobileNavOpen(true)}
+                aria-label="Open navigation menu"
+                className="lg:hidden w-9 h-9 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] flex items-center justify-center text-[#C7D0DC] shrink-0"
+              >
+                <Menu className="w-4 h-4" />
+              </button>
+              <div className="flex items-center gap-2 text-sm min-w-0 whitespace-nowrap">
+                <span className="text-[#6B7686] hidden sm:inline">Nest Wallet</span>
+                <span className="text-[#6B7686] hidden sm:inline" aria-hidden="true">/</span>
+                <span className="font-medium text-[#F3F5F8] truncate">{currentMeta.label}</span>
+              </div>
+            </div>
 
-      {/* Main Content Shell */}
-      <div className="flex-1 min-w-0 flex flex-col">
-        {/* Clean 3-Zone Top Bar */}
-        <header className="h-16 px-4 md:px-8 border-b border-white/[0.08] bg-[#090B0E]/90 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
             <button
               type="button"
-              onClick={() => setMobileNavOpen(true)}
-              aria-label="Open navigation menu"
-              className="lg:hidden w-9 h-9 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] flex items-center justify-center text-[#C7D0DC] shrink-0"
+              onClick={() => openActionDrawer('send')}
+              className={`px-3.5 py-2 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 focus-ring ${
+                mode === 'sentinel'
+                  ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
+                  : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
+              }`}
             >
-              <Menu className="w-4 h-4" />
+              <ArrowUpRight className="w-3.5 h-3.5" />
+              <span>New transaction</span>
             </button>
-            <div className="flex items-center gap-2 text-sm min-w-0 whitespace-nowrap">
-              <span className="text-[#6B7686] hidden sm:inline">Nest Wallet</span>
-              <span className="text-[#6B7686] hidden sm:inline" aria-hidden="true">/</span>
-              <span className="font-medium text-[#F3F5F8] truncate">{currentMeta.label}</span>
+          </header>
+
+          {/* Main Workspace Canvas */}
+          <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-8 py-6 md:py-8 space-y-6">
+            {/* Workspace Toolbar: Section Title + Instant Guardian / Sentinel Toggle */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-white/[0.06]">
+              <div className="space-y-1">
+                <h1 className="font-display text-2xl font-bold text-[#F3F5F8] text-balance">
+                  {currentMeta.heading}
+                </h1>
+                <p className="text-sm text-[#9AA4B2]">{currentMeta.subtitle}</p>
+              </div>
+
+              {/* Instant Mode Switcher with Apple Snappy Spring Thumb */}
+              <div
+                role="group"
+                aria-label="Safety interface mode"
+                className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#11151C] border border-white/[0.08] self-start sm:self-auto shrink-0 relative"
+              >
+                {(
+                  [
+                    { id: 'guardian', label: 'Guardian', icon: Shield },
+                    { id: 'sentinel', label: 'Sentinel', icon: Terminal },
+                  ] as Array<{ id: WalletMode; label: string; icon: React.ElementType }>
+                ).map((item) => {
+                  const active = mode === item.id;
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setMode(item.id)}
+                      aria-pressed={active}
+                      className={`relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap shrink-0 focus-ring ${
+                        active
+                          ? item.id === 'sentinel'
+                            ? 'text-sky-300'
+                            : 'text-emerald-300'
+                          : 'text-[#9AA4B2] hover:text-white'
+                      }`}
+                    >
+                      {active && (
+                        <motion.span
+                          layoutId="walletModeThumb"
+                          transition={
+                            prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SNAPPY
+                          }
+                          className={`absolute inset-0 rounded-md border ${
+                            item.id === 'sentinel'
+                              ? 'bg-sky-500/15 border-sky-400/30'
+                              : 'bg-emerald-500/15 border-emerald-400/30'
+                          }`}
+                        />
+                      )}
+                      <Icon className="w-3.5 h-3.5 relative z-10" />
+                      <span className="relative z-10">{item.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          <button
-            type="button"
-            onClick={() => openActionDrawer('send')}
-            className={`px-3.5 py-2 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 focus-ring ${
-              mode === 'sentinel'
-                ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
-                : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
-            }`}
-          >
-            <ArrowUpRight className="w-3.5 h-3.5" />
-            <span>New transaction</span>
-          </button>
-        </header>
+            {/* Active Route View */}
+            {activeTab === 'overview' && <OverviewView />}
+            {activeTab === 'assets' && <AssetsView />}
+            {activeTab === 'activity' && <ActivityView />}
+            {activeTab === 'approvals' && <ApprovalsView />}
+            {activeTab === 'settings' && <SettingsView />}
+          </main>
+        </div>
+      </motion.div>
 
-        {/* Main Workspace Canvas */}
-        <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-8 py-6 md:py-8 space-y-6">
-          {/* Workspace Toolbar: Section Title + Instant Guardian / Sentinel Toggle */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-white/[0.06]">
-            <div className="space-y-1">
-              <h1 className="font-display text-2xl font-bold text-[#F3F5F8] text-balance">
-                {currentMeta.heading}
-              </h1>
-              <p className="text-sm text-[#9AA4B2]">{currentMeta.subtitle}</p>
-            </div>
-
-            {/* Instant Mode Switcher */}
-            <div
-              role="group"
-              aria-label="Safety interface mode"
-              className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#11151C] border border-white/[0.08] self-start sm:self-auto shrink-0"
-            >
-              {(
-                [
-                  { id: 'guardian', label: 'Guardian', icon: Shield },
-                  { id: 'sentinel', label: 'Sentinel', icon: Terminal },
-                ] as Array<{ id: WalletMode; label: string; icon: React.ElementType }>
-              ).map((item) => {
-                const active = mode === item.id;
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setMode(item.id)}
-                    aria-pressed={active}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap shrink-0 focus-ring ${
-                      active
-                        ? item.id === 'sentinel'
-                          ? 'bg-sky-500/15 text-sky-300 border border-sky-400/30'
-                          : 'bg-emerald-500/15 text-emerald-300 border border-emerald-400/30'
-                        : 'text-[#9AA4B2] hover:text-white border border-transparent'
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Active Route View */}
-          {activeTab === 'overview' && <OverviewView />}
-          {activeTab === 'assets' && <AssetsView />}
-          {activeTab === 'activity' && <ActivityView />}
-          {activeTab === 'approvals' && <ApprovalsView />}
-          {activeTab === 'settings' && <SettingsView />}
-        </main>
-      </div>
+      {/* Mobile Navigation Slide-In Sheet (Apple HIG Spring + Swipe-Left Dismiss) */}
+      <SlideOverSheet
+        open={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+        ariaLabel="Navigation menu"
+        side="left"
+      >
+        {renderSidebarContent()}
+      </SlideOverSheet>
 
       {/* Flagship Interactive Action Drawer (Send / Swap / Receive + Pre-Sign Simulation) */}
       <ActionDrawer />
 
-      {/* Live Toast Notifications */}
+      {/* Slide-In Transaction Audit Detail Sheet */}
+      <TransactionDetailSheet
+        transaction={inspectedTransaction}
+        onClose={closeTransactionDetail}
+      />
+
+      {/* Live Spring Toast Notifications */}
       <ToastStack />
     </div>
   );

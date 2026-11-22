@@ -33,6 +33,7 @@ export function OverviewView() {
     atRiskApprovalsCount,
     blockedThreatsCount,
     openActionDrawer,
+    openTransactionDetail,
     setActiveTab,
   } = useWallet();
 
@@ -412,7 +413,7 @@ export function OverviewView() {
                 <button
                   key={tx.id}
                   type="button"
-                  onClick={() => setActiveTab('activity')}
+                  onClick={() => openTransactionDetail(tx)}
                   className="w-full px-5 py-3.5 flex items-center justify-between gap-3 text-left hover:bg-white/[0.025] transition-colors focus-ring"
                 >
                   <div className="flex items-center gap-3 min-w-0">

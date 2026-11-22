@@ -3,28 +3,24 @@ import {
   ArrowDownLeft,
   ArrowDownUp,
   ArrowUpRight,
-  ChevronDown,
-  ChevronUp,
+  ChevronRight,
   Search,
   ShieldAlert,
   ShieldCheck,
 } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import {
-  formatFiat,
   formatRelativeTime,
   formatTokenAmount,
   NETWORKS,
-  shortenAddress,
 } from '../data/initialWalletData';
 
 type ActivityFilter = 'all' | 'send' | 'swap' | 'receive' | 'blocked' | 'revoke';
 
 export function ActivityView() {
-  const { transactions, mode, settings } = useWallet();
+  const { transactions, openTransactionDetail } = useWallet();
   const [filter, setFilter] = useState<ActivityFilter>('all');
   const [query, setQuery] = useState('');
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -90,7 +86,7 @@ export function ActivityView() {
         </div>
       </div>
 
-      {/* Ledger List */}
+      {/* Ledger List — Clicking Any Row Slides In TransactionDetailSheet */}
       <section className="surface-panel overflow-hidden">
         {filtered.length === 0 ? (
           <div className="px-6 py-16 text-center space-y-3">
@@ -112,129 +108,72 @@ export function ActivityView() {
         ) : (
           <div className="divide-y divide-white/[0.06]">
             {filtered.map((tx) => {
-              const isExpanded = expandedId === tx.id;
               const isBlocked = tx.status === 'blocked';
               return (
-                <div key={tx.id}>
-                  <button
-                    type="button"
-                    onClick={() => setExpandedId(isExpanded ? null : tx.id)}
-                    className="w-full px-5 py-4 flex items-center justify-between gap-4 text-left hover:bg-white/[0.025] transition-colors focus-ring"
-                  >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <div
-                        className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ${
-                          isBlocked
-                            ? 'bg-red-500/[0.1] border-red-500/25 text-red-400'
-                            : tx.type === 'receive'
-                              ? 'bg-emerald-500/[0.1] border-emerald-500/25 text-emerald-400'
-                              : tx.type === 'revoke'
-                                ? 'bg-sky-500/[0.1] border-sky-500/25 text-sky-400'
-                                : 'bg-white/[0.04] border-white/[0.08] text-[#C7D0DC]'
-                        }`}
-                      >
-                        {isBlocked ? (
-                          <ShieldAlert className="w-4 h-4" />
-                        ) : tx.type === 'receive' ? (
-                          <ArrowDownLeft className="w-4 h-4" />
-                        ) : tx.type === 'swap' ? (
-                          <ArrowDownUp className="w-4 h-4" />
-                        ) : tx.type === 'revoke' ? (
-                          <ShieldCheck className="w-4 h-4" />
-                        ) : (
-                          <ArrowUpRight className="w-4 h-4" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-[#F3F5F8] truncate">{tx.title}</p>
-                        <p className="text-xs text-[#9AA4B2] truncate mt-0.5">
-                          {isBlocked ? 'Intercepted & Blocked' : 'Confirmed'} · {NETWORKS[tx.network].shortName} ·{' '}
-                          {tx.counterparty} · {formatRelativeTime(tx.timestamp)}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 shrink-0">
-                      <div className="text-right font-mono tabular-nums">
-                        {tx.balanceDiffs.length > 0 ? (
-                          tx.balanceDiffs.map((diff, idx) => (
-                            <p
-                              key={idx}
-                              className={`text-xs font-medium ${
-                                isBlocked
-                                  ? 'text-red-400 line-through'
-                                  : diff.direction === 'in'
-                                    ? 'text-emerald-400'
-                                    : 'text-[#F3F5F8]'
-                              }`}
-                            >
-                              {diff.direction === 'in' ? '+' : '-'}
-                              {formatTokenAmount(Math.abs(diff.delta))} {diff.symbol}
-                            </p>
-                          ))
-                        ) : (
-                          <p className="text-xs text-sky-400">Allowance = 0</p>
-                        )}
-                      </div>
-                      {isExpanded ? (
-                        <ChevronUp className="w-4 h-4 text-[#9AA4B2]" />
+                <button
+                  key={tx.id}
+                  type="button"
+                  onClick={() => openTransactionDetail(tx)}
+                  className="w-full px-5 py-4 flex items-center justify-between gap-4 text-left hover:bg-white/[0.025] transition-colors focus-ring group"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div
+                      className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ${
+                        isBlocked
+                          ? 'bg-red-500/[0.1] border-red-500/25 text-red-400'
+                          : tx.type === 'receive'
+                            ? 'bg-emerald-500/[0.1] border-emerald-500/25 text-emerald-400'
+                            : tx.type === 'revoke'
+                              ? 'bg-sky-500/[0.1] border-sky-500/25 text-sky-400'
+                              : 'bg-white/[0.04] border-white/[0.08] text-[#C7D0DC]'
+                      }`}
+                    >
+                      {isBlocked ? (
+                        <ShieldAlert className="w-4 h-4" />
+                      ) : tx.type === 'receive' ? (
+                        <ArrowDownLeft className="w-4 h-4" />
+                      ) : tx.type === 'swap' ? (
+                        <ArrowDownUp className="w-4 h-4" />
+                      ) : tx.type === 'revoke' ? (
+                        <ShieldCheck className="w-4 h-4" />
                       ) : (
-                        <ChevronDown className="w-4 h-4 text-[#9AA4B2]" />
+                        <ArrowUpRight className="w-4 h-4" />
                       )}
                     </div>
-                  </button>
-
-                  {isExpanded && (
-                    <div className="px-5 pb-5 pt-2 bg-[#0C0F14] border-t border-white/[0.05] space-y-3 text-xs">
-                      <p className="text-[#C7D0DC] leading-relaxed">
-                        <span className="text-[#9AA4B2]">Safety audit: </span>
-                        {tx.riskSummary}
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-[#F3F5F8] truncate">{tx.title}</p>
+                      <p className="text-xs text-[#9AA4B2] truncate mt-0.5">
+                        {isBlocked ? 'Intercepted & Blocked' : 'Confirmed'} · {NETWORKS[tx.network].shortName} ·{' '}
+                        {tx.counterparty} · {formatRelativeTime(tx.timestamp)}
                       </p>
+                    </div>
+                  </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono tabular-nums pt-1">
-                        <div>
-                          <span className="block text-[11px] text-[#6B7686]">Counterparty</span>
-                          <span className="text-[#F3F5F8]">{shortenAddress(tx.counterpartyAddress)}</span>
-                        </div>
-                        <div>
-                          <span className="block text-[11px] text-[#6B7686]">Network fee</span>
-                          <span className="text-[#F3F5F8]">
-                            {isBlocked
-                              ? '$0.00 (Not broadcast)'
-                              : `${formatFiat(tx.gasCostUsd, settings.currency)} · ${tx.gasGwei} gwei`}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="block text-[11px] text-[#6B7686]">Orderflow</span>
-                          <span className="text-[#F3F5F8]">
-                            {tx.mevProtected ? 'MEV Protected Relay' : 'Standard RPC'}
-                          </span>
-                        </div>
-                      </div>
-
-                      {mode === 'sentinel' && (
-                        <div className="pt-2 border-t border-white/[0.06] space-y-2 font-mono text-[11px]">
-                          <div className="flex flex-wrap gap-x-6 gap-y-1">
-                            <div>
-                              <span className="text-[#6B7686]">Method: </span>
-                              <span className="text-sky-300">{tx.calldataMethod}</span>
-                            </div>
-                            <div>
-                              <span className="text-[#6B7686]">Tx hash: </span>
-                              <span className="text-[#9AA4B2]">{shortenAddress(tx.txHash)}</span>
-                            </div>
-                          </div>
-                          <div>
-                            <span className="block text-[#6B7686] mb-1">Calldata payload</span>
-                            <p className="p-2 rounded bg-[#090B0E] border border-white/[0.06] text-[#9AA4B2] break-all">
-                              {tx.calldataHex}
-                            </p>
-                          </div>
-                        </div>
+                  <div className="flex items-center gap-4 shrink-0">
+                    <div className="text-right font-mono tabular-nums">
+                      {tx.balanceDiffs.length > 0 ? (
+                        tx.balanceDiffs.map((diff, idx) => (
+                          <p
+                            key={idx}
+                            className={`text-xs font-medium ${
+                              isBlocked
+                                ? 'text-red-400 line-through'
+                                : diff.direction === 'in'
+                                  ? 'text-emerald-400'
+                                  : 'text-[#F3F5F8]'
+                            }`}
+                          >
+                            {diff.direction === 'in' ? '+' : '-'}
+                            {formatTokenAmount(Math.abs(diff.delta))} {diff.symbol}
+                          </p>
+                        ))
+                      ) : (
+                        <p className="text-xs text-sky-400">Allowance = 0</p>
                       )}
                     </div>
-                  )}
-                </div>
+                    <ChevronRight className="w-4 h-4 text-[#6B7686] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                  </div>
+                </button>
               );
             })}
           </div>

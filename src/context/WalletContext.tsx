@@ -59,6 +59,9 @@ interface WalletContextValue {
   actionDrawer: ActionDrawerState;
   openActionDrawer: (tab: ActionDrawerTab, preselectedTokenId?: string) => void;
   closeActionDrawer: () => void;
+  inspectedTransaction: TransactionRecord | null;
+  openTransactionDetail: (tx: TransactionRecord) => void;
+  closeTransactionDetail: () => void;
   executeSimulation: (sim: SimulationResult) => TransactionRecord;
   recordBlockedSimulation: (sim: SimulationResult) => void;
   simulateIncomingReceive: (network: NetworkId, symbol: string, amount: number) => void;
@@ -109,6 +112,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     open: false,
     tab: 'send',
   });
+  const [inspectedTransaction, setInspectedTransaction] = useState<TransactionRecord | null>(null);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   useEffect(() => {
@@ -142,11 +146,21 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   );
 
   const openActionDrawer = useCallback((tab: ActionDrawerTab, preselectedTokenId?: string) => {
+    setInspectedTransaction(null);
     setActionDrawer({ open: true, tab, preselectedTokenId });
   }, []);
 
   const closeActionDrawer = useCallback(() => {
     setActionDrawer((prev) => ({ ...prev, open: false }));
+  }, []);
+
+  const openTransactionDetail = useCallback((tx: TransactionRecord) => {
+    setActionDrawer((prev) => ({ ...prev, open: false }));
+    setInspectedTransaction(tx);
+  }, []);
+
+  const closeTransactionDetail = useCallback(() => {
+    setInspectedTransaction(null);
   }, []);
 
   const executeSimulation = useCallback(
@@ -434,6 +448,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     actionDrawer,
     openActionDrawer,
     closeActionDrawer,
+    inspectedTransaction,
+    openTransactionDetail,
+    closeTransactionDetail,
     executeSimulation,
     recordBlockedSimulation,
     simulateIncomingReceive,

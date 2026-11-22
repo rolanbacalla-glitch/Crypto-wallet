@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowDownUp,
   ArrowUpRight,
@@ -23,6 +24,11 @@ import {
   simulateSendTransaction,
   simulateSwapTransaction,
 } from '../engine/simulator';
+import {
+  APPLE_REDUCED_CROSSFADE,
+  APPLE_SPRING_NAV_PUSH,
+  APPLE_SPRING_SNAPPY,
+} from '../motion/appleMotion';
 import type {
   ActionDrawerTab,
   GasSpeed,
@@ -31,7 +37,14 @@ import type {
   SimulationResult,
 } from '../types/wallet';
 import { PreSignSimulationSheet } from './PreSignSimulationSheet';
+import { SlideOverSheet } from './SlideOverSheet';
 import { TokenIcon } from './TokenIcon';
+
+const TAB_ORDER: Record<ActionDrawerTab, number> = {
+  send: 0,
+  swap: 1,
+  receive: 2,
+};
 
 export function ActionDrawer() {
   const {
@@ -47,7 +60,10 @@ export function ActionDrawer() {
     addToast,
   } = useWallet();
 
+  const prefersReducedMotion = useReducedMotion();
   const [activeSimulation, setActiveSimulation] = useState<SimulationResult | null>(null);
+  const prevTabRef = useRef<ActionDrawerTab>(actionDrawer.tab);
+  const [tabDirection, setTabDirection] = useState<number>(1);
 
   // Send Form State
   const [sendTokenId, setSendTokenId] = useState<string>(assets[0]?.id || 'eth-mainnet');
@@ -73,6 +89,13 @@ export function ActionDrawer() {
   const [copiedAddress, setCopiedAddress] = useState(false);
 
   useEffect(() => {
+    if (prevTabRef.current !== actionDrawer.tab) {
+      setTabDirection(TAB_ORDER[actionDrawer.tab] > TAB_ORDER[prevTabRef.current] ? 1 : -1);
+      prevTabRef.current = actionDrawer.tab;
+    }
+  }, [actionDrawer.tab]);
+
+  useEffect(() => {
     if (actionDrawer.open) {
       setActiveSimulation(null);
       setMevRelay(settings.defaultMevRelay);
@@ -90,16 +113,6 @@ export function ActionDrawer() {
       }
     }
   }, [actionDrawer.open, actionDrawer.preselectedTokenId, actionDrawer.tab, assets, settings.defaultMevRelay]);
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && actionDrawer.open) {
-        closeActionDrawer();
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [actionDrawer.open, closeActionDrawer]);
 
   const selectedSendToken = assets.find((a) => a.id === sendTokenId) || assets[0];
   const parsedSendAmount = Number(sendAmount);
@@ -170,8 +183,6 @@ export function ActionDrawer() {
   }, [receiveNetwork, requestAmount, requestSymbol, settings.walletAddress]);
 
   const qrMatrix = useMemo(() => generateQrMatrix(paymentUri), [paymentUri]);
-
-  if (!actionDrawer.open) return null;
 
   const handleSimulateSend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -256,48 +267,59 @@ export function ActionDrawer() {
     openActionDrawer(tab);
   };
 
+  const navTransition = prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_NAV_PUSH;
+  const tabTransition = prefersReducedMotion ? APPLE_REDUCED_CROSSFADE : APPLE_SPRING_SNAPPY;
+
   return (
-    <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true" aria-label="Transaction action center">
-      <div
-        className="fixed inset-0 bg-black/70 backdrop-blur-[2px] transition-opacity"
-        onClick={closeActionDrawer}
-      />
-
-      <div className="relative z-10 w-full max-w-[520px] bg-[#11151C] border-l border-white/[0.08] h-full flex flex-col shadow-2xl">
-        {/* Drawer Header */}
-        <div className="px-6 py-4 border-b border-white/[0.08] flex items-center justify-between gap-4 shrink-0">
-          <div>
-            <h2 className="font-display text-lg font-semibold text-[#F3F5F8]">
-              {activeSimulation
-                ? 'Pre-sign simulation'
-                : actionDrawer.tab === 'send'
-                  ? 'Send assets'
-                  : actionDrawer.tab === 'swap'
-                    ? 'Swap assets'
-                    : 'Receive assets'}
-            </h2>
-            <p className="text-xs text-[#9AA4B2] mt-0.5">
-              {activeSimulation
-                ? mode === 'sentinel'
-                  ? 'Inspecting calldata, state diff, and threat heuristics'
-                  : 'Verified preview of what leaves and enters your vault'
-                : 'Every outgoing transaction is simulated before signing'}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={closeActionDrawer}
-            aria-label="Close panel"
-            className="w-9 h-9 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] flex items-center justify-center text-[#9AA4B2] hover:text-white transition-colors focus-ring shrink-0"
-          >
-            <X className="w-4 h-4" />
-          </button>
+    <SlideOverSheet
+      open={actionDrawer.open}
+      onClose={closeActionDrawer}
+      ariaLabel="Transaction action center"
+      side="right"
+      maxWidthClass="sm:max-w-[520px]"
+    >
+      {/* Drawer Header */}
+      <div className="px-6 py-4 border-b border-white/[0.08] flex items-center justify-between gap-4 shrink-0">
+        <div>
+          <h2 className="font-display text-lg font-semibold text-[#F3F5F8]">
+            {activeSimulation
+              ? 'Pre-sign simulation'
+              : actionDrawer.tab === 'send'
+                ? 'Send assets'
+                : actionDrawer.tab === 'swap'
+                  ? 'Swap assets'
+                  : 'Receive assets'}
+          </h2>
+          <p className="text-xs text-[#9AA4B2] mt-0.5">
+            {activeSimulation
+              ? mode === 'sentinel'
+                ? 'Inspecting calldata, state diff, and threat heuristics'
+                : 'Verified preview of what leaves and enters your vault'
+              : 'Every outgoing transaction is simulated before signing'}
+          </p>
         </div>
+        <button
+          type="button"
+          onClick={closeActionDrawer}
+          aria-label="Close panel"
+          className="w-9 h-9 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] flex items-center justify-center text-[#9AA4B2] hover:text-white transition-colors focus-ring shrink-0"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
 
-        {/* Action Tab Switcher (hidden while reviewing simulation) */}
+      {/* iOS Segmented Tab Switcher (slides smoothly out during simulation push) */}
+      <AnimatePresence initial={false}>
         {!activeSimulation && (
-          <div className="px-6 pt-4 shrink-0">
-            <div className="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[#090B0E] border border-white/[0.08]">
+          <motion.div
+            key="drawer-tab-bar"
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+            transition={tabTransition}
+            className="px-6 pt-4 shrink-0"
+          >
+            <div className="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[#090B0E] border border-white/[0.08] relative">
               {(['send', 'swap', 'receive'] as ActionDrawerTab[]).map((tab) => {
                 const isActive = actionDrawer.tab === tab;
                 const Icon = tab === 'send' ? ArrowUpRight : tab === 'swap' ? ArrowDownUp : Download;
@@ -306,590 +328,629 @@ export function ActionDrawer() {
                     key={tab}
                     type="button"
                     onClick={() => switchTab(tab)}
-                    className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-md text-xs font-medium transition-colors whitespace-nowrap focus-ring ${
-                      isActive
-                        ? 'bg-[#1A212C] text-[#F3F5F8] border border-white/[0.09]'
-                        : 'text-[#9AA4B2] hover:text-[#F3F5F8]'
+                    className={`relative flex items-center justify-center gap-1.5 py-2 px-3 rounded-md text-xs font-medium transition-colors whitespace-nowrap focus-ring ${
+                      isActive ? 'text-[#F3F5F8]' : 'text-[#9AA4B2] hover:text-[#F3F5F8]'
                     }`}
                   >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span className="capitalize">{tab}</span>
+                    {isActive && (
+                      <motion.span
+                        layoutId="actionDrawerTabThumb"
+                        transition={tabTransition}
+                        className="absolute inset-0 rounded-md bg-[#1A212C] border border-white/[0.1]"
+                      />
+                    )}
+                    <Icon className="w-3.5 h-3.5 relative z-10" />
+                    <span className="capitalize relative z-10">{tab}</span>
                   </button>
                 );
               })}
             </div>
-          </div>
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* Drawer Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-5">
+      {/* Drawer Body with iOS UINavigationController Push / Pop Parallax */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 py-5 relative">
+        <AnimatePresence mode="wait" initial={false}>
           {activeSimulation ? (
-            <PreSignSimulationSheet
-              simulation={activeSimulation}
-              onBack={() => setActiveSimulation(null)}
-              onComplete={() => {
-                setActiveSimulation(null);
-                closeActionDrawer();
-              }}
-            />
-          ) : actionDrawer.tab === 'send' ? (
-            <form onSubmit={handleSimulateSend} className="space-y-5">
-              {/* Token Selector */}
-              <div className="space-y-2">
-                <label htmlFor="send-asset" className="block text-xs font-medium text-[#9AA4B2]">
-                  Asset & network
-                </label>
-                <select
-                  id="send-asset"
-                  value={sendTokenId}
-                  onChange={(e) => setSendTokenId(e.target.value)}
-                  className="w-full h-11 px-3.5 rounded-lg bg-[#090B0E] border border-white/[0.1] text-sm text-[#F3F5F8] focus:border-emerald-400/60 focus:outline-none"
-                >
-                  {assets.map((asset) => (
-                    <option key={asset.id} value={asset.id}>
-                      {asset.symbol} · {NETWORKS[asset.network].shortName} — {formatTokenAmount(asset.balance)} available
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Amount Input */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <label htmlFor="send-amount" className="font-medium text-[#9AA4B2]">
-                    Amount
-                  </label>
-                  <span className="text-[#9AA4B2] font-mono tabular-nums">
-                    Balance: {formatTokenAmount(selectedSendToken.balance)} {selectedSendToken.symbol}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#090B0E] border border-white/[0.1] focus-within:border-emerald-400/60">
-                  <TokenIcon symbol={selectedSendToken.symbol} size={28} />
-                  <input
-                    id="send-amount"
-                    type="number"
-                    step="any"
-                    min="0"
-                    value={sendAmount}
-                    onChange={(e) => setSendAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="flex-1 bg-transparent text-lg font-mono tabular-nums text-[#F3F5F8] placeholder:text-[#6B7686] focus:outline-none min-w-0"
-                  />
-                  <span className="text-xs font-mono tabular-nums text-[#9AA4B2] shrink-0">
-                    {formatFiat(sendAmountUsd, settings.currency)}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  {[0.25, 0.5, 1].map((pct) => (
-                    <button
-                      key={pct}
-                      type="button"
-                      onClick={() =>
-                        setSendAmount(String(Number((selectedSendToken.balance * pct).toFixed(4))))
-                      }
-                      className="px-2.5 py-1 rounded-md text-xs font-mono tabular-nums bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-[#C7D0DC] transition-colors whitespace-nowrap"
+            <motion.div
+              key="simulation-push-view"
+              initial={prefersReducedMotion ? { opacity: 0 } : { x: '22%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { x: '22%', opacity: 0 }}
+              transition={navTransition}
+              style={{ willChange: 'transform, opacity' }}
+            >
+              <PreSignSimulationSheet
+                simulation={activeSimulation}
+                onBack={() => setActiveSimulation(null)}
+                onComplete={() => {
+                  setActiveSimulation(null);
+                  closeActionDrawer();
+                }}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key={`form-view-${actionDrawer.tab}`}
+              initial={
+                prefersReducedMotion
+                  ? { opacity: 0 }
+                  : { x: tabDirection * 24, opacity: 0 }
+              }
+              animate={{ x: 0, opacity: 1 }}
+              exit={
+                prefersReducedMotion
+                  ? { opacity: 0 }
+                  : { x: tabDirection * -24, opacity: 0 }
+              }
+              transition={navTransition}
+              style={{ willChange: 'transform, opacity' }}
+            >
+              {actionDrawer.tab === 'send' ? (
+                <form onSubmit={handleSimulateSend} className="space-y-5">
+                  {/* Token Selector */}
+                  <div className="space-y-2">
+                    <label htmlFor="send-asset" className="block text-xs font-medium text-[#9AA4B2]">
+                      Asset & network
+                    </label>
+                    <select
+                      id="send-asset"
+                      value={sendTokenId}
+                      onChange={(e) => setSendTokenId(e.target.value)}
+                      className="w-full h-11 px-3.5 rounded-lg bg-[#090B0E] border border-white/[0.1] text-sm text-[#F3F5F8] focus:border-emerald-400/60 focus:outline-none"
                     >
-                      {pct === 1 ? 'Max' : `${pct * 100}%`}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Recipient Input */}
-              <div className="space-y-2">
-                <label htmlFor="send-recipient" className="block text-xs font-medium text-[#9AA4B2]">
-                  Recipient address or ENS
-                </label>
-                <input
-                  id="send-recipient"
-                  type="text"
-                  value={recipientInput}
-                  onChange={(e) => setRecipientInput(e.target.value)}
-                  placeholder="0x… or name.eth"
-                  className="w-full h-11 px-3.5 rounded-lg bg-[#090B0E] border border-white/[0.1] font-mono text-xs text-[#F3F5F8] placeholder:text-[#6B7686] focus:border-emerald-400/60 focus:outline-none"
-                />
-              </div>
-
-              {/* Quick Safety Test Presets */}
-              <div className="space-y-2">
-                <p className="text-xs font-medium text-[#9AA4B2]">
-                  Contacts & threat simulation presets
-                </p>
-                <div className="grid grid-cols-1 gap-1.5">
-                  {SEND_PRESETS.map((preset) => {
-                    const selected = recipientInput.toLowerCase() === preset.address.toLowerCase();
-                    return (
-                      <button
-                        key={preset.id}
-                        type="button"
-                        onClick={() => setRecipientInput(preset.address)}
-                        className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${
-                          selected
-                            ? 'bg-[#18202B] border-white/[0.18]'
-                            : 'bg-[#0D1015] border-white/[0.06] hover:border-white/[0.12]'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-medium text-[#F3F5F8] flex items-center gap-1.5">
-                            {preset.category === 'threat' && (
-                              <ShieldAlert className="w-3.5 h-3.5 text-red-400 shrink-0" />
-                            )}
-                            {preset.label}
-                          </span>
-                          <span
-                            className={`text-[11px] shrink-0 ${
-                              preset.category === 'threat'
-                                ? 'text-red-400'
-                                : preset.category === 'unverified'
-                                  ? 'text-amber-400'
-                                  : 'text-emerald-400'
-                            }`}
-                          >
-                            {preset.category === 'threat'
-                              ? 'Critical test'
-                              : preset.category === 'unverified'
-                                ? 'Caution test'
-                                : 'Verified'}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-[#9AA4B2] mt-0.5">{preset.description}</p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Sentinel Execution Controls */}
-              {mode === 'sentinel' && (
-                <div className="p-3.5 rounded-xl bg-[#0D1015] border border-sky-400/20 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-sky-300">Sentinel execution controls</span>
-                    <span className="text-[11px] font-mono tabular-nums text-[#9AA4B2]">
-                      Base {NETWORKS[selectedSendToken.network].baseFeeGwei} gwei
-                    </span>
+                      {assets.map((asset) => (
+                        <option key={asset.id} value={asset.id}>
+                          {asset.symbol} · {NETWORKS[asset.network].shortName} — {formatTokenAmount(asset.balance)} available
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <span className="block text-[11px] text-[#9AA4B2]">Priority speed</span>
-                      <div className="grid grid-cols-3 gap-1 p-0.5 bg-[#090B0E] rounded-md border border-white/[0.08]">
-                        {(['standard', 'fast', 'priority'] as GasSpeed[]).map((spd) => (
+
+                  {/* Amount Input */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <label htmlFor="send-amount" className="font-medium text-[#9AA4B2]">
+                        Amount
+                      </label>
+                      <span className="text-[#9AA4B2] font-mono tabular-nums">
+                        Balance: {formatTokenAmount(selectedSendToken.balance)} {selectedSendToken.symbol}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#090B0E] border border-white/[0.1] focus-within:border-emerald-400/60">
+                      <TokenIcon symbol={selectedSendToken.symbol} size={28} />
+                      <input
+                        id="send-amount"
+                        type="number"
+                        step="any"
+                        min="0"
+                        value={sendAmount}
+                        onChange={(e) => setSendAmount(e.target.value)}
+                        placeholder="0.00"
+                        className="flex-1 bg-transparent text-lg font-mono tabular-nums text-[#F3F5F8] placeholder:text-[#6B7686] focus:outline-none min-w-0"
+                      />
+                      <span className="text-xs font-mono tabular-nums text-[#9AA4B2] shrink-0">
+                        {formatFiat(sendAmountUsd, settings.currency)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {[0.25, 0.5, 1].map((pct) => (
+                        <button
+                          key={pct}
+                          type="button"
+                          onClick={() =>
+                            setSendAmount(String(Number((selectedSendToken.balance * pct).toFixed(4))))
+                          }
+                          className="px-2.5 py-1 rounded-md text-xs font-mono tabular-nums bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-[#C7D0DC] transition-colors whitespace-nowrap"
+                        >
+                          {pct === 1 ? 'Max' : `${pct * 100}%`}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Recipient Input */}
+                  <div className="space-y-2">
+                    <label htmlFor="send-recipient" className="block text-xs font-medium text-[#9AA4B2]">
+                      Recipient address or ENS
+                    </label>
+                    <input
+                      id="send-recipient"
+                      type="text"
+                      value={recipientInput}
+                      onChange={(e) => setRecipientInput(e.target.value)}
+                      placeholder="0x… or name.eth"
+                      className="w-full h-11 px-3.5 rounded-lg bg-[#090B0E] border border-white/[0.1] font-mono text-xs text-[#F3F5F8] placeholder:text-[#6B7686] focus:border-emerald-400/60 focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Quick Safety Test Presets */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-[#9AA4B2]">
+                      Contacts & threat simulation presets
+                    </p>
+                    <div className="grid grid-cols-1 gap-1.5">
+                      {SEND_PRESETS.map((preset) => {
+                        const selected = recipientInput.toLowerCase() === preset.address.toLowerCase();
+                        return (
                           <button
-                            key={spd}
+                            key={preset.id}
                             type="button"
-                            onClick={() => setGasSpeed(spd)}
-                            className={`py-1 text-[11px] rounded capitalize transition-colors ${
-                              gasSpeed === spd
-                                ? 'bg-sky-500/20 text-sky-300 font-medium'
-                                : 'text-[#9AA4B2] hover:text-white'
+                            onClick={() => setRecipientInput(preset.address)}
+                            className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${
+                              selected
+                                ? 'bg-[#18202B] border-white/[0.18]'
+                                : 'bg-[#0D1015] border-white/[0.06] hover:border-white/[0.12]'
                             }`}
                           >
-                            {spd === 'standard' ? 'Std' : spd === 'fast' ? 'Fast' : 'Max'}
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-xs font-medium text-[#F3F5F8] flex items-center gap-1.5">
+                                {preset.category === 'threat' && (
+                                  <ShieldAlert className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                                )}
+                                {preset.label}
+                              </span>
+                              <span
+                                className={`text-[11px] shrink-0 ${
+                                  preset.category === 'threat'
+                                    ? 'text-red-400'
+                                    : preset.category === 'unverified'
+                                      ? 'text-amber-400'
+                                      : 'text-emerald-400'
+                                }`}
+                              >
+                                {preset.category === 'threat'
+                                  ? 'Critical test'
+                                  : preset.category === 'unverified'
+                                    ? 'Caution test'
+                                    : 'Verified'}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-[#9AA4B2] mt-0.5">{preset.description}</p>
                           </button>
-                        ))}
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Sentinel Execution Controls */}
+                  {mode === 'sentinel' && (
+                    <div className="p-3.5 rounded-xl bg-[#0D1015] border border-sky-400/20 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-sky-300">Sentinel execution controls</span>
+                        <span className="text-[11px] font-mono tabular-nums text-[#9AA4B2]">
+                          Base {NETWORKS[selectedSendToken.network].baseFeeGwei} gwei
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <span className="block text-[11px] text-[#9AA4B2]">Priority speed</span>
+                          <div className="grid grid-cols-3 gap-1 p-0.5 bg-[#090B0E] rounded-md border border-white/[0.08]">
+                            {(['standard', 'fast', 'priority'] as GasSpeed[]).map((spd) => (
+                              <button
+                                key={spd}
+                                type="button"
+                                onClick={() => setGasSpeed(spd)}
+                                className={`py-1 text-[11px] rounded capitalize transition-colors ${
+                                  gasSpeed === spd
+                                    ? 'bg-sky-500/20 text-sky-300 font-medium'
+                                    : 'text-[#9AA4B2] hover:text-white'
+                                }`}
+                              >
+                                {spd === 'standard' ? 'Std' : spd === 'fast' ? 'Fast' : 'Max'}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <label htmlFor="send-mev-relay" className="block text-[11px] text-[#9AA4B2]">
+                            MEV orderflow relay
+                          </label>
+                          <select
+                            id="send-mev-relay"
+                            value={mevRelay}
+                            onChange={(e) => setMevRelay(e.target.value as MevRelay)}
+                            className="w-full h-8 px-2 rounded-md bg-[#090B0E] border border-white/[0.08] text-xs text-[#F3F5F8] focus:outline-none"
+                          >
+                            <option value="flashbots">Flashbots Protect</option>
+                            <option value="mev-blocker">MEV Blocker</option>
+                            <option value="public">Public Mempool</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
-                    <div className="space-y-1.5">
-                      <label htmlFor="send-mev-relay" className="block text-[11px] text-[#9AA4B2]">
-                        MEV orderflow relay
-                      </label>
-                      <select
-                        id="send-mev-relay"
-                        value={mevRelay}
-                        onChange={(e) => setMevRelay(e.target.value as MevRelay)}
-                        className="w-full h-8 px-2 rounded-md bg-[#090B0E] border border-white/[0.08] text-xs text-[#F3F5F8] focus:outline-none"
-                      >
-                        <option value="flashbots">Flashbots Protect</option>
-                        <option value="mev-blocker">MEV Blocker</option>
-                        <option value="public">Public Mempool</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              )}
+                  )}
 
-              {sendValidationError && (
-                <p className="text-xs text-amber-300">{sendValidationError}</p>
-              )}
+                  {sendValidationError && (
+                    <p className="text-xs text-amber-300">{sendValidationError}</p>
+                  )}
 
-              <button
-                type="submit"
-                disabled={Boolean(sendValidationError)}
-                className={`w-full py-3 px-4 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-ring ${
-                  mode === 'sentinel'
-                    ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
-                    : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
-                }`}
-              >
-                <Shield className="w-4 h-4" />
-                <span>Review & simulate transfer</span>
-              </button>
-            </form>
-          ) : actionDrawer.tab === 'swap' ? (
-            <form onSubmit={handleSimulateSwap} className="space-y-5">
-              {/* Curated Scenario Strip */}
-              <div className="space-y-2">
-                <p className="text-xs font-medium text-[#9AA4B2]">Swap test scenarios</p>
-                <div className="grid grid-cols-1 gap-1.5">
-                  {SWAP_SCENARIOS.map((sc) => {
-                    const selected = selectedSwapScenarioId === sc.id;
-                    return (
-                      <button
-                        key={sc.id}
-                        type="button"
-                        onClick={() => handleSelectSwapScenario(sc.id)}
-                        className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${
-                          selected
-                            ? 'bg-[#18202B] border-white/[0.18]'
-                            : 'bg-[#0D1015] border-white/[0.06] hover:border-white/[0.12]'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-medium text-[#F3F5F8]">{sc.label}</span>
-                          <span
-                            className={`text-[11px] shrink-0 ${
-                              sc.category === 'threat'
-                                ? 'text-red-400'
-                                : sc.category === 'caution'
-                                  ? 'text-amber-400'
-                                  : 'text-emerald-400'
-                            }`}
-                          >
-                            {sc.category === 'threat'
-                              ? 'Permit trap'
-                              : sc.category === 'caution'
-                                ? 'High impact'
-                                : 'Safe route'}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-[#9AA4B2] mt-0.5">{sc.description}</p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Pay Input */}
-              <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">
-                <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
-                  <span>You pay</span>
-                  <span className="font-mono tabular-nums">
-                    Balance: {formatTokenAmount(fromToken.balance)} {fromToken.symbol}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <select
-                    aria-label="Token to pay"
-                    value={fromToken.id}
-                    onChange={(e) => {
-                      const nextFrom = assets.find((a) => a.id === e.target.value);
-                      if (!nextFrom) return;
-                      setSwapFromId(nextFrom.id);
-                      const nextTarget = assets.find(
-                        (a) => a.network === nextFrom.network && a.id !== nextFrom.id
-                      );
-                      if (nextTarget) setSwapToId(nextTarget.id);
-                      setForcedPriceImpactPct(undefined);
-                      setMaliciousSwapFlag(false);
-                      setSelectedSwapScenarioId('custom');
-                      setSwapVenue('Uniswap V3 · 0.05% Pool');
-                    }}
-                    className="h-10 px-3 rounded-lg bg-[#161B22] border border-white/[0.1] text-sm font-medium text-[#F3F5F8] focus:outline-none"
-                  >
-                    {assets.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.symbol} ({NETWORKS[a.network].shortName})
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    aria-label="Swap input amount"
-                    type="number"
-                    step="any"
-                    min="0"
-                    value={swapAmount}
-                    onChange={(e) => {
-                      setSwapAmount(e.target.value);
-                      if (selectedSwapScenarioId !== 'swap-drainer') {
-                        setForcedPriceImpactPct(undefined);
-                      }
-                    }}
-                    placeholder="0.00"
-                    className="flex-1 bg-transparent text-right text-xl font-mono tabular-nums font-semibold text-[#F3F5F8] placeholder:text-[#6B7686] focus:outline-none min-w-0"
-                  />
-                </div>
-              </div>
-
-              {/* Flip Button */}
-              <div className="flex justify-center -my-2 relative z-10">
-                <button
-                  type="button"
-                  onClick={handleFlipSwapTokens}
-                  aria-label="Flip swap direction"
-                  className="w-9 h-9 rounded-lg bg-[#161B22] border border-white/[0.12] hover:bg-[#1E2530] flex items-center justify-center text-[#C7D0DC] transition-colors focus-ring"
-                >
-                  <ArrowDownUp className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Receive Quote */}
-              <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">
-                <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
-                  <span>Estimated receive</span>
-                  <span className="font-mono tabular-nums">
-                    {toToken ? NETWORKS[toToken.network].shortName : ''}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <select
-                    aria-label="Token to receive"
-                    value={toToken?.id || ''}
-                    onChange={(e) => {
-                      setSwapToId(e.target.value);
-                      setForcedPriceImpactPct(undefined);
-                      setMaliciousSwapFlag(false);
-                      setSelectedSwapScenarioId('custom');
-                    }}
-                    className="h-10 px-3 rounded-lg bg-[#161B22] border border-white/[0.1] text-sm font-medium text-[#F3F5F8] focus:outline-none"
-                  >
-                    {(sameNetworkTargets.length > 0 ? sameNetworkTargets : assets.filter((a) => a.id !== fromToken.id)).map(
-                      (a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.symbol} ({NETWORKS[a.network].shortName})
-                        </option>
-                      )
-                    )}
-                  </select>
-                  <div className="flex-1 text-right font-mono tabular-nums text-xl font-semibold text-[#F3F5F8] truncate">
-                    {formatTokenAmount(swapQuote.outAmount)}
-                  </div>
-                </div>
-              </div>
-
-              {/* Route Summary */}
-              <div className="p-3.5 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-2 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-[#9AA4B2]">Route venue</span>
-                  <span className="text-[#F3F5F8] font-medium">{swapVenue}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#9AA4B2]">Rate</span>
-                  <span className="font-mono tabular-nums text-[#F3F5F8]">
-                    1 {fromToken.symbol} = {formatTokenAmount(swapQuote.rate)} {toToken?.symbol}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#9AA4B2]">Price impact</span>
-                  <span
-                    className={`font-mono tabular-nums font-medium ${
-                      swapQuote.impactPct >= 3 ? 'text-amber-400' : 'text-emerald-400'
+                  <button
+                    type="submit"
+                    disabled={Boolean(sendValidationError)}
+                    className={`w-full py-3 px-4 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-ring ${
+                      mode === 'sentinel'
+                        ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
+                        : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
                     }`}
                   >
-                    -{swapQuote.impactPct.toFixed(2)}%
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#9AA4B2]">Minimum received</span>
-                  <span className="font-mono tabular-nums text-[#C7D0DC]">
-                    {formatTokenAmount(swapQuote.minReceived)} {toToken?.symbol}
-                  </span>
-                </div>
-              </div>
-
-              {/* Sentinel Slippage & MEV Controls */}
-              {mode === 'sentinel' && (
-                <div className="p-3.5 rounded-xl bg-[#0D1015] border border-sky-400/20 space-y-3">
-                  <span className="block text-xs font-medium text-sky-300">
-                    Sentinel execution controls
-                  </span>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <span className="block text-[11px] text-[#9AA4B2]">Max slippage</span>
-                      <div className="grid grid-cols-3 gap-1 p-0.5 bg-[#090B0E] rounded-md border border-white/[0.08]">
-                        {[0.1, 0.5, 1.0].map((val) => (
+                    <Shield className="w-4 h-4" />
+                    <span>Review & simulate transfer</span>
+                  </button>
+                </form>
+              ) : actionDrawer.tab === 'swap' ? (
+                <form onSubmit={handleSimulateSwap} className="space-y-5">
+                  {/* Curated Scenario Strip */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-[#9AA4B2]">Swap test scenarios</p>
+                    <div className="grid grid-cols-1 gap-1.5">
+                      {SWAP_SCENARIOS.map((sc) => {
+                        const selected = selectedSwapScenarioId === sc.id;
+                        return (
                           <button
-                            key={val}
+                            key={sc.id}
                             type="button"
-                            onClick={() => setSlippagePct(val)}
-                            className={`py-1 text-[11px] font-mono tabular-nums rounded transition-colors ${
-                              slippagePct === val
-                                ? 'bg-sky-500/20 text-sky-300 font-medium'
-                                : 'text-[#9AA4B2] hover:text-white'
+                            onClick={() => handleSelectSwapScenario(sc.id)}
+                            className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${
+                              selected
+                                ? 'bg-[#18202B] border-white/[0.18]'
+                                : 'bg-[#0D1015] border-white/[0.06] hover:border-white/[0.12]'
                             }`}
                           >
-                            {val}%
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-xs font-medium text-[#F3F5F8]">{sc.label}</span>
+                              <span
+                                className={`text-[11px] shrink-0 ${
+                                  sc.category === 'threat'
+                                    ? 'text-red-400'
+                                    : sc.category === 'caution'
+                                      ? 'text-amber-400'
+                                      : 'text-emerald-400'
+                                }`}
+                              >
+                                {sc.category === 'threat'
+                                  ? 'Permit trap'
+                                  : sc.category === 'caution'
+                                    ? 'High impact'
+                                    : 'Safe route'}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-[#9AA4B2] mt-0.5">{sc.description}</p>
                           </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label htmlFor="swap-mev-relay" className="block text-[11px] text-[#9AA4B2]">
-                        MEV orderflow relay
-                      </label>
-                      <select
-                        id="swap-mev-relay"
-                        value={mevRelay}
-                        onChange={(e) => setMevRelay(e.target.value as MevRelay)}
-                        className="w-full h-8 px-2 rounded-md bg-[#090B0E] border border-white/[0.08] text-xs text-[#F3F5F8] focus:outline-none"
-                      >
-                        <option value="flashbots">Flashbots Protect</option>
-                        <option value="mev-blocker">MEV Blocker</option>
-                        <option value="public">Public Mempool</option>
-                      </select>
+                        );
+                      })}
                     </div>
                   </div>
-                </div>
-              )}
 
-              {swapValidationError && (
-                <p className="text-xs text-amber-300">{swapValidationError}</p>
-              )}
+                  {/* Pay Input */}
+                  <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">
+                    <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
+                      <span>You pay</span>
+                      <span className="font-mono tabular-nums">
+                        Balance: {formatTokenAmount(fromToken.balance)} {fromToken.symbol}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <select
+                        aria-label="Token to pay"
+                        value={fromToken.id}
+                        onChange={(e) => {
+                          const nextFrom = assets.find((a) => a.id === e.target.value);
+                          if (!nextFrom) return;
+                          setSwapFromId(nextFrom.id);
+                          const nextTarget = assets.find(
+                            (a) => a.network === nextFrom.network && a.id !== nextFrom.id
+                          );
+                          if (nextTarget) setSwapToId(nextTarget.id);
+                          setForcedPriceImpactPct(undefined);
+                          setMaliciousSwapFlag(false);
+                          setSelectedSwapScenarioId('custom');
+                          setSwapVenue('Uniswap V3 · 0.05% Pool');
+                        }}
+                        className="h-10 px-3 rounded-lg bg-[#161B22] border border-white/[0.1] text-sm font-medium text-[#F3F5F8] focus:outline-none"
+                      >
+                        {assets.map((a) => (
+                          <option key={a.id} value={a.id}>
+                            {a.symbol} ({NETWORKS[a.network].shortName})
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        aria-label="Swap input amount"
+                        type="number"
+                        step="any"
+                        min="0"
+                        value={swapAmount}
+                        onChange={(e) => {
+                          setSwapAmount(e.target.value);
+                          if (selectedSwapScenarioId !== 'swap-drainer') {
+                            setForcedPriceImpactPct(undefined);
+                          }
+                        }}
+                        placeholder="0.00"
+                        className="flex-1 bg-transparent text-right text-xl font-mono tabular-nums font-semibold text-[#F3F5F8] placeholder:text-[#6B7686] focus:outline-none min-w-0"
+                      />
+                    </div>
+                  </div>
 
-              <button
-                type="submit"
-                disabled={Boolean(swapValidationError)}
-                className={`w-full py-3 px-4 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-ring ${
-                  mode === 'sentinel'
-                    ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
-                    : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
-                }`}
-              >
-                <Shield className="w-4 h-4" />
-                <span>Simulate swap before signing</span>
-              </button>
-            </form>
-          ) : (
-            /* RECEIVE TAB */
-            <div className="space-y-5">
-              {/* Network Selector */}
-              <div className="space-y-2">
-                <span className="block text-xs font-medium text-[#9AA4B2]">Receiving network</span>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                  {(Object.keys(NETWORKS) as NetworkId[]).map((netId) => {
-                    const active = receiveNetwork === netId;
-                    return (
-                      <button
-                        key={netId}
-                        type="button"
-                        onClick={() => setReceiveNetwork(netId)}
-                        className={`py-2 px-2.5 rounded-lg text-xs font-medium border transition-colors whitespace-nowrap ${
-                          active
-                            ? 'bg-[#1A212C] border-white/[0.18] text-[#F3F5F8]'
-                            : 'bg-[#0D1015] border-white/[0.06] text-[#9AA4B2] hover:text-white'
+                  {/* Flip Button */}
+                  <div className="flex justify-center -my-2 relative z-10">
+                    <button
+                      type="button"
+                      onClick={handleFlipSwapTokens}
+                      aria-label="Flip swap direction"
+                      className="w-9 h-9 rounded-lg bg-[#161B22] border border-white/[0.12] hover:bg-[#1E2530] flex items-center justify-center text-[#C7D0DC] transition-colors focus-ring"
+                    >
+                      <ArrowDownUp className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Receive Quote */}
+                  <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">
+                    <div className="flex items-center justify-between text-xs text-[#9AA4B2]">
+                      <span>Estimated receive</span>
+                      <span className="font-mono tabular-nums">
+                        {toToken ? NETWORKS[toToken.network].shortName : ''}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <select
+                        aria-label="Token to receive"
+                        value={toToken?.id || ''}
+                        onChange={(e) => {
+                          setSwapToId(e.target.value);
+                          setForcedPriceImpactPct(undefined);
+                          setMaliciousSwapFlag(false);
+                          setSelectedSwapScenarioId('custom');
+                        }}
+                        className="h-10 px-3 rounded-lg bg-[#161B22] border border-white/[0.1] text-sm font-medium text-[#F3F5F8] focus:outline-none"
+                      >
+                        {(sameNetworkTargets.length > 0 ? sameNetworkTargets : assets.filter((a) => a.id !== fromToken.id)).map(
+                          (a) => (
+                            <option key={a.id} value={a.id}>
+                              {a.symbol} ({NETWORKS[a.network].shortName})
+                            </option>
+                          )
+                        )}
+                      </select>
+                      <div className="flex-1 text-right font-mono tabular-nums text-xl font-semibold text-[#F3F5F8] truncate">
+                        {formatTokenAmount(swapQuote.outAmount)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Route Summary */}
+                  <div className="p-3.5 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-2 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#9AA4B2]">Route venue</span>
+                      <span className="text-[#F3F5F8] font-medium">{swapVenue}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#9AA4B2]">Rate</span>
+                      <span className="font-mono tabular-nums text-[#F3F5F8]">
+                        1 {fromToken.symbol} = {formatTokenAmount(swapQuote.rate)} {toToken?.symbol}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#9AA4B2]">Price impact</span>
+                      <span
+                        className={`font-mono tabular-nums font-medium ${
+                          swapQuote.impactPct >= 3 ? 'text-amber-400' : 'text-emerald-400'
                         }`}
                       >
-                        {NETWORKS[netId].shortName}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+                        -{swapQuote.impactPct.toFixed(2)}%
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#9AA4B2]">Minimum received</span>
+                      <span className="font-mono tabular-nums text-[#C7D0DC]">
+                        {formatTokenAmount(swapQuote.minReceived)} {toToken?.symbol}
+                      </span>
+                    </div>
+                  </div>
 
-              {/* QR Display */}
-              <div className="p-6 rounded-xl bg-[#0D1015] border border-white/[0.08] flex flex-col items-center text-center space-y-4">
-                <div className="p-3.5 rounded-xl bg-white">
-                  <svg
-                    width="180"
-                    height="180"
-                    viewBox={`0 0 ${qrMatrix.length} ${qrMatrix.length}`}
-                    shapeRendering="crispEdges"
-                    role="img"
-                    aria-label={`Deposit QR code for ${settings.walletAddress} on ${NETWORKS[receiveNetwork].name}`}
-                  >
-                    <rect width={qrMatrix.length} height={qrMatrix.length} fill="#FFFFFF" />
-                    {qrMatrix.map((row, rIdx) =>
-                      row.map((cell, cIdx) =>
-                        cell ? (
-                          <rect
-                            key={`${rIdx}-${cIdx}`}
-                            x={cIdx}
-                            y={rIdx}
-                            width={1}
-                            height={1}
-                            fill="#090B0E"
-                          />
-                        ) : null
-                      )
-                    )}
-                  </svg>
-                </div>
-
-                <div className="space-y-1 max-w-full">
-                  <p className="text-sm font-medium text-[#F3F5F8]">{settings.ensName}</p>
-                  <p className="font-mono text-xs text-[#9AA4B2] break-all px-2">
-                    {settings.walletAddress}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleCopyAddress}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-medium text-[#F3F5F8] transition-colors whitespace-nowrap focus-ring"
-                >
-                  {copiedAddress ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Address copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>Copy vault address</span>
-                    </>
+                  {/* Sentinel Slippage & MEV Controls */}
+                  {mode === 'sentinel' && (
+                    <div className="p-3.5 rounded-xl bg-[#0D1015] border border-sky-400/20 space-y-3">
+                      <span className="block text-xs font-medium text-sky-300">
+                        Sentinel execution controls
+                      </span>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <span className="block text-[11px] text-[#9AA4B2]">Max slippage</span>
+                          <div className="grid grid-cols-3 gap-1 p-0.5 bg-[#090B0E] rounded-md border border-white/[0.08]">
+                            {[0.1, 0.5, 1.0].map((val) => (
+                              <button
+                                key={val}
+                                type="button"
+                                onClick={() => setSlippagePct(val)}
+                                className={`py-1 text-[11px] font-mono tabular-nums rounded transition-colors ${
+                                  slippagePct === val
+                                    ? 'bg-sky-500/20 text-sky-300 font-medium'
+                                    : 'text-[#9AA4B2] hover:text-white'
+                                }`}
+                              >
+                                {val}%
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <label htmlFor="swap-mev-relay" className="block text-[11px] text-[#9AA4B2]">
+                            MEV orderflow relay
+                          </label>
+                          <select
+                            id="swap-mev-relay"
+                            value={mevRelay}
+                            onChange={(e) => setMevRelay(e.target.value as MevRelay)}
+                            className="w-full h-8 px-2 rounded-md bg-[#090B0E] border border-white/[0.08] text-xs text-[#F3F5F8] focus:outline-none"
+                          >
+                            <option value="flashbots">Flashbots Protect</option>
+                            <option value="mev-blocker">MEV Blocker</option>
+                            <option value="public">Public Mempool</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
                   )}
-                </button>
-              </div>
 
-              {/* Optional Payment Request */}
-              <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">
-                <h4 className="text-xs font-medium text-[#C7D0DC]">
-                  Request specific amount (optional)
-                </h4>
-                <div className="grid grid-cols-3 gap-2">
-                  <select
-                    aria-label="Requested asset"
-                    value={requestSymbol}
-                    onChange={(e) => setRequestSymbol(e.target.value)}
-                    className="h-10 px-2.5 rounded-lg bg-[#090B0E] border border-white/[0.1] text-xs text-[#F3F5F8] focus:outline-none"
+                  {swapValidationError && (
+                    <p className="text-xs text-amber-300">{swapValidationError}</p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={Boolean(swapValidationError)}
+                    className={`w-full py-3 px-4 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-ring ${
+                      mode === 'sentinel'
+                        ? 'bg-sky-500 hover:bg-sky-400 text-[#05131E]'
+                        : 'bg-emerald-500 hover:bg-emerald-400 text-[#04140D]'
+                    }`}
                   >
-                    <option value="USDC">USDC</option>
-                    <option value="ETH">ETH</option>
-                    <option value="WBTC">WBTC</option>
-                    <option value="rETH">rETH</option>
-                  </select>
-                  <input
-                    aria-label="Requested amount"
-                    type="number"
-                    min="0"
-                    step="any"
-                    value={requestAmount}
-                    onChange={(e) => setRequestAmount(e.target.value)}
-                    placeholder="Amount"
-                    className="col-span-2 h-10 px-3 rounded-lg bg-[#090B0E] border border-white/[0.1] font-mono tabular-nums text-xs text-[#F3F5F8] placeholder:text-[#6B7686] focus:outline-none"
-                  />
+                    <Shield className="w-4 h-4" />
+                    <span>Simulate swap before signing</span>
+                  </button>
+                </form>
+              ) : (
+                /* RECEIVE TAB */
+                <div className="space-y-5">
+                  {/* Network Selector */}
+                  <div className="space-y-2">
+                    <span className="block text-xs font-medium text-[#9AA4B2]">Receiving network</span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                      {(Object.keys(NETWORKS) as NetworkId[]).map((netId) => {
+                        const active = receiveNetwork === netId;
+                        return (
+                          <button
+                            key={netId}
+                            type="button"
+                            onClick={() => setReceiveNetwork(netId)}
+                            className={`py-2 px-2.5 rounded-lg text-xs font-medium border transition-colors whitespace-nowrap ${
+                              active
+                                ? 'bg-[#1A212C] border-white/[0.18] text-[#F3F5F8]'
+                                : 'bg-[#0D1015] border-white/[0.06] text-[#9AA4B2] hover:text-white'
+                            }`}
+                          >
+                            {NETWORKS[netId].shortName}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* QR Display */}
+                  <div className="p-6 rounded-xl bg-[#0D1015] border border-white/[0.08] flex flex-col items-center text-center space-y-4">
+                    <div className="p-3.5 rounded-xl bg-white">
+                      <svg
+                        width="180"
+                        height="180"
+                        viewBox={`0 0 ${qrMatrix.length} ${qrMatrix.length}`}
+                        shapeRendering="crispEdges"
+                        role="img"
+                        aria-label={`Deposit QR code for ${settings.walletAddress} on ${NETWORKS[receiveNetwork].name}`}
+                      >
+                        <rect width={qrMatrix.length} height={qrMatrix.length} fill="#FFFFFF" />
+                        {qrMatrix.map((row, rIdx) =>
+                          row.map((cell, cIdx) =>
+                            cell ? (
+                              <rect
+                                key={`${rIdx}-${cIdx}`}
+                                x={cIdx}
+                                y={rIdx}
+                                width={1}
+                                height={1}
+                                fill="#090B0E"
+                              />
+                            ) : null
+                          )
+                        )}
+                      </svg>
+                    </div>
+
+                    <div className="space-y-1 max-w-full">
+                      <p className="text-sm font-medium text-[#F3F5F8]">{settings.ensName}</p>
+                      <p className="font-mono text-xs text-[#9AA4B2] break-all px-2">
+                        {settings.walletAddress}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleCopyAddress}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-medium text-[#F3F5F8] transition-colors whitespace-nowrap focus-ring"
+                    >
+                      {copiedAddress ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Address copied</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Copy vault address</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Optional Payment Request */}
+                  <div className="p-4 rounded-xl bg-[#0D1015] border border-white/[0.08] space-y-3">
+                    <h4 className="text-xs font-medium text-[#C7D0DC]">
+                      Request specific amount (optional)
+                    </h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      <select
+                        aria-label="Requested asset"
+                        value={requestSymbol}
+                        onChange={(e) => setRequestSymbol(e.target.value)}
+                        className="h-10 px-2.5 rounded-lg bg-[#090B0E] border border-white/[0.1] text-xs text-[#F3F5F8] focus:outline-none"
+                      >
+                        <option value="USDC">USDC</option>
+                        <option value="ETH">ETH</option>
+                        <option value="WBTC">WBTC</option>
+                        <option value="rETH">rETH</option>
+                      </select>
+                      <input
+                        aria-label="Requested amount"
+                        type="number"
+                        min="0"
+                        step="any"
+                        value={requestAmount}
+                        onChange={(e) => setRequestAmount(e.target.value)}
+                        placeholder="Amount"
+                        className="col-span-2 h-10 px-3 rounded-lg bg-[#090B0E] border border-white/[0.1] font-mono tabular-nums text-xs text-[#F3F5F8] placeholder:text-[#6B7686] focus:outline-none"
+                      />
+                    </div>
+                    {mode === 'sentinel' && (
+                      <p className="font-mono text-[11px] text-[#6B7686] break-all">
+                        URI: {paymentUri}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Network Safety Notice + Sandbox Deposit Tester */}
+                  <div className="p-3.5 rounded-xl bg-amber-500/[0.06] border border-amber-500/20 text-xs text-amber-200/90 leading-relaxed">
+                    Only send EVM-compatible assets on{' '}
+                    <strong className="text-amber-200">{NETWORKS[receiveNetwork].name}</strong> (Chain ID{' '}
+                    {NETWORKS[receiveNetwork].chainId}). Sending non-EVM tokens may result in permanent loss.
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleSimulateTestDeposit}
+                    className="w-full py-2.5 px-4 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-medium text-[#F3F5F8] transition-colors focus-ring"
+                  >
+                    Simulate incoming test deposit (
+                    {Number(requestAmount) > 0 ? requestAmount : requestSymbol === 'ETH' ? '0.5' : '500'}{' '}
+                    {requestSymbol} on {NETWORKS[receiveNetwork].shortName})
+                  </button>
                 </div>
-                {mode === 'sentinel' && (
-                  <p className="font-mono text-[11px] text-[#6B7686] break-all">
-                    URI: {paymentUri}
-                  </p>
-                )}
-              </div>
-
-              {/* Network Safety Notice + Sandbox Deposit Tester */}
-              <div className="p-3.5 rounded-xl bg-amber-500/[0.06] border border-amber-500/20 text-xs text-amber-200/90 leading-relaxed">
-                Only send EVM-compatible assets on <strong className="text-amber-200">{NETWORKS[receiveNetwork].name}</strong> (Chain ID {NETWORKS[receiveNetwork].chainId}). Sending non-EVM tokens may result in permanent loss.
-              </div>
-
-              <button
-                type="button"
-                onClick={handleSimulateTestDeposit}
-                className="w-full py-2.5 px-4 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-medium text-[#F3F5F8] transition-colors focus-ring"
-              >
-                Simulate incoming test deposit ({Number(requestAmount) > 0 ? requestAmount : requestSymbol === 'ETH' ? '0.5' : '500'} {requestSymbol} on {NETWORKS[receiveNetwork].shortName})
-              </button>
-            </div>
+              )}
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
-    </div>
+    </SlideOverSheet>
   );
 }
