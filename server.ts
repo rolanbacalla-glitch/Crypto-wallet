@@ -155,7 +155,8 @@ async function createServer() {
   if (isProduction) {
     const distDir = path.join(__dirname, 'dist');
     app.use(express.static(distDir));
-    app.get('*', (_req: Request, res: Response) => {
+    // Express 5 (path-to-regexp v8) requires a named wildcard for the SPA fallback
+    app.get('/{*splat}', (_req: Request, res: Response) => {
       res.sendFile(path.join(distDir, 'index.html'));
     });
   } else {
